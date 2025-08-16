@@ -2070,55 +2070,79 @@ const RakutenProducts = [
         id: 'gaming_chair',
         name: 'ゲーミングチェア',
         price: 15800,
-        image: 'https://via.placeholder.com/200x120/e60012/ffffff?text=Gaming+Chair',
+        originalPrice: 19800,
+        discount: 20,
+        image: 'https://images.unsplash.com/photo-1592078615290-033ee584e267?w=400&h=240&fit=crop&crop=center',
         description: '長時間のゲームプレイに最適な快適なチェア',
         link: `https://hb.afl.rakuten.co.jp/hgc/${RAKUTEN_AFFILIATE_ID}/?pc=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2F%25E3%2582%25B2%25E3%2583%25BC%25E3%2583%259F%25E3%2583%25B3%25E3%2582%25B0%25E3%2583%2581%25E3%2582%25A7%25E3%2582%25A2%2F`,
-        category: 'furniture'
+        category: 'furniture',
+        badge: '🔥 限定セール',
+        urgency: '残り2時間'
     },
     {
         id: 'nintendo_switch',
         name: 'Nintendo Switch',
         price: 29800,
-        image: 'https://via.placeholder.com/200x120/e60012/ffffff?text=Nintendo+Switch',
+        originalPrice: 34800,
+        discount: 14,
+        image: 'https://images.unsplash.com/photo-1578303512597-81e6cc155b3e?w=400&h=240&fit=crop&crop=center',
         description: '人気のゲーム機、どこでも楽しめる',
         link: `https://hb.afl.rakuten.co.jp/hgc/${RAKUTEN_AFFILIATE_ID}/?pc=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2Fnintendo%2Bswitch%2F`,
-        category: 'gaming'
+        category: 'gaming',
+        badge: '🎮 人気商品',
+        urgency: '在庫残り少'
     },
     {
         id: 'gaming_mouse',
         name: 'ゲーミングマウス',
         price: 8980,
-        image: 'https://via.placeholder.com/200x120/e60012/ffffff?text=Gaming+Mouse',
+        originalPrice: 12980,
+        discount: 31,
+        image: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=400&h=240&fit=crop&crop=center',
         description: '高精度センサー搭載のゲーミングマウス',
         link: `https://hb.afl.rakuten.co.jp/hgc/${RAKUTEN_AFFILIATE_ID}/?pc=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2F%25E3%2582%25B2%25E3%2583%25BC%25E3%2583%259F%25E3%2583%25B3%25E3%2582%25B0%25E3%2583%259E%25E3%2582%25A6%25E3%2582%25B9%2F`,
-        category: 'accessory'
+        category: 'accessory',
+        badge: '⚡ 激安特価',
+        urgency: '本日限定'
     },
     {
         id: 'gaming_keyboard',
         name: 'ゲーミングキーボード',
         price: 12800,
-        image: 'https://via.placeholder.com/200x120/e60012/ffffff?text=Gaming+Keyboard',
+        originalPrice: 16800,
+        discount: 24,
+        image: 'https://images.unsplash.com/photo-1541140532154-b024d705b90a?w=400&h=240&fit=crop&crop=center',
         description: 'メカニカルスイッチ搭載の高級キーボード',
         link: `https://hb.afl.rakuten.co.jp/hgc/${RAKUTEN_AFFILIATE_ID}/?pc=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2F%25E3%2582%25B2%25E3%2583%25BC%25E3%2583%259F%25E3%2583%25B3%25E3%2582%25B0%25E3%2582%25AD%25E3%2583%25BC%25E3%2583%259C%25E3%2583%25BC%25E3%2583%2589%2F`,
-        category: 'accessory'
+        category: 'accessory',
+        badge: '💎 プレミアム',
+        urgency: '数量限定'
     },
     {
         id: 'gaming_headset',
         name: 'ゲーミングヘッドセット',
         price: 6800,
-        image: 'https://via.placeholder.com/200x120/e60012/ffffff?text=Gaming+Headset',
+        originalPrice: 9800,
+        discount: 31,
+        image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=240&fit=crop&crop=center',
         description: '高音質で長時間使用に最適',
         link: `https://hb.afl.rakuten.co.jp/hgc/${RAKUTEN_AFFILIATE_ID}/?pc=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2F%25E3%2582%25B2%25E3%2583%25BC%25E3%2583%259F%25E3%2583%25B3%25E3%2582%25B0%25E3%2583%2598%25E3%2583%2583%25E3%2583%2589%25E3%2582%25BB%25E3%2583%2583%25E3%2583%2588%2F`,
-        category: 'accessory'
+        category: 'accessory',
+        badge: '🎧 音質重視',
+        urgency: 'セール終了間近'
     },
     {
         id: 'gaming_monitor',
         name: 'ゲーミングモニター',
         price: 25800,
-        image: 'https://via.placeholder.com/200x120/e60012/ffffff?text=Gaming+Monitor',
+        originalPrice: 35800,
+        discount: 28,
+        image: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=400&h=240&fit=crop&crop=center',
         description: '高リフレッシュレートで滑らかな映像',
         link: `https://hb.afl.rakuten.co.jp/hgc/${RAKUTEN_AFFILIATE_ID}/?pc=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2F%25E3%2582%25B2%25E3%2583%25BC%25E3%2583%259F%25E3%2583%25B3%25E3%2582%25B0%25E3%2583%25A2%25E3%2583%258B%25E3%2582%25BF%25E3%2583%25BC%2F`,
-        category: 'accessory'
+        category: 'accessory',
+        badge: '🖥️ 高画質',
+        urgency: '今だけ特価'
     }
 ];
 
@@ -2155,13 +2179,25 @@ const RakutenAffiliate = {
     createProductElement: function(product) {
         const div = document.createElement('div');
         div.className = 'rakuten-product';
+        
+        // 割引情報の計算
+        const savings = product.originalPrice - product.price;
+        const savingsText = savings > 0 ? `¥${savings.toLocaleString()}お得！` : '';
+        
         div.innerHTML = `
+            <div class="product-badge">${product.badge}</div>
+            <div class="urgency-badge">${product.urgency}</div>
             <img src="${product.image}" alt="${product.name}" loading="lazy">
             <h5>${product.name}</h5>
-            <div class="price">¥${product.price.toLocaleString()}</div>
+            <div class="price-container">
+                <div class="current-price">¥${product.price.toLocaleString()}</div>
+                ${product.originalPrice ? `<div class="original-price">¥${product.originalPrice.toLocaleString()}</div>` : ''}
+                ${product.discount ? `<div class="discount-badge">-${product.discount}%</div>` : ''}
+            </div>
+            ${savingsText ? `<div class="savings">${savingsText}</div>` : ''}
             <div class="description">${product.description}</div>
             <a href="${product.link}" target="_blank" onclick="RakutenAffiliate.trackClick('${product.id}')">
-                楽天で購入
+                🛒 今すぐ購入
             </a>
         `;
         return div;

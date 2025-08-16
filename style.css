@@ -4441,6 +4441,40 @@ body::before {
     }
 }
 
+.rakuten-product {
+    position: relative;
+}
+
+.product-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    z-index: 2;
+    box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+    animation: badgePulse 2s ease-in-out infinite;
+}
+
+.urgency-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: linear-gradient(45deg, #ff4757, #ff3742);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    z-index: 2;
+    box-shadow: 0 2px 8px rgba(255, 71, 87, 0.3);
+    animation: urgencyBlink 1.5s ease-in-out infinite;
+}
+
 .rakuten-product img {
     width: 100%;
     height: 120px;
@@ -4456,11 +4490,46 @@ body::before {
     font-weight: 600;
 }
 
-.rakuten-product .price {
-    font-size: 1.1rem;
+.price-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+
+.current-price {
+    font-size: 1.2rem;
     font-weight: bold;
     color: #e60012;
-    margin-bottom: 10px;
+}
+
+.original-price {
+    font-size: 0.9rem;
+    color: #999;
+    text-decoration: line-through;
+}
+
+.discount-badge {
+    background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 8px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    animation: discountGlow 2s ease-in-out infinite;
+}
+
+.savings {
+    background: linear-gradient(45deg, #2ed573, #7bed9f);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-bottom: 8px;
+    text-align: center;
+    animation: savingsPulse 2s ease-in-out infinite;
 }
 
 .rakuten-product .description {
@@ -4568,6 +4637,46 @@ body::before {
     }
     50% {
         background-position: 100% 50%;
+    }
+}
+
+@keyframes badgePulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 0.9;
+    }
+}
+
+@keyframes urgencyBlink {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.8;
+        transform: scale(1.1);
+    }
+}
+
+@keyframes discountGlow {
+    0%, 100% {
+        box-shadow: 0 0 5px rgba(255, 107, 107, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 15px rgba(255, 107, 107, 0.8);
+    }
+}
+
+@keyframes savingsPulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.02);
     }
 }
 
