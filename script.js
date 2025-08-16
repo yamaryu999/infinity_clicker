@@ -39,6 +39,26 @@ const clickButton = document.getElementById('clickButton');
 const clickEffect = document.getElementById('clickEffect');
 const notification = document.getElementById('notification');
 const mainCharacter = document.getElementById('mainCharacter');
+const achievementsElement = document.getElementById('achievements');
+
+// アップグレード要素
+const autoClickerLevelElement = document.getElementById('autoClickerLevel');
+const autoClickerCostElement = document.getElementById('autoClickerCost');
+const clickMultiplierLevelElement = document.getElementById('clickMultiplierLevel');
+const clickMultiplierCostElement = document.getElementById('clickMultiplierCost');
+const autoClickerSpeedLevelElement = document.getElementById('autoClickerSpeedLevel');
+const autoClickerSpeedCostElement = document.getElementById('autoClickerSpeedCost');
+const criticalClickLevelElement = document.getElementById('criticalClickLevel');
+const criticalClickCostElement = document.getElementById('criticalClickCost');
+
+// モバイル検出
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+// アップグレードコスト計算関数
+function calculateUpgradeCost(level, baseCost) {
+    return Math.floor(baseCost * Math.pow(1.15, level));
+}
 
 // キャラクター管理
 const CharacterManager = {
@@ -134,10 +154,6 @@ const CharacterManager = {
     }
 };
 
-// スマホ最適化のための設定
-const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-
 // 初期化
 function init() {
     loadGame();
@@ -154,32 +170,7 @@ function init() {
     }, 1000);
 }
 
-// スマホ最適化の設定
-function setupMobileOptimizations() {
-    // スマホでのダブルタップズームを無効化
-    let lastTouchEnd = 0;
-    document.addEventListener('touchend', function (event) {
-        const now = (new Date()).getTime();
-        if (now - lastTouchEnd <= 300) {
-            event.preventDefault();
-        }
-        lastTouchEnd = now;
-    }, false);
-
-    // スマホでのスクロールを滑らかに
-    document.addEventListener('touchmove', function(event) {
-        if (event.scale !== 1) {
-            event.preventDefault();
-        }
-    }, { passive: false });
-
-    // スマホでのタッチフィードバック
-    if (isTouchDevice) {
-        document.body.classList.add('touch-device');
-    }
-}
-
-// イベントリスナーの設定
+// イベントリスナー設定
 function setupEventListeners() {
     // クリックイベント
     clickButton.addEventListener('click', handleClick);
@@ -190,11 +181,11 @@ function setupEventListeners() {
         clickButton.addEventListener('touchend', handleTouchEnd, { passive: true });
     }
     
-    // キーボードショートカット（デスクトップのみ）
+    // キーボードショートカット（モバイル以外）
     if (!isMobile) {
-        document.addEventListener('keydown', (e) => {
-            if (e.code === 'Space') {
-                e.preventDefault();
+        document.addEventListener('keydown', function(event) {
+            if (event.code === 'Space') {
+                event.preventDefault();
                 handleClick();
             }
         });
@@ -218,11 +209,14 @@ function handleTouchEnd(event) {
 function handleClick() {
     const points = gameState.clickMultiplier;
     gameState.points += points;
+    gameState.totalClicks++;
+    gameState.totalPoints += points;
     
     // クリティカルヒット判定
     if (Math.random() < gameState.criticalClickChance) {
         const criticalPoints = points * 3;
         gameState.points += criticalPoints * 2; // 追加で3倍
+        gameState.totalPoints += criticalPoints * 2;
         showNotification(`💥 クリティカルヒット! +${formatNumber(criticalPoints * 3)}`, 'critical');
         CharacterManager.changeExpression('surprised');
         CharacterManager.createParticleBurst(50, 50, 8);
@@ -241,13 +235,16 @@ function handleClick() {
     checkAchievements();
 }
 
-// クリックエフェクト表示
-function showClickEffect(points, isCritical) {
+// クリックエフェクト作成
+function createClickEffect() {
     const effect = document.createElement('span');
-    effect.textContent = `+${Math.floor(points)}`;
-    effect.style.color = isCritical ? '#ffd700' : '#ff6b6b';
-    effect.style.fontSize = isCritical ? '1.5rem' : '1.2rem';
+    effect.textContent = `+${gameState.clickMultiplier}`;
+    effect.style.color = '#ff6b6b';
+    effect.style.fontSize = '1.2rem';
     effect.style.fontWeight = 'bold';
+    effect.style.position = 'absolute';
+    effect.style.pointerEvents = 'none';
+    effect.style.zIndex = '1000';
     
     // ランダムな位置に配置
     const rect = clickButton.getBoundingClientRect();
@@ -345,17 +342,17 @@ function updateDisplay() {
     clickMultiplierElement.textContent = gameState.clickMultiplierLevel;
     
     // アップグレード情報更新
-    elements.autoClickerLevel.textContent = gameState.autoClickerLevel;
-    elements.autoClickerCost.textContent = formatNumber(upgradeCosts.autoClicker(gameState.autoClickerLevel));
+    autoClickerLevelElement.textContent = gameState.autoClickerLevel;
+    autoClickerCostElement.textContent = formatNumber(calculateUpgradeCost(gameState.autoClickerLevel, 10));
     
-    elements.clickMultiplierLevel.textContent = gameState.clickMultiplierLevel;
-    elements.clickMultiplierCost.textContent = formatNumber(upgradeCosts.clickMultiplier(gameState.clickMultiplierLevel - 1));
+    clickMultiplierLevelElement.textContent = gameState.clickMultiplierLevel;
+    clickMultiplierCostElement.textContent = formatNumber(calculateUpgradeCost(gameState.clickMultiplierLevel, 50));
     
-    elements.autoClickerSpeedLevel.textContent = gameState.autoClickerSpeedLevel;
-    elements.autoClickerSpeedCost.textContent = formatNumber(upgradeCosts.autoClickerSpeed(gameState.autoClickerSpeedLevel - 1));
+    autoClickerSpeedLevelElement.textContent = gameState.autoClickerSpeedLevel;
+    autoClickerSpeedCostElement.textContent = formatNumber(calculateUpgradeCost(gameState.autoClickerSpeedLevel, 100));
     
-    elements.criticalClickLevel.textContent = gameState.criticalClickLevel;
-    elements.criticalClickCost.textContent = formatNumber(upgradeCosts.criticalClick(gameState.criticalClickLevel));
+    criticalClickLevelElement.textContent = gameState.criticalClickLevel;
+    criticalClickCostElement.textContent = formatNumber(calculateUpgradeCost(gameState.criticalClickLevel, 200));
     
     // ボタンの有効/無効状態更新
     updateUpgradeButtons();
@@ -365,10 +362,10 @@ function updateDisplay() {
 function updateUpgradeButtons() {
     const buttons = document.querySelectorAll('.upgrade-btn');
     const costs = [
-        upgradeCosts.autoClicker(gameState.autoClickerLevel),
-        upgradeCosts.clickMultiplier(gameState.clickMultiplierLevel - 1),
-        upgradeCosts.autoClickerSpeed(gameState.autoClickerSpeedLevel - 1),
-        upgradeCosts.criticalClick(gameState.criticalClickLevel)
+        calculateUpgradeCost(gameState.autoClickerLevel, 10),
+        calculateUpgradeCost(gameState.clickMultiplierLevel, 50),
+        calculateUpgradeCost(gameState.autoClickerSpeedLevel, 100),
+        calculateUpgradeCost(gameState.criticalClickLevel, 200)
     ];
     
     buttons.forEach((button, index) => {
@@ -425,7 +422,7 @@ function unlockAchievement(achievementId) {
 
 // 実績表示
 function renderAchievements() {
-    elements.achievements.innerHTML = '';
+    achievementsElement.innerHTML = '';
     
     achievements.forEach(achievement => {
         const isUnlocked = gameState.achievements.includes(achievement.id);
@@ -435,7 +432,7 @@ function renderAchievements() {
             <div>${achievement.name}</div>
             <div style="font-size: 0.8rem; opacity: 0.8;">${achievement.description}</div>
         `;
-        elements.achievements.appendChild(achievementElement);
+        achievementsElement.appendChild(achievementElement);
     });
 }
 
