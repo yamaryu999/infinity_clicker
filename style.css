@@ -1056,6 +1056,31 @@ body::before {
     overflow: hidden;
 }
 
+/* アニメ調の基本スタイル */
+.anime-style {
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+    position: relative;
+}
+
+.anime-style::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    background: linear-gradient(45deg, #ff6b9d, #c44569, #feca57, #48dbfb, #ff9ff3);
+    border-radius: 50%;
+    z-index: -1;
+    opacity: 0;
+    animation: animeGlow 3s ease-in-out infinite;
+}
+
+@keyframes animeGlow {
+    0%, 100% { opacity: 0; transform: scale(1); }
+    50% { opacity: 0.3; transform: scale(1.1); }
+}
+
 /* メインキャラクター */
 .character {
     position: relative;
@@ -1065,17 +1090,19 @@ body::before {
     animation: characterFloat 3s ease-in-out infinite;
     z-index: 10;
     transform-origin: center bottom;
+    filter: drop-shadow(0 0 15px rgba(255, 107, 157, 0.5));
 }
 
 .character:hover {
     transform: scale(1.1) rotate(5deg);
-    filter: drop-shadow(0 0 20px var(--neon-color));
+    filter: drop-shadow(0 0 25px var(--neon-color)) brightness(1.1);
 }
 
 .character-body {
     position: relative;
     z-index: 2;
     animation: bodyWiggle 2s ease-in-out infinite;
+    filter: contrast(1.1) saturate(1.2);
 }
 
 .character-eyes {
@@ -1088,10 +1115,11 @@ body::before {
     z-index: 3;
 }
 
-.eye {
+.anime-eye {
     font-size: 1.5rem;
     animation: eyeBlink 4s infinite;
     transition: all 0.3s ease;
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
 }
 
 .left-eye {
@@ -1113,6 +1141,10 @@ body::before {
     transition: all 0.3s ease;
 }
 
+.anime-mouth {
+    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.3));
+}
+
 /* 動物特有の要素 */
 .character-ears {
     position: absolute;
@@ -1124,10 +1156,11 @@ body::before {
     z-index: 1;
 }
 
-.ear {
+.anime-ear {
     font-size: 1.2rem;
     animation: earWiggle 3s ease-in-out infinite;
     transition: all 0.3s ease;
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.4));
 }
 
 .left-ear {
@@ -1138,7 +1171,7 @@ body::before {
     animation-delay: 1.5s;
 }
 
-.character-tail {
+.anime-tail {
     position: absolute;
     bottom: 10%;
     right: -20%;
@@ -1146,19 +1179,94 @@ body::before {
     z-index: 1;
     animation: tailWag 2s ease-in-out infinite;
     transform-origin: center left;
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
 }
 
-.character-shadow {
+/* アニメ調の追加要素 */
+.character-cheeks {
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 40px;
+    z-index: 2;
+}
+
+.cheek {
+    font-size: 0.8rem;
+    animation: cheekBlush 4s ease-in-out infinite;
+    opacity: 0.7;
+}
+
+.left-cheek {
+    animation-delay: 0s;
+}
+
+.right-cheek {
+    animation-delay: 2s;
+}
+
+.character-sparkles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 4;
+}
+
+.sparkle {
+    position: absolute;
+    font-size: 0.6rem;
+    animation: sparkleTwinkle 3s ease-in-out infinite;
+    opacity: 0;
+}
+
+.sparkle-1 {
+    top: 20%;
+    left: 20%;
+    animation-delay: 0s;
+}
+
+.sparkle-2 {
+    top: 30%;
+    right: 25%;
+    animation-delay: 1s;
+}
+
+.sparkle-3 {
+    bottom: 30%;
+    left: 30%;
+    animation-delay: 2s;
+}
+
+.anime-shadow {
     position: absolute;
     bottom: -20px;
     left: 50%;
     transform: translateX(-50%);
     width: 80px;
     height: 20px;
-    background: radial-gradient(ellipse, rgba(0,0,0,0.3) 0%, transparent 70%);
+    background: radial-gradient(ellipse, rgba(255, 107, 157, 0.3) 0%, transparent 70%);
     border-radius: 50%;
     z-index: 1;
     animation: shadowPulse 2s ease-in-out infinite;
+    filter: blur(2px);
+}
+
+.character-outline {
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #ff6b9d, #c44569, #feca57, #48dbfb);
+    border-radius: 50%;
+    z-index: -1;
+    opacity: 0.3;
+    animation: outlineGlow 4s ease-in-out infinite;
 }
 
 .character-particles {
@@ -1182,17 +1290,19 @@ body::before {
     z-index: 1;
 }
 
-.floating-char {
+.anime-char {
     position: absolute;
     font-size: 1.5rem;
     animation: float 6s ease-in-out infinite;
     opacity: 0.7;
     transition: all 0.3s ease;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.4));
 }
 
 .floating-char:hover {
     transform: scale(1.2);
     opacity: 1;
+    filter: drop-shadow(0 0 15px rgba(255, 107, 157, 0.6));
 }
 
 .floating-char:nth-child(1) {
@@ -1262,11 +1372,12 @@ body::before {
     z-index: 0;
 }
 
-.grass {
+.anime-grass {
     position: absolute;
     bottom: 0;
     font-size: 1.2rem;
     animation: grassSway 4s ease-in-out infinite;
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.2));
 }
 
 .grass-1 {
@@ -1284,12 +1395,13 @@ body::before {
     animation-delay: 2s;
 }
 
-.cloud {
+.anime-cloud {
     position: absolute;
     top: 10%;
     font-size: 2rem;
     opacity: 0.6;
     animation: cloudFloat 20s linear infinite;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
 }
 
 .cloud-1 {
@@ -1302,67 +1414,255 @@ body::before {
     animation-delay: 10s;
 }
 
-/* アップグレードアイコン */
-.upgrade-icon {
+.flowers {
+    position: absolute;
+    bottom: 5%;
+    left: 0;
+    width: 100%;
+    height: 30px;
+}
+
+.flower {
+    position: absolute;
+    font-size: 1rem;
+    animation: flowerBloom 5s ease-in-out infinite;
+    opacity: 0.8;
+}
+
+.flower-1 {
+    left: 15%;
+    animation-delay: 0s;
+}
+
+.flower-2 {
+    left: 60%;
+    animation-delay: 2s;
+}
+
+.flower-3 {
+    right: 20%;
+    animation-delay: 4s;
+}
+
+/* アニメ調ボタン */
+.anime-button {
+    background: linear-gradient(45deg, #ff6b9d, #c44569, #feca57, #48dbfb);
+    background-size: 300% 300%;
+    animation: gradientShift 3s ease-in-out infinite;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 
+        0 0 20px rgba(255, 107, 157, 0.5),
+        inset 0 0 20px rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.anime-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: left 0.5s ease;
+}
+
+.anime-button:hover::before {
+    left: 100%;
+}
+
+.button-glow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+    border-radius: inherit;
+    opacity: 0;
+    animation: buttonGlow 2s ease-in-out infinite;
+}
+
+/* アニメ調カード */
+.anime-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 
+        0 8px 32px rgba(255, 107, 157, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    transition: all 0.3s ease;
+}
+
+.anime-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 
+        0 15px 40px rgba(255, 107, 157, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 107, 157, 0.4);
+}
+
+.anime-icon {
     position: absolute;
     top: -15px;
     right: -15px;
     font-size: 2rem;
-    background: var(--neon-gradient);
+    background: linear-gradient(45deg, #ff6b9d, #c44569, #feca57, #48dbfb);
+    background-size: 200% 200%;
+    animation: gradientShift 2s ease-in-out infinite;
     border-radius: 50%;
     width: 50px;
     height: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: var(--shadow-medium);
-    animation: iconPulse 2s ease-in-out infinite;
+    box-shadow: 
+        0 5px 15px rgba(255, 107, 157, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
-/* 豊富なアニメーション */
+.anime-btn {
+    background: linear-gradient(45deg, #ff6b9d, #c44569);
+    background-size: 200% 200%;
+    animation: gradientShift 2s ease-in-out infinite;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 
+        0 4px 15px rgba(255, 107, 157, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.anime-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+        0 8px 25px rgba(255, 107, 157, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    background-size: 150% 150%;
+}
+
+/* アニメ調アニメーション */
+@keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+@keyframes buttonGlow {
+    0%, 100% { opacity: 0; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.1); }
+}
+
+@keyframes outlineGlow {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.05); }
+}
+
+@keyframes cheekBlush {
+    0%, 100% { opacity: 0.7; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.2); }
+}
+
+@keyframes sparkleTwinkle {
+    0%, 100% { opacity: 0; transform: scale(0.5) rotate(0deg); }
+    25% { opacity: 1; transform: scale(1) rotate(90deg); }
+    50% { opacity: 0.8; transform: scale(0.8) rotate(180deg); }
+    75% { opacity: 1; transform: scale(1.1) rotate(270deg); }
+}
+
+@keyframes flowerBloom {
+    0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.8; }
+    50% { transform: scale(1.2) rotate(5deg); opacity: 1; }
+}
+
+/* 既存のアニメーションをアニメ調に強化 */
 @keyframes characterFloat {
-    0%, 100% { transform: translateY(0px) rotate(0deg); }
-    25% { transform: translateY(-8px) rotate(1deg); }
-    50% { transform: translateY(-12px) rotate(0deg); }
-    75% { transform: translateY(-8px) rotate(-1deg); }
+    0%, 100% { 
+        transform: translateY(0px) rotate(0deg) scale(1); 
+        filter: drop-shadow(0 0 15px rgba(255, 107, 157, 0.5));
+    }
+    25% { 
+        transform: translateY(-8px) rotate(1deg) scale(1.02); 
+        filter: drop-shadow(0 0 20px rgba(255, 107, 157, 0.6));
+    }
+    50% { 
+        transform: translateY(-12px) rotate(0deg) scale(1.05); 
+        filter: drop-shadow(0 0 25px rgba(255, 107, 157, 0.7));
+    }
+    75% { 
+        transform: translateY(-8px) rotate(-1deg) scale(1.02); 
+        filter: drop-shadow(0 0 20px rgba(255, 107, 157, 0.6));
+    }
 }
 
 @keyframes bodyWiggle {
-    0%, 100% { transform: rotate(0deg); }
-    25% { transform: rotate(2deg); }
-    75% { transform: rotate(-2deg); }
+    0%, 100% { transform: rotate(0deg) scale(1); }
+    25% { transform: rotate(2deg) scale(1.02); }
+    75% { transform: rotate(-2deg) scale(1.02); }
 }
 
 @keyframes eyeBlink {
-    0%, 90%, 100% { opacity: 1; transform: scaleY(1); }
-    95% { opacity: 0; transform: scaleY(0.1); }
+    0%, 90%, 100% { 
+        opacity: 1; 
+        transform: scaleY(1) scale(1); 
+    }
+    95% { 
+        opacity: 0; 
+        transform: scaleY(0.1) scale(0.8); 
+    }
 }
 
 @keyframes mouthMove {
-    0%, 100% { transform: translateX(-50%) scale(1); }
-    50% { transform: translateX(-50%) scale(1.1); }
+    0%, 100% { 
+        transform: translateX(-50%) scale(1); 
+        filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.3));
+    }
+    50% { 
+        transform: translateX(-50%) scale(1.1); 
+        filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+    }
 }
 
 @keyframes earWiggle {
-    0%, 100% { transform: rotate(0deg); }
-    25% { transform: rotate(5deg); }
-    75% { transform: rotate(-5deg); }
+    0%, 100% { 
+        transform: rotate(0deg) scale(1); 
+        filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.4));
+    }
+    25% { 
+        transform: rotate(5deg) scale(1.05); 
+        filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6));
+    }
+    75% { 
+        transform: rotate(-5deg) scale(1.05); 
+        filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6));
+    }
 }
 
 @keyframes tailWag {
-    0%, 100% { transform: rotate(0deg); }
-    25% { transform: rotate(15deg); }
-    75% { transform: rotate(-15deg); }
+    0%, 100% { 
+        transform: rotate(0deg) scale(1); 
+        filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
+    }
+    25% { 
+        transform: rotate(15deg) scale(1.1); 
+        filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.5));
+    }
+    75% { 
+        transform: rotate(-15deg) scale(1.1); 
+        filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.5));
+    }
 }
 
 @keyframes shadowPulse {
     0%, 100% { 
         transform: translateX(-50%) scale(1); 
         opacity: 0.3;
+        filter: blur(2px);
     }
     50% { 
         transform: translateX(-50%) scale(1.1); 
         opacity: 0.5;
+        filter: blur(3px);
     }
 }
 
@@ -1575,38 +1875,42 @@ body::before {
         font-size: 3rem;
     }
     
-    .eye {
+    .anime-eye {
         font-size: 1.2rem;
     }
     
-    .character-mouth {
+    .anime-mouth {
         font-size: 1rem;
     }
     
-    .ear {
+    .anime-ear {
         font-size: 1rem;
     }
     
-    .character-tail {
+    .anime-tail {
         font-size: 1.2rem;
     }
     
-    .floating-char {
+    .anime-char {
         font-size: 1.2rem;
     }
     
-    .upgrade-icon {
+    .anime-icon {
         font-size: 1.5rem;
         width: 40px;
         height: 40px;
     }
     
-    .grass {
+    .anime-grass {
         font-size: 1rem;
     }
     
-    .cloud {
+    .anime-cloud {
         font-size: 1.5rem;
+    }
+    
+    .flower {
+        font-size: 0.8rem;
     }
 }
 
@@ -1615,37 +1919,41 @@ body::before {
         font-size: 2.5rem;
     }
     
-    .eye {
+    .anime-eye {
         font-size: 1rem;
     }
     
-    .character-mouth {
+    .anime-mouth {
         font-size: 0.8rem;
     }
     
-    .ear {
+    .anime-ear {
         font-size: 0.8rem;
     }
     
-    .character-tail {
+    .anime-tail {
         font-size: 1rem;
     }
     
-    .floating-char {
+    .anime-char {
         font-size: 1rem;
     }
     
-    .upgrade-icon {
+    .anime-icon {
         font-size: 1.2rem;
         width: 35px;
         height: 35px;
     }
     
-    .grass {
+    .anime-grass {
         font-size: 0.8rem;
     }
     
-    .cloud {
+    .anime-cloud {
         font-size: 1.2rem;
+    }
+    
+    .flower {
+        font-size: 0.7rem;
     }
 } 

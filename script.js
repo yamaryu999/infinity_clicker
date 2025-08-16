@@ -73,52 +73,62 @@ const CharacterManager = {
         const mouth = mainCharacter.querySelector('.character-mouth');
         const eyes = mainCharacter.querySelectorAll('.eye');
         const ears = mainCharacter.querySelectorAll('.ear');
+        const cheeks = mainCharacter.querySelectorAll('.cheek');
         
         switch(expression) {
             case 'happy':
                 mouth.textContent = '😊';
                 eyes.forEach(eye => eye.textContent = '👁️');
                 ears.forEach(ear => ear.style.transform = 'rotate(0deg)');
+                cheeks.forEach(cheek => cheek.style.opacity = '0.7');
                 break;
             case 'excited':
                 mouth.textContent = '😄';
                 eyes.forEach(eye => eye.textContent = '🤩');
                 ears.forEach(ear => ear.style.transform = 'rotate(5deg)');
+                cheeks.forEach(cheek => cheek.style.opacity = '1');
                 break;
             case 'surprised':
                 mouth.textContent = '😲';
                 eyes.forEach(eye => eye.textContent = '😳');
                 ears.forEach(ear => ear.style.transform = 'rotate(10deg)');
+                cheeks.forEach(cheek => cheek.style.opacity = '0.9');
                 break;
             case 'cool':
                 mouth.textContent = '😎';
                 eyes.forEach(eye => eye.textContent = '😏');
                 ears.forEach(ear => ear.style.transform = 'rotate(-3deg)');
+                cheeks.forEach(cheek => cheek.style.opacity = '0.6');
                 break;
             case 'sleepy':
                 mouth.textContent = '😴';
                 eyes.forEach(eye => eye.textContent = '😪');
                 ears.forEach(ear => ear.style.transform = 'rotate(-5deg)');
+                cheeks.forEach(cheek => cheek.style.opacity = '0.5');
                 break;
             case 'hungry':
                 mouth.textContent = '😋';
                 eyes.forEach(eye => eye.textContent = '🥺');
                 ears.forEach(ear => ear.style.transform = 'rotate(3deg)');
+                cheeks.forEach(cheek => cheek.style.opacity = '0.8');
                 break;
             case 'angry':
                 mouth.textContent = '😠';
                 eyes.forEach(eye => eye.textContent = '😤');
                 ears.forEach(ear => ear.style.transform = 'rotate(-8deg)');
+                cheeks.forEach(cheek => cheek.style.opacity = '0.4');
                 break;
             case 'love':
                 mouth.textContent = '🥰';
                 eyes.forEach(eye => eye.textContent = '😍');
                 ears.forEach(ear => ear.style.transform = 'rotate(2deg)');
+                cheeks.forEach(cheek => cheek.style.opacity = '1');
                 break;
             default:
                 mouth.textContent = '😊';
                 eyes.forEach(eye => eye.textContent = '👁️');
                 ears.forEach(ear => ear.style.transform = 'rotate(0deg)');
+                cheeks.forEach(cheek => cheek.style.opacity = '0.7');
         }
     },
 
@@ -130,6 +140,9 @@ const CharacterManager = {
         // 尻尾を振る
         const tail = mainCharacter.querySelector('.character-tail');
         tail.style.animation = 'tailWag 0.5s ease-in-out';
+        
+        // キラキラエフェクト
+        this.createSparkleEffect();
         
         setTimeout(() => {
             mainCharacter.classList.remove('clicked');
@@ -146,10 +159,24 @@ const CharacterManager = {
         // 特別なパーティクルエフェクト
         this.createParticleBurst(50, 50, 15);
         
+        // キラキラエフェクト強化
+        this.createSparkleEffect(true);
+        
         setTimeout(() => {
             mainCharacter.classList.remove('levelup');
             this.changeExpression('happy');
         }, 1000);
+    },
+
+    // キラキラエフェクト
+    createSparkleEffect: function(intense = false) {
+        const sparkles = mainCharacter.querySelectorAll('.sparkle');
+        sparkles.forEach((sparkle, index) => {
+            sparkle.style.animation = intense ? 'sparkleTwinkle 0.5s ease-in-out' : 'sparkleTwinkle 1s ease-in-out';
+            setTimeout(() => {
+                sparkle.style.animation = 'sparkleTwinkle 3s ease-in-out infinite';
+            }, intense ? 500 : 1000);
+        });
     },
 
     // 動物を変更
@@ -160,6 +187,10 @@ const CharacterManager = {
         
         // 変更時のアニメーション
         mainCharacter.style.animation = 'characterClick 0.5s ease-out';
+        
+        // キラキラエフェクト
+        this.createSparkleEffect(true);
+        
         setTimeout(() => {
             mainCharacter.style.animation = 'characterFloat 3s ease-in-out infinite';
         }, 500);
@@ -223,6 +254,7 @@ const CharacterManager = {
     updateEnvironment: function() {
         const grass = document.querySelectorAll('.grass');
         const clouds = document.querySelectorAll('.cloud');
+        const flowers = document.querySelectorAll('.flower');
         
         // 草の色をランダムに変更
         grass.forEach(g => {
@@ -237,6 +269,14 @@ const CharacterManager = {
             const cloudTypes = ['☁️', '⛅', '🌤️', '🌥️'];
             if (Math.random() < 0.05) { // 5%の確率で変更
                 c.textContent = cloudTypes[Math.floor(Math.random() * cloudTypes.length)];
+            }
+        });
+        
+        // 花の色をランダムに変更
+        flowers.forEach(f => {
+            const flowerTypes = ['🌸', '🌺', '🌼', '🌻', '🌹', '🌷'];
+            if (Math.random() < 0.15) { // 15%の確率で変更
+                f.textContent = flowerTypes[Math.floor(Math.random() * flowerTypes.length)];
             }
         });
     }

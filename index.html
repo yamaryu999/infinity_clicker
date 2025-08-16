@@ -49,42 +49,58 @@
         <main class="game-main">
             <div class="click-area">
                 <div class="character-container">
-                    <div class="character" id="mainCharacter">
+                    <div class="character anime-style" id="mainCharacter">
                         <div class="character-body">🐱</div>
                         <div class="character-eyes">
-                            <span class="eye left-eye">👁️</span>
-                            <span class="eye right-eye">👁️</span>
+                            <span class="eye left-eye anime-eye">👁️</span>
+                            <span class="eye right-eye anime-eye">👁️</span>
                         </div>
-                        <div class="character-mouth">😊</div>
+                        <div class="character-mouth anime-mouth">😊</div>
                         <div class="character-ears">
-                            <span class="ear left-ear">🐾</span>
-                            <span class="ear right-ear">🐾</span>
+                            <span class="ear left-ear anime-ear">🐾</span>
+                            <span class="ear right-ear anime-ear">🐾</span>
                         </div>
-                        <div class="character-tail">🐾</div>
+                        <div class="character-tail anime-tail">🐾</div>
+                        <div class="character-cheeks">
+                            <span class="cheek left-cheek">🌸</span>
+                            <span class="cheek right-cheek">🌸</span>
+                        </div>
+                        <div class="character-sparkles">
+                            <span class="sparkle sparkle-1">✨</span>
+                            <span class="sparkle sparkle-2">✨</span>
+                            <span class="sparkle sparkle-3">✨</span>
+                        </div>
                         <div class="character-particles"></div>
-                        <div class="character-shadow"></div>
+                        <div class="character-shadow anime-shadow"></div>
+                        <div class="character-outline"></div>
                     </div>
                     <div class="floating-characters">
-                        <div class="floating-char" data-char="🦋">🦋</div>
-                        <div class="floating-char" data-char="🐝">🐝</div>
-                        <div class="floating-char" data-char="🦜">🦜</div>
-                        <div class="floating-char" data-char="🐿️">🐿️</div>
-                        <div class="floating-char" data-char="🦊">🦊</div>
-                        <div class="floating-char" data-char="🐰">🐰</div>
-                        <div class="floating-char" data-char="🦝">🦝</div>
-                        <div class="floating-char" data-char="🦘">🦘</div>
+                        <div class="floating-char anime-char" data-char="🦋">🦋</div>
+                        <div class="floating-char anime-char" data-char="🐝">🐝</div>
+                        <div class="floating-char anime-char" data-char="🦜">🦜</div>
+                        <div class="floating-char anime-char" data-char="🐿️">🐿️</div>
+                        <div class="floating-char anime-char" data-char="🦊">🦊</div>
+                        <div class="floating-char anime-char" data-char="🐰">🐰</div>
+                        <div class="floating-char anime-char" data-char="🦝">🦝</div>
+                        <div class="floating-char anime-char" data-char="🦘">🦘</div>
                     </div>
                     <div class="environment-effects">
-                        <div class="grass grass-1">🌱</div>
-                        <div class="grass grass-2">🌿</div>
-                        <div class="grass grass-3">🍃</div>
-                        <div class="cloud cloud-1">☁️</div>
-                        <div class="cloud cloud-2">☁️</div>
+                        <div class="grass grass-1 anime-grass">🌱</div>
+                        <div class="grass grass-2 anime-grass">🌿</div>
+                        <div class="grass grass-3 anime-grass">🍃</div>
+                        <div class="cloud cloud-1 anime-cloud">☁️</div>
+                        <div class="cloud cloud-2 anime-cloud">☁️</div>
+                        <div class="flowers">
+                            <span class="flower flower-1">🌸</span>
+                            <span class="flower flower-2">🌺</span>
+                            <span class="flower flower-3">🌼</span>
+                        </div>
                     </div>
                 </div>
-                <button id="clickButton" class="click-button" aria-label="クリックしてポイントを獲得" data-touch-action="manipulation">
+                <button id="clickButton" class="click-button anime-button" aria-label="クリックしてポイントを獲得" data-touch-action="manipulation">
                     <span class="click-text">クリック!</span>
                     <div class="click-particles"></div>
+                    <div class="button-glow"></div>
                 </button>
                 <div id="clickEffect" class="click-effect"></div>
             </div>
@@ -92,48 +108,48 @@
             <div class="upgrades-section">
                 <h2>🛠️ アップグレード</h2>
                 <div class="upgrades-grid">
-                    <div class="upgrade-card" id="autoClickerUpgrade">
-                        <div class="upgrade-icon">🤖</div>
+                    <div class="upgrade-card anime-card" id="autoClickerUpgrade">
+                        <div class="upgrade-icon anime-icon">🤖</div>
                         <h3>🤖 自動クリッカー</h3>
                         <p>自動的にポイントを生成します。放置でもポイントが増え続けます！2024年最新の自動化技術を採用。</p>
                         <div class="upgrade-info">
                             <span>現在: <span id="autoClickerLevel">0</span></span>
                             <span>コスト: <span id="autoClickerCost">10</span></span>
                         </div>
-                        <button class="upgrade-btn" onclick="buyAutoClicker()" aria-label="自動クリッカーを購入" data-touch-action="manipulation">購入</button>
+                        <button class="upgrade-btn anime-btn" onclick="buyAutoClicker()" aria-label="自動クリッカーを購入" data-touch-action="manipulation">購入</button>
                     </div>
 
-                    <div class="upgrade-card" id="clickMultiplierUpgrade">
-                        <div class="upgrade-icon">⚡</div>
+                    <div class="upgrade-card anime-card" id="clickMultiplierUpgrade">
+                        <div class="upgrade-icon anime-icon">⚡</div>
                         <h3>⚡ クリック倍率</h3>
                         <p>クリックごとのポイントを増加させます。効率的にポイントを稼げます！モダンな倍率システム。</p>
                         <div class="upgrade-info">
                             <span>現在: <span id="clickMultiplierLevel">1</span>x</span>
                             <span>コスト: <span id="clickMultiplierCost">50</span></span>
                         </div>
-                        <button class="upgrade-btn" onclick="buyClickMultiplier()" aria-label="クリック倍率をアップグレード" data-touch-action="manipulation">購入</button>
+                        <button class="upgrade-btn anime-btn" onclick="buyClickMultiplier()" aria-label="クリック倍率をアップグレード" data-touch-action="manipulation">購入</button>
                     </div>
 
-                    <div class="upgrade-card" id="autoClickerSpeedUpgrade">
-                        <div class="upgrade-icon">🚀</div>
+                    <div class="upgrade-card anime-card" id="autoClickerSpeedUpgrade">
+                        <div class="upgrade-icon anime-icon">🚀</div>
                         <h3>🚀 自動クリッカー速度</h3>
                         <p>自動クリッカーの速度を上げます。より速くポイントが増加します！2024年最新の高速化技術。</p>
                         <div class="upgrade-info">
                             <span>現在: <span id="autoClickerSpeedLevel">1</span>x</span>
                             <span>コスト: <span id="autoClickerSpeedCost">100</span></span>
                         </div>
-                        <button class="upgrade-btn" onclick="buyAutoClickerSpeed()" aria-label="自動クリッカー速度をアップグレード" data-touch-action="manipulation">購入</button>
+                        <button class="upgrade-btn anime-btn" onclick="buyAutoClickerSpeed()" aria-label="自動クリッカー速度をアップグレード" data-touch-action="manipulation">購入</button>
                     </div>
 
-                    <div class="upgrade-card" id="criticalClickUpgrade">
-                        <div class="upgrade-icon">💥</div>
+                    <div class="upgrade-card anime-card" id="criticalClickUpgrade">
+                        <div class="upgrade-icon anime-icon">💥</div>
                         <h3>💥 クリティカルクリック</h3>
                         <p>クリティカルヒットの確率を上げます。ラッキーでポイントが3倍に！モダンな確率システム。</p>
                         <div class="upgrade-info">
                             <span>現在: <span id="criticalClickLevel">0</span>%</span>
                             <span>コスト: <span id="criticalClickCost">200</span></span>
                         </div>
-                        <button class="upgrade-btn" onclick="buyCriticalClick()" aria-label="クリティカルクリックをアップグレード" data-touch-action="manipulation">購入</button>
+                        <button class="upgrade-btn anime-btn" onclick="buyCriticalClick()" aria-label="クリティカルクリックをアップグレード" data-touch-action="manipulation">購入</button>
                     </div>
                 </div>
             </div>
