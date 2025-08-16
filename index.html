@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>無限クリッカー - Idle Clicker</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="game-container">
+        <header class="game-header">
+            <h1>🚀 無限クリッカー</h1>
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-label">ポイント:</span>
+                    <span id="points" class="stat-value">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">ポイント/秒:</span>
+                    <span id="pointsPerSecond" class="stat-value">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">クリック倍率:</span>
+                    <span id="clickMultiplier" class="stat-value">1</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="game-main">
+            <div class="click-area">
+                <button id="clickButton" class="click-button">
+                    <span class="click-text">クリック!</span>
+                    <div class="click-particles"></div>
+                </button>
+                <div id="clickEffect" class="click-effect"></div>
+            </div>
+
+            <div class="upgrades-section">
+                <h2>🛠️ アップグレード</h2>
+                <div class="upgrades-grid">
+                    <div class="upgrade-card" id="autoClickerUpgrade">
+                        <h3>🤖 自動クリッカー</h3>
+                        <p>自動的にポイントを生成します</p>
+                        <div class="upgrade-info">
+                            <span>現在: <span id="autoClickerLevel">0</span></span>
+                            <span>コスト: <span id="autoClickerCost">10</span></span>
+                        </div>
+                        <button class="upgrade-btn" onclick="buyAutoClicker()">購入</button>
+                    </div>
+
+                    <div class="upgrade-card" id="clickMultiplierUpgrade">
+                        <h3>⚡ クリック倍率</h3>
+                        <p>クリックごとのポイントを増加させます</p>
+                        <div class="upgrade-info">
+                            <span>現在: <span id="clickMultiplierLevel">1</span>x</span>
+                            <span>コスト: <span id="clickMultiplierCost">50</span></span>
+                        </div>
+                        <button class="upgrade-btn" onclick="buyClickMultiplier()">購入</button>
+                    </div>
+
+                    <div class="upgrade-card" id="autoClickerSpeedUpgrade">
+                        <h3>🚀 自動クリッカー速度</h3>
+                        <p>自動クリッカーの速度を上げます</p>
+                        <div class="upgrade-info">
+                            <span>現在: <span id="autoClickerSpeedLevel">1</span>x</span>
+                            <span>コスト: <span id="autoClickerSpeedCost">100</span></span>
+                        </div>
+                        <button class="upgrade-btn" onclick="buyAutoClickerSpeed()">購入</button>
+                    </div>
+
+                    <div class="upgrade-card" id="criticalClickUpgrade">
+                        <h3>💥 クリティカルクリック</h3>
+                        <p>クリティカルヒットの確率を上げます</p>
+                        <div class="upgrade-info">
+                            <span>現在: <span id="criticalClickLevel">0</span>%</span>
+                            <span>コスト: <span id="criticalClickCost">200</span></span>
+                        </div>
+                        <button class="upgrade-btn" onclick="buyCriticalClick()">購入</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="achievements-section">
+                <h2>🏆 実績</h2>
+                <div id="achievements" class="achievements-grid">
+                    <!-- 実績はJavaScriptで動的に追加 -->
+                </div>
+            </div>
+        </main>
+
+        <footer class="game-footer">
+            <button id="saveBtn" class="save-btn" onclick="saveGame()">💾 セーブ</button>
+            <button id="resetBtn" class="reset-btn" onclick="resetGame()">🔄 リセット</button>
+            <div class="version">v1.0.0</div>
+        </footer>
+    </div>
+
+    <div id="notification" class="notification"></div>
+    
+    <script src="script.js"></script>
+</body>
+</html> 
