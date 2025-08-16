@@ -2061,7 +2061,10 @@ window.copyFriendId = copyFriendId;
 
 // ===== 楽天アフィリエイトシステム =====
 
-// 楽天商品データ（実際のアフィリエイトIDに置き換えてください）
+// 楽天アフィリエイトID
+const RAKUTEN_AFFILIATE_ID = '4b5e6cd5.ac0265fe.4b5e6cd6.caeebcf2';
+
+// 楽天商品データ
 const RakutenProducts = [
     {
         id: 'gaming_chair',
@@ -2069,7 +2072,7 @@ const RakutenProducts = [
         price: 15800,
         image: 'https://via.placeholder.com/200x120/e60012/ffffff?text=Gaming+Chair',
         description: '長時間のゲームプレイに最適な快適なチェア',
-        link: 'https://hb.afl.rakuten.co.jp/hgc/YOUR_ID/',
+        link: `https://hb.afl.rakuten.co.jp/hgc/${RAKUTEN_AFFILIATE_ID}/?pc=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2F%25E3%2582%25B2%25E3%2583%25BC%25E3%2583%259F%25E3%2583%25B3%25E3%2582%25B0%25E3%2583%2581%25E3%2582%25A7%25E3%2582%25A2%2F`,
         category: 'furniture'
     },
     {
@@ -2078,7 +2081,7 @@ const RakutenProducts = [
         price: 29800,
         image: 'https://via.placeholder.com/200x120/e60012/ffffff?text=Nintendo+Switch',
         description: '人気のゲーム機、どこでも楽しめる',
-        link: 'https://hb.afl.rakuten.co.jp/hgc/YOUR_ID/',
+        link: `https://hb.afl.rakuten.co.jp/hgc/${RAKUTEN_AFFILIATE_ID}/?pc=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2Fnintendo%2Bswitch%2F`,
         category: 'gaming'
     },
     {
@@ -2087,7 +2090,7 @@ const RakutenProducts = [
         price: 8980,
         image: 'https://via.placeholder.com/200x120/e60012/ffffff?text=Gaming+Mouse',
         description: '高精度センサー搭載のゲーミングマウス',
-        link: 'https://hb.afl.rakuten.co.jp/hgc/YOUR_ID/',
+        link: `https://hb.afl.rakuten.co.jp/hgc/${RAKUTEN_AFFILIATE_ID}/?pc=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2F%25E3%2582%25B2%25E3%2583%25BC%25E3%2583%259F%25E3%2583%25B3%25E3%2582%25B0%25E3%2583%259E%25E3%2582%25A6%25E3%2582%25B9%2F`,
         category: 'accessory'
     },
     {
@@ -2096,7 +2099,7 @@ const RakutenProducts = [
         price: 12800,
         image: 'https://via.placeholder.com/200x120/e60012/ffffff?text=Gaming+Keyboard',
         description: 'メカニカルスイッチ搭載の高級キーボード',
-        link: 'https://hb.afl.rakuten.co.jp/hgc/YOUR_ID/',
+        link: `https://hb.afl.rakuten.co.jp/hgc/${RAKUTEN_AFFILIATE_ID}/?pc=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2F%25E3%2582%25B2%25E3%2583%25BC%25E3%2583%259F%25E3%2583%25B3%25E3%2582%25B0%25E3%2582%25AD%25E3%2583%25BC%25E3%2583%259C%25E3%2583%25BC%25E3%2583%2589%2F`,
         category: 'accessory'
     },
     {
@@ -2105,7 +2108,7 @@ const RakutenProducts = [
         price: 6800,
         image: 'https://via.placeholder.com/200x120/e60012/ffffff?text=Gaming+Headset',
         description: '高音質で長時間使用に最適',
-        link: 'https://hb.afl.rakuten.co.jp/hgc/YOUR_ID/',
+        link: `https://hb.afl.rakuten.co.jp/hgc/${RAKUTEN_AFFILIATE_ID}/?pc=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2F%25E3%2582%25B2%25E3%2583%25BC%25E3%2583%259F%25E3%2583%25B3%25E3%2582%25B0%25E3%2583%2598%25E3%2583%2583%25E3%2583%2589%25E3%2582%25BB%25E3%2583%2583%25E3%2583%2588%2F`,
         category: 'accessory'
     },
     {
@@ -2114,7 +2117,7 @@ const RakutenProducts = [
         price: 25800,
         image: 'https://via.placeholder.com/200x120/e60012/ffffff?text=Gaming+Monitor',
         description: '高リフレッシュレートで滑らかな映像',
-        link: 'https://hb.afl.rakuten.co.jp/hgc/YOUR_ID/',
+        link: `https://hb.afl.rakuten.co.jp/hgc/${RAKUTEN_AFFILIATE_ID}/?pc=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2F%25E3%2582%25B2%25E3%2583%25BC%25E3%2583%259F%25E3%2583%25B3%25E3%2582%25B0%25E3%2583%25A2%25E3%2583%258B%25E3%2582%25BF%25E3%2583%25BC%2F`,
         category: 'accessory'
     }
 ];
