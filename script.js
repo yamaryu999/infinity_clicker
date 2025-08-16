@@ -50,6 +50,10 @@ const elements = {
     notification: document.getElementById('notification')
 };
 
+// スマホ最適化のための設定
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
 // 初期化
 function init() {
     loadGame();
@@ -57,6 +61,7 @@ function init() {
     setupEventListeners();
     startAutoClicker();
     renderAchievements();
+    setupMobileOptimizations();
     
     // 1秒ごとに自動クリッカーを実行
     setInterval(() => {
@@ -65,17 +70,64 @@ function init() {
     }, 1000);
 }
 
+// スマホ最適化の設定
+function setupMobileOptimizations() {
+    // スマホでのダブルタップズームを無効化
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', function (event) {
+        const now = (new Date()).getTime();
+        if (now - lastTouchEnd <= 300) {
+            event.preventDefault();
+        }
+        lastTouchEnd = now;
+    }, false);
+
+    // スマホでのスクロールを滑らかに
+    document.addEventListener('touchmove', function(event) {
+        if (event.scale !== 1) {
+            event.preventDefault();
+        }
+    }, { passive: false });
+
+    // スマホでのタッチフィードバック
+    if (isTouchDevice) {
+        document.body.classList.add('touch-device');
+    }
+}
+
 // イベントリスナーの設定
 function setupEventListeners() {
+    // クリックイベント
     elements.clickButton.addEventListener('click', handleClick);
     
-    // キーボードショートカット
-    document.addEventListener('keydown', (e) => {
-        if (e.code === 'Space') {
-            e.preventDefault();
-            handleClick();
-        }
-    });
+    // タッチイベント（スマホ最適化）
+    if (isTouchDevice) {
+        elements.clickButton.addEventListener('touchstart', handleTouchStart, { passive: true });
+        elements.clickButton.addEventListener('touchend', handleTouchEnd, { passive: true });
+    }
+    
+    // キーボードショートカット（デスクトップのみ）
+    if (!isMobile) {
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                handleClick();
+            }
+        });
+    }
+}
+
+// タッチ開始時の処理
+function handleTouchStart(event) {
+    event.preventDefault();
+    elements.clickButton.classList.add('touch-active');
+}
+
+// タッチ終了時の処理
+function handleTouchEnd(event) {
+    event.preventDefault();
+    elements.clickButton.classList.remove('touch-active');
+    handleClick();
 }
 
 // クリック処理
