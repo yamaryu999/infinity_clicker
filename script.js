@@ -70,6 +70,11 @@ const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
 // アップグレードコスト計算関数
 function calculateUpgradeCost(level, baseCost) {
+    // 安全性チェック
+    if (typeof level !== 'number' || typeof baseCost !== 'number' || isNaN(level) || isNaN(baseCost)) {
+        return 0;
+    }
+    
     return Math.floor(baseCost * Math.pow(1.15, level));
 }
 
@@ -687,31 +692,25 @@ const DecorationSystem = {
     }
 };
 
-// 初期化
-function init() {
-    loadGame();
-    updateDisplay();
-    setupEventListeners();
-    startAutoClicker();
-    renderAchievements();
-    setupMobileOptimizations();
-    
-    // 1秒ごとに自動クリッカーを実行
-    setInterval(() => {
-        autoClick();
-        updateDisplay();
-    }, 1000);
-}
-
 // イベントリスナー設定
 function setupEventListeners() {
     // クリックイベント
-    clickButton.addEventListener('click', handleClick);
-    
-    // タッチイベント（スマホ最適化）
-    if (isTouchDevice) {
-        clickButton.addEventListener('touchstart', handleTouchStart, { passive: true });
-        clickButton.addEventListener('touchend', handleTouchEnd, { passive: true });
+    if (clickButton) {
+        clickButton.addEventListener('click', handleClick);
+        
+        // タッチイベント（スマホ最適化）
+        if (isTouchDevice) {
+            clickButton.addEventListener('touchstart', function(event) {
+                event.preventDefault();
+                clickButton.classList.add('touch-active');
+            }, { passive: true });
+            
+            clickButton.addEventListener('touchend', function(event) {
+                event.preventDefault();
+                clickButton.classList.remove('touch-active');
+                handleClick();
+            }, { passive: true });
+        }
     }
     
     // キーボードショートカット（モバイル以外）
@@ -723,19 +722,6 @@ function setupEventListeners() {
             }
         });
     }
-}
-
-// タッチ開始時の処理
-function handleTouchStart(event) {
-    event.preventDefault();
-    clickButton.classList.add('touch-active');
-}
-
-// タッチ終了時の処理
-function handleTouchEnd(event) {
-    event.preventDefault();
-    clickButton.classList.remove('touch-active');
-    handleClick();
 }
 
 // クリック処理を更新
@@ -854,15 +840,6 @@ function createClickEffect(x, y) {
             effect.remove();
         }
     }, 1000);
-}
-
-// 自動クリッカー
-function autoClick() {
-    if (gameState.autoClickerLevel > 0) {
-        const autoPoints = gameState.autoClickerLevel * gameState.autoClickerSpeedLevel;
-        gameState.points += autoPoints;
-        gameState.totalPoints += autoPoints;
-    }
 }
 
 // アップグレード購入関数を更新
@@ -1068,6 +1045,11 @@ function showNotification(message, type = 'success') {
 
 // 数値フォーマット
 function formatNumber(num) {
+    // 安全性チェック
+    if (typeof num !== 'number' || isNaN(num)) {
+        return '0';
+    }
+    
     if (num >= 1e12) return (num / 1e12).toFixed(1) + 'T';
     if (num >= 1e9) return (num / 1e9).toFixed(1) + 'B';
     if (num >= 1e6) return (num / 1e6).toFixed(1) + 'M';
@@ -1077,8 +1059,13 @@ function formatNumber(num) {
 
 // ゲーム保存
 function saveGame() {
-    localStorage.setItem('idleClickerSave', JSON.stringify(gameState));
-    showNotification('ゲームを保存しました！');
+    try {
+        localStorage.setItem('idleClickerSave', JSON.stringify(gameState));
+        showNotification('ゲームを保存しました！');
+    } catch (e) {
+        console.error('ゲームの保存に失敗しました:', e);
+        showNotification('❌ ゲームの保存に失敗しました', 'error');
+    }
 }
 
 // ゲーム読み込み
@@ -1153,11 +1140,6 @@ function resetGame() {
     }
 }
 
-// 自動クリッカー開始
-function startAutoClicker() {
-    // 既に設定済み
-}
-
 // ゲームループ
 function gameLoop() {
     // 自動クリッカーの処理
@@ -1179,7 +1161,6 @@ function gameLoop() {
 document.addEventListener('DOMContentLoaded', function() {
     loadGame();
     setupEventListeners();
-    setupMobileOptimizations();
     
     // キャラクターの初期設定
     if (CharacterManager && typeof CharacterManager.changeExpression === 'function') {
@@ -1236,4 +1217,10 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // ページ離脱時に自動保存
-window.addEventListener('beforeunload', saveGame);
+window.addEventListener('beforeunload', function() {
+    try {
+        saveGame();
+    } catch (e) {
+        console.error('自動保存に失敗しました:', e);
+    }
+});
