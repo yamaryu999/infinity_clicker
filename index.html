@@ -50,10 +50,37 @@
                     <span id="clickMultiplier" class="stat-value">1</span>
                 </div>
             </div>
+            <!-- クイックシェアボタン -->
+            <div class="quick-share">
+                <button onclick="shareToX()" class="quick-share-btn x" title="Xでシェア">
+                    <span class="quick-share-icon">𝕏</span>
+                </button>
+                <button onclick="shareToLine()" class="quick-share-btn line" title="LINEでシェア">
+                    <span class="quick-share-icon">💬</span>
+                </button>
+                <button onclick="shareToInstagram()" class="quick-share-btn instagram" title="Instagramでシェア">
+                    <span class="quick-share-icon">📷</span>
+                </button>
+                <button onclick="copyShareLink()" class="quick-share-btn copy" title="リンクをコピー">
+                    <span class="quick-share-icon">📋</span>
+                </button>
+            </div>
         </header>
 
         <main class="game-main">
             <div class="click-area">
+                <!-- クリックエリア内のシェアボタン -->
+                <div class="click-area-share">
+                    <button onclick="shareToX()" class="click-share-btn x" title="Xでシェア">
+                        <span>𝕏</span>
+                    </button>
+                    <button onclick="shareToLine()" class="click-share-btn line" title="LINEでシェア">
+                        <span>💬</span>
+                    </button>
+                    <button onclick="shareToInstagram()" class="click-share-btn instagram" title="Instagramでシェア">
+                        <span>📷</span>
+                    </button>
+                </div>
                 <div class="character-container">
                     <div class="character" id="mainCharacter">
                         <!-- オリジナル猫キャラクター -->

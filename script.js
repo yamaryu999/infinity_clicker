@@ -1975,6 +1975,7 @@ function shareToX() {
     const url = window.location.href;
     const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
     window.open(shareUrl, '_blank');
+    showNotification('𝕏 Xでシェアウィンドウを開きました！');
 }
 
 function shareToLine() {
@@ -1982,6 +1983,30 @@ function shareToLine() {
     const url = window.location.href;
     const shareUrl = `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
     window.open(shareUrl, '_blank');
+    showNotification('💬 LINEでシェアウィンドウを開きました！');
+}
+
+function shareToInstagram() {
+    const text = `🚀 無限クリッカー 2024で${formatNumber(gameState.totalPoints)}ポイントを獲得しました！総クリック数: ${formatNumber(gameState.totalClicks)}回、実績: ${gameState.achievements.length}個 #無限クリッカー #IdleGame #ゲーム`;
+    const url = window.location.href;
+    
+    // Instagramのシェア方法（コピーして手動投稿）
+    const shareText = `${text}\n\n${url}`;
+    
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(shareText).then(() => {
+            showNotification('Instagram投稿用テキストをコピーしました！Instagramアプリで貼り付けて投稿してください');
+        });
+    } else {
+        // フォールバック
+        const textArea = document.createElement('textarea');
+        textArea.value = shareText;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        showNotification('Instagram投稿用テキストをコピーしました！Instagramアプリで貼り付けて投稿してください');
+    }
 }
 
 function copyShareLink() {
@@ -1989,7 +2014,7 @@ function copyShareLink() {
     
     if (navigator.clipboard) {
         navigator.clipboard.writeText(text).then(() => {
-            showNotification('シェアリンクをコピーしました');
+            showNotification('📋 シェアリンクをコピーしました！');
         });
     } else {
         // フォールバック
@@ -1999,7 +2024,7 @@ function copyShareLink() {
         textArea.select();
         document.execCommand('copy');
         document.body.removeChild(textArea);
-        showNotification('シェアリンクをコピーしました');
+        showNotification('📋 シェアリンクをコピーしました！');
     }
 }
 
@@ -2014,6 +2039,7 @@ window.sendGift = sendGift;
 window.acceptGift = acceptGift;
 window.shareToX = shareToX;
 window.shareToLine = shareToLine;
+window.shareToInstagram = shareToInstagram;
 window.copyShareLink = copyShareLink;
 
 // フレンドIDコピー機能
