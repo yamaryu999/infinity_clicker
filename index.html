@@ -3,9 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>無限クリッカー - Idle Clicker</title>
+    <meta name="description" content="中毒性のある無限クリッカーゲーム！シンプルなクリックから始まり、アップグレードを重ねて自動化していく放置ゲームです。">
+    <meta name="keywords" content="クリッカー, 放置ゲーム, 無限クリッカー, idle game, clicker game">
+    <meta name="author" content="Infinite Clicker Game">
+    <meta property="og:title" content="🚀 無限クリッカー - Idle Clicker Game">
+    <meta property="og:description" content="中毒性のある無限クリッカーゲーム！アップグレードを重ねて自動化していく放置ゲームです。">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://yamaryu999.github.io/infinity_clicker/">
+    <title>🚀 無限クリッカー - Idle Clicker Game</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
 </head>
 <body>
     <div class="game-container">
@@ -13,15 +21,15 @@
             <h1>🚀 無限クリッカー</h1>
             <div class="stats">
                 <div class="stat-item">
-                    <span class="stat-label">ポイント:</span>
+                    <span class="stat-label">ポイント</span>
                     <span id="points" class="stat-value">0</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-label">ポイント/秒:</span>
+                    <span class="stat-label">ポイント/秒</span>
                     <span id="pointsPerSecond" class="stat-value">0</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-label">クリック倍率:</span>
+                    <span class="stat-label">クリック倍率</span>
                     <span id="clickMultiplier" class="stat-value">1</span>
                 </div>
             </div>
@@ -29,7 +37,7 @@
 
         <main class="game-main">
             <div class="click-area">
-                <button id="clickButton" class="click-button">
+                <button id="clickButton" class="click-button" aria-label="クリックしてポイントを獲得">
                     <span class="click-text">クリック!</span>
                     <div class="click-particles"></div>
                 </button>
@@ -41,42 +49,42 @@
                 <div class="upgrades-grid">
                     <div class="upgrade-card" id="autoClickerUpgrade">
                         <h3>🤖 自動クリッカー</h3>
-                        <p>自動的にポイントを生成します</p>
+                        <p>自動的にポイントを生成します。放置でもポイントが増え続けます！</p>
                         <div class="upgrade-info">
                             <span>現在: <span id="autoClickerLevel">0</span></span>
                             <span>コスト: <span id="autoClickerCost">10</span></span>
                         </div>
-                        <button class="upgrade-btn" onclick="buyAutoClicker()">購入</button>
+                        <button class="upgrade-btn" onclick="buyAutoClicker()" aria-label="自動クリッカーを購入">購入</button>
                     </div>
 
                     <div class="upgrade-card" id="clickMultiplierUpgrade">
                         <h3>⚡ クリック倍率</h3>
-                        <p>クリックごとのポイントを増加させます</p>
+                        <p>クリックごとのポイントを増加させます。効率的にポイントを稼げます！</p>
                         <div class="upgrade-info">
                             <span>現在: <span id="clickMultiplierLevel">1</span>x</span>
                             <span>コスト: <span id="clickMultiplierCost">50</span></span>
                         </div>
-                        <button class="upgrade-btn" onclick="buyClickMultiplier()">購入</button>
+                        <button class="upgrade-btn" onclick="buyClickMultiplier()" aria-label="クリック倍率をアップグレード">購入</button>
                     </div>
 
                     <div class="upgrade-card" id="autoClickerSpeedUpgrade">
                         <h3>🚀 自動クリッカー速度</h3>
-                        <p>自動クリッカーの速度を上げます</p>
+                        <p>自動クリッカーの速度を上げます。より速くポイントが増加します！</p>
                         <div class="upgrade-info">
                             <span>現在: <span id="autoClickerSpeedLevel">1</span>x</span>
                             <span>コスト: <span id="autoClickerSpeedCost">100</span></span>
                         </div>
-                        <button class="upgrade-btn" onclick="buyAutoClickerSpeed()">購入</button>
+                        <button class="upgrade-btn" onclick="buyAutoClickerSpeed()" aria-label="自動クリッカー速度をアップグレード">購入</button>
                     </div>
 
                     <div class="upgrade-card" id="criticalClickUpgrade">
                         <h3>💥 クリティカルクリック</h3>
-                        <p>クリティカルヒットの確率を上げます</p>
+                        <p>クリティカルヒットの確率を上げます。ラッキーでポイントが3倍に！</p>
                         <div class="upgrade-info">
                             <span>現在: <span id="criticalClickLevel">0</span>%</span>
                             <span>コスト: <span id="criticalClickCost">200</span></span>
                         </div>
-                        <button class="upgrade-btn" onclick="buyCriticalClick()">購入</button>
+                        <button class="upgrade-btn" onclick="buyCriticalClick()" aria-label="クリティカルクリックをアップグレード">購入</button>
                     </div>
                 </div>
             </div>
@@ -90,13 +98,13 @@
         </main>
 
         <footer class="game-footer">
-            <button id="saveBtn" class="save-btn" onclick="saveGame()">💾 セーブ</button>
-            <button id="resetBtn" class="reset-btn" onclick="resetGame()">🔄 リセット</button>
-            <div class="version">v1.0.0</div>
+            <button id="saveBtn" class="save-btn" onclick="saveGame()" aria-label="ゲームを保存">💾 セーブ</button>
+            <button id="resetBtn" class="reset-btn" onclick="resetGame()" aria-label="ゲームをリセット">🔄 リセット</button>
+            <div class="version">v1.1.0</div>
         </footer>
     </div>
 
-    <div id="notification" class="notification"></div>
+    <div id="notification" class="notification" role="alert" aria-live="polite"></div>
     
     <script src="script.js"></script>
 </body>
