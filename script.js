@@ -1592,6 +1592,11 @@ document.addEventListener('DOMContentLoaded', function() {
         SocialSystem.init();
     }
 
+    // 楽天アフィリエイトシステムの初期化
+    if (typeof RakutenAffiliate !== 'undefined') {
+        RakutenAffiliate.init();
+    }
+
     // ゲームループ開始
     setInterval(gameLoop, 1000);
     updateDisplay();
@@ -2053,3 +2058,286 @@ function copyFriendId(friendId) {
 }
 
 window.copyFriendId = copyFriendId;
+
+// ===== 楽天アフィリエイトシステム =====
+
+// 楽天商品データ（実際のアフィリエイトIDに置き換えてください）
+const RakutenProducts = [
+    {
+        id: 'gaming_chair',
+        name: 'ゲーミングチェア',
+        price: 15800,
+        image: 'https://via.placeholder.com/200x120/e60012/ffffff?text=Gaming+Chair',
+        description: '長時間のゲームプレイに最適な快適なチェア',
+        link: 'https://hb.afl.rakuten.co.jp/hgc/YOUR_ID/',
+        category: 'furniture'
+    },
+    {
+        id: 'nintendo_switch',
+        name: 'Nintendo Switch',
+        price: 29800,
+        image: 'https://via.placeholder.com/200x120/e60012/ffffff?text=Nintendo+Switch',
+        description: '人気のゲーム機、どこでも楽しめる',
+        link: 'https://hb.afl.rakuten.co.jp/hgc/YOUR_ID/',
+        category: 'gaming'
+    },
+    {
+        id: 'gaming_mouse',
+        name: 'ゲーミングマウス',
+        price: 8980,
+        image: 'https://via.placeholder.com/200x120/e60012/ffffff?text=Gaming+Mouse',
+        description: '高精度センサー搭載のゲーミングマウス',
+        link: 'https://hb.afl.rakuten.co.jp/hgc/YOUR_ID/',
+        category: 'accessory'
+    },
+    {
+        id: 'gaming_keyboard',
+        name: 'ゲーミングキーボード',
+        price: 12800,
+        image: 'https://via.placeholder.com/200x120/e60012/ffffff?text=Gaming+Keyboard',
+        description: 'メカニカルスイッチ搭載の高級キーボード',
+        link: 'https://hb.afl.rakuten.co.jp/hgc/YOUR_ID/',
+        category: 'accessory'
+    },
+    {
+        id: 'gaming_headset',
+        name: 'ゲーミングヘッドセット',
+        price: 6800,
+        image: 'https://via.placeholder.com/200x120/e60012/ffffff?text=Gaming+Headset',
+        description: '高音質で長時間使用に最適',
+        link: 'https://hb.afl.rakuten.co.jp/hgc/YOUR_ID/',
+        category: 'accessory'
+    },
+    {
+        id: 'gaming_monitor',
+        name: 'ゲーミングモニター',
+        price: 25800,
+        image: 'https://via.placeholder.com/200x120/e60012/ffffff?text=Gaming+Monitor',
+        description: '高リフレッシュレートで滑らかな映像',
+        link: 'https://hb.afl.rakuten.co.jp/hgc/YOUR_ID/',
+        category: 'accessory'
+    }
+];
+
+// 楽天アフィリエイト管理システム
+const RakutenAffiliate = {
+    isSidebarOpen: false,
+    lastPopupTime: 0,
+    
+    // 初期化
+    init: function() {
+        this.loadProducts();
+        this.setupEventListeners();
+        this.startPeriodicPopup();
+    },
+    
+    // 商品を読み込み
+    loadProducts: function() {
+        const content = document.getElementById('rakutenContent');
+        if (!content) return;
+        
+        content.innerHTML = '';
+        
+        // ランダムに商品を選択（最大4個）
+        const shuffled = [...RakutenProducts].sort(() => 0.5 - Math.random());
+        const selectedProducts = shuffled.slice(0, 4);
+        
+        selectedProducts.forEach(product => {
+            const productElement = this.createProductElement(product);
+            content.appendChild(productElement);
+        });
+    },
+    
+    // 商品要素を作成
+    createProductElement: function(product) {
+        const div = document.createElement('div');
+        div.className = 'rakuten-product';
+        div.innerHTML = `
+            <img src="${product.image}" alt="${product.name}" loading="lazy">
+            <h5>${product.name}</h5>
+            <div class="price">¥${product.price.toLocaleString()}</div>
+            <div class="description">${product.description}</div>
+            <a href="${product.link}" target="_blank" onclick="RakutenAffiliate.trackClick('${product.id}')">
+                楽天で購入
+            </a>
+        `;
+        return div;
+    },
+    
+    // サイドバーの表示/非表示を切り替え
+    toggleSidebar: function() {
+        const sidebar = document.getElementById('rakutenSidebar');
+        if (!sidebar) return;
+        
+        this.isSidebarOpen = !this.isSidebarOpen;
+        
+        if (this.isSidebarOpen) {
+            sidebar.classList.add('active');
+            this.loadProducts(); // 商品を更新
+        } else {
+            sidebar.classList.remove('active');
+        }
+    },
+    
+    // ポップアップを表示
+    showPopup: function() {
+        const now = Date.now();
+        if (now - this.lastPopupTime < 300000) return; // 5分間隔
+        
+        this.lastPopupTime = now;
+        
+        // ランダムに商品を選択
+        const randomProducts = [...RakutenProducts].sort(() => 0.5 - Math.random()).slice(0, 2);
+        
+        const popup = document.createElement('div');
+        popup.className = 'rakuten-popup';
+        popup.id = 'rakutenPopup';
+        popup.innerHTML = `
+            <div class="rakuten-popup-header">
+                <h3>🎁 ボーナス獲得チャンス！</h3>
+            </div>
+            <div class="rakuten-popup-content">
+                <p>楽天商品をチェックしてボーナスポイントを獲得しよう！</p>
+                <div class="rakuten-popup-products">
+                    ${randomProducts.map(product => `
+                        <a href="${product.link}" target="_blank" class="rakuten-popup-product" onclick="RakutenAffiliate.trackClick('${product.id}')">
+                            <img src="${product.image}" alt="${product.name}">
+                            <span>¥${product.price.toLocaleString()}</span>
+                        </a>
+                    `).join('')}
+                </div>
+                <button class="check-products-btn" onclick="RakutenAffiliate.openSidebar()">
+                    もっと見る
+                </button>
+            </div>
+        `;
+        
+        document.body.appendChild(popup);
+        
+        // アニメーション表示
+        setTimeout(() => {
+            popup.classList.add('active');
+        }, 100);
+        
+        // 5秒後に自動で閉じる
+        setTimeout(() => {
+            this.closePopup();
+        }, 5000);
+    },
+    
+    // ポップアップを閉じる
+    closePopup: function() {
+        const popup = document.getElementById('rakutenPopup');
+        if (popup) {
+            popup.classList.remove('active');
+            setTimeout(() => {
+                popup.remove();
+            }, 300);
+        }
+    },
+    
+    // サイドバーを開く
+    openSidebar: function() {
+        this.closePopup();
+        this.toggleSidebar();
+    },
+    
+    // クリック追跡
+    trackClick: function(productId) {
+        // アナリティクス送信
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'rakuten_click', {
+                'product_id': productId,
+                'user_score': gameState.totalPoints,
+                'timestamp': Date.now()
+            });
+        }
+        
+        // ローカル統計
+        if (!gameState.rakutenStats) {
+            gameState.rakutenStats = {
+                clicks: 0,
+                lastClick: 0
+            };
+        }
+        
+        gameState.rakutenStats.clicks++;
+        gameState.rakutenStats.lastClick = Date.now();
+        
+        showNotification('🛒 楽天商品ページを開きました！');
+    },
+    
+    // イベントリスナーを設定
+    setupEventListeners: function() {
+        // サイドバー外クリックで閉じる
+        document.addEventListener('click', (e) => {
+            const sidebar = document.getElementById('rakutenSidebar');
+            if (sidebar && this.isSidebarOpen) {
+                if (!sidebar.contains(e.target) && !e.target.closest('.rakuten-btn')) {
+                    this.toggleSidebar();
+                }
+            }
+        });
+        
+        // ESCキーでポップアップを閉じる
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                this.closePopup();
+                if (this.isSidebarOpen) {
+                    this.toggleSidebar();
+                }
+            }
+        });
+    },
+    
+    // 定期的なポップアップ表示
+    startPeriodicPopup: function() {
+        // 10分ごとにポップアップ表示（30%の確率）
+        setInterval(() => {
+            if (Math.random() < 0.3 && !this.isSidebarOpen) {
+                this.showPopup();
+            }
+        }, 600000); // 10分
+    },
+    
+    // ゲーム進行に応じた商品推薦
+    showContextualProducts: function() {
+        const score = gameState.totalPoints;
+        let category = 'accessory';
+        
+        if (score > 50000) {
+            category = 'gaming'; // 高スコアならゲーム機
+        } else if (score > 10000) {
+            category = 'furniture'; // 中スコアなら家具
+        }
+        
+        const categoryProducts = RakutenProducts.filter(p => p.category === category);
+        if (categoryProducts.length > 0) {
+            const randomProduct = categoryProducts[Math.floor(Math.random() * categoryProducts.length)];
+            this.showProductNotification(randomProduct);
+        }
+    },
+    
+    // 商品通知を表示
+    showProductNotification: function(product) {
+        showNotification(`🛒 ${product.name}がおすすめ！¥${product.price.toLocaleString()}`);
+    }
+};
+
+// グローバル関数
+window.toggleRakutenSidebar = function() {
+    RakutenAffiliate.toggleSidebar();
+};
+
+// ゲーム進行に応じた楽天商品推薦
+const originalUnlockAchievement = unlockAchievement;
+unlockAchievement = function(achievementId) {
+    originalUnlockAchievement(achievementId);
+    
+    // 実績解除時に楽天商品を推薦（20%の確率）
+    if (Math.random() < 0.2) {
+        setTimeout(() => {
+            RakutenAffiliate.showContextualProducts();
+        }, 2000);
+    }
+};

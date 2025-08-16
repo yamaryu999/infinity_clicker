@@ -68,6 +68,17 @@
         </header>
 
         <main class="game-main">
+            <!-- 楽天アフィリエイトサイドバー -->
+            <div class="rakuten-sidebar" id="rakutenSidebar">
+                <div class="rakuten-header">
+                    <h4>🛒 おすすめ商品</h4>
+                    <button class="close-rakuten" onclick="toggleRakutenSidebar()">×</button>
+                </div>
+                <div class="rakuten-content" id="rakutenContent">
+                    <!-- 楽天商品はJavaScriptで動的に追加 -->
+                </div>
+            </div>
+            
             <div class="click-area">
                 <div class="character-container">
                     <div class="character" id="mainCharacter">
@@ -222,7 +233,8 @@
             <button id="saveBtn" class="save-btn" onclick="saveGame()" aria-label="ゲームを保存" data-touch-action="manipulation">💾 セーブ</button>
             <button id="resetBtn" class="reset-btn" onclick="resetGame()" aria-label="ゲームをリセット" data-touch-action="manipulation">🔄 リセット</button>
             <button id="socialBtn" class="social-btn" onclick="openSocialPanel()" aria-label="ソーシャル機能" data-touch-action="manipulation">👥 ソーシャル</button>
-            <div class="version">v2.2.0 - ソーシャル機能追加</div>
+            <button id="rakutenBtn" class="rakuten-btn" onclick="toggleRakutenSidebar()" aria-label="楽天商品" data-touch-action="manipulation">🛒 楽天</button>
+            <div class="version">v2.3.0 - 楽天アフィリエイト追加</div>
         </footer>
 
         <!-- 装飾システム -->
