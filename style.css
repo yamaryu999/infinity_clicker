@@ -4103,8 +4103,8 @@ body::before {
     font-size: 0.9rem;
 }
 
-.share-btn.twitter {
-    background: linear-gradient(45deg, #1DA1F2, #0d8bd9);
+.share-btn.x {
+    background: linear-gradient(45deg, #000000, #1a1a1a);
     color: white;
 }
 

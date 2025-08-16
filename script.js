@@ -1970,7 +1970,7 @@ function acceptGift(giftId) {
 }
 
 // シェア機能
-function shareToTwitter() {
+function shareToX() {
     const text = `🚀 無限クリッカー 2024で${formatNumber(gameState.totalPoints)}ポイントを獲得しました！総クリック数: ${formatNumber(gameState.totalClicks)}回、実績: ${gameState.achievements.length}個 #無限クリッカー #IdleGame`;
     const url = window.location.href;
     const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
@@ -2012,7 +2012,7 @@ window.addFriend = addFriend;
 window.removeFriend = removeFriend;
 window.sendGift = sendGift;
 window.acceptGift = acceptGift;
-window.shareToTwitter = shareToTwitter;
+window.shareToX = shareToX;
 window.shareToLine = shareToLine;
 window.copyShareLink = copyShareLink;
 
