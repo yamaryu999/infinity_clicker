@@ -2324,34 +2324,49 @@ body::before {
 
 @keyframes headBob {
     0%, 100% { transform: translateY(0px) rotate(0deg); }
-    50% { transform: translateY(-2px) rotate(1deg); }
+    25% { transform: translateY(-2px) rotate(1deg); }
+    50% { transform: translateY(-1px) rotate(0deg); }
+    75% { transform: translateY(-3px) rotate(-1deg); }
 }
 
 @keyframes earWiggle {
     0%, 100% { transform: rotate(0deg); }
     25% { transform: rotate(3deg); }
+    50% { transform: rotate(1deg); }
     75% { transform: rotate(-3deg); }
 }
 
 @keyframes eyeBlink {
-    0%, 90%, 100% { 
+    0%, 85%, 100% { 
         transform: scaleY(1) scale(1); 
         opacity: 1;
     }
-    95% { 
+    90% { 
         transform: scaleY(0.1) scale(0.8); 
         opacity: 0.3;
+    }
+    95% { 
+        transform: scaleY(0.05) scale(0.6); 
+        opacity: 0.1;
     }
 }
 
 @keyframes eyeSparkle {
     0%, 100% { 
         opacity: 1; 
-        transform: scale(1); 
+        transform: scale(1) rotate(0deg); 
+    }
+    25% { 
+        opacity: 0.7; 
+        transform: scale(1.2) rotate(90deg); 
     }
     50% { 
-        opacity: 0.7; 
-        transform: scale(1.2); 
+        opacity: 0.9; 
+        transform: scale(0.8) rotate(180deg); 
+    }
+    75% { 
+        opacity: 0.6; 
+        transform: scale(1.1) rotate(270deg); 
     }
 }
 
@@ -2360,9 +2375,17 @@ body::before {
         transform: scale(1); 
         opacity: 1;
     }
+    25% { 
+        transform: scale(1.05); 
+        opacity: 0.9;
+    }
     50% { 
         transform: scale(1.1); 
         opacity: 0.8;
+    }
+    75% { 
+        transform: scale(1.03); 
+        opacity: 0.95;
     }
 }
 
@@ -2371,21 +2394,32 @@ body::before {
         opacity: 0.6; 
         transform: scale(1); 
     }
+    25% { 
+        opacity: 0.8; 
+        transform: scale(1.05); 
+    }
     50% { 
         opacity: 1; 
         transform: scale(1.1); 
+    }
+    75% { 
+        opacity: 0.9; 
+        transform: scale(1.08); 
     }
 }
 
 @keyframes tailWag {
     0%, 100% { 
-        transform: rotate(0deg); 
+        transform: rotate(0deg) scale(1); 
     }
     25% { 
-        transform: rotate(10deg); 
+        transform: rotate(10deg) scale(1.05); 
+    }
+    50% { 
+        transform: rotate(-5deg) scale(1.02); 
     }
     75% { 
-        transform: rotate(-10deg); 
+        transform: rotate(-10deg) scale(1.05); 
     }
 }
 
@@ -2393,19 +2427,33 @@ body::before {
     0%, 100% { 
         transform: translateY(0px) scale(1); 
     }
+    25% { 
+        transform: translateY(-2px) scale(1.03); 
+    }
     50% { 
         transform: translateY(-3px) scale(1.05); 
+    }
+    75% { 
+        transform: translateY(-1px) scale(1.02); 
     }
 }
 
 @keyframes patternGlow {
     0%, 100% { 
         opacity: 0.3; 
-        transform: scale(1); 
+        transform: scale(1) rotate(0deg); 
+    }
+    25% { 
+        opacity: 0.4; 
+        transform: scale(1.05) rotate(5deg); 
     }
     50% { 
         opacity: 0.5; 
-        transform: scale(1.1); 
+        transform: scale(1.1) rotate(0deg); 
+    }
+    75% { 
+        opacity: 0.45; 
+        transform: scale(1.08) rotate(-5deg); 
     }
 }
 
@@ -2414,283 +2462,303 @@ body::before {
         opacity: 0; 
         transform: scale(0.5) rotate(0deg); 
     }
-    25% { 
+    20% { 
+        opacity: 0.8; 
+        transform: scale(0.8) rotate(45deg); 
+    }
+    40% { 
         opacity: 1; 
         transform: scale(1) rotate(90deg); 
     }
-    50% { 
-        opacity: 0.8; 
-        transform: scale(0.8) rotate(180deg); 
+    60% { 
+        opacity: 0.9; 
+        transform: scale(0.9) rotate(135deg); 
     }
-    75% { 
-        opacity: 1; 
-        transform: scale(1.1) rotate(270deg); 
+    80% { 
+        opacity: 0.6; 
+        transform: scale(0.7) rotate(180deg); 
     }
 }
 
-/* 動物特有の浮遊アニメーション */
-@keyframes butterflyFloat {
+/* 新しいアニメーション */
+@keyframes catStretch {
     0%, 100% { 
-        transform: translateY(0px) rotate(0deg) scale(1); 
-        opacity: 0.7;
+        transform: scale(1) rotate(0deg); 
     }
     25% { 
-        transform: translateY(-20px) rotate(10deg) scale(1.1); 
-        opacity: 1;
+        transform: scale(1.1) rotate(2deg); 
     }
     50% { 
-        transform: translateY(-10px) rotate(-5deg) scale(0.9); 
-        opacity: 0.8;
+        transform: scale(1.15) rotate(0deg); 
     }
     75% { 
-        transform: translateY(-15px) rotate(5deg) scale(1.05); 
-        opacity: 0.9;
+        transform: scale(1.08) rotate(-2deg); 
     }
 }
 
-@keyframes beeFloat {
-    0%, 100% { 
-        transform: translateY(0px) rotate(0deg); 
-        opacity: 0.7;
-    }
-    50% { 
-        transform: translateY(-15px) rotate(180deg); 
-        opacity: 1;
-    }
-}
-
-@keyframes birdFloat {
+@keyframes catBounce {
     0%, 100% { 
         transform: translateY(0px) scale(1); 
-        opacity: 0.7;
     }
     25% { 
-        transform: translateY(-25px) scale(1.2); 
-        opacity: 1;
+        transform: translateY(-5px) scale(1.02); 
     }
     50% { 
-        transform: translateY(-10px) scale(0.8); 
-        opacity: 0.8;
+        transform: translateY(-10px) scale(1.05); 
     }
     75% { 
-        transform: translateY(-20px) scale(1.1); 
-        opacity: 0.9;
+        transform: translateY(-5px) scale(1.02); 
     }
 }
 
-@keyframes squirrelFloat {
-    0%, 100% { 
-        transform: translateY(0px) rotate(0deg); 
-        opacity: 0.7;
-    }
-    25% { 
-        transform: translateY(-18px) rotate(5deg); 
-        opacity: 1;
-    }
-    50% { 
-        transform: translateY(-8px) rotate(-3deg); 
-        opacity: 0.8;
-    }
-    75% { 
-        transform: translateY(-15px) rotate(2deg); 
-        opacity: 0.9;
-    }
-}
-
-@keyframes foxFloat {
-    0%, 100% { 
-        transform: translateY(0px) scale(1); 
-        opacity: 0.7;
-    }
-    50% { 
-        transform: translateY(-20px) scale(1.1); 
-        opacity: 1;
-    }
-}
-
-@keyframes rabbitFloat {
-    0%, 100% { 
-        transform: translateY(0px) rotate(0deg); 
-        opacity: 0.7;
-    }
-    25% { 
-        transform: translateY(-22px) rotate(8deg); 
-        opacity: 1;
-    }
-    50% { 
-        transform: translateY(-12px) rotate(-4deg); 
-        opacity: 0.8;
-    }
-    75% { 
-        transform: translateY(-18px) rotate(3deg); 
-        opacity: 0.9;
-    }
-}
-
-@keyframes raccoonFloat {
-    0%, 100% { 
-        transform: translateY(0px) scale(1); 
-        opacity: 0.7;
-    }
-    50% { 
-        transform: translateY(-16px) scale(1.05); 
-        opacity: 1;
-    }
-}
-
-@keyframes kangarooFloat {
-    0%, 100% { 
-        transform: translateY(0px) rotate(0deg); 
-        opacity: 0.7;
-    }
-    25% { 
-        transform: translateY(-30px) rotate(5deg); 
-        opacity: 1;
-    }
-    50% { 
-        transform: translateY(-15px) rotate(-2deg); 
-        opacity: 0.8;
-    }
-    75% { 
-        transform: translateY(-25px) rotate(3deg); 
-        opacity: 0.9;
-    }
-}
-
-/* 環境アニメーション */
-@keyframes grassSway {
-    0%, 100% { transform: rotate(0deg); }
-    25% { transform: rotate(3deg); }
-    75% { transform: rotate(-3deg); }
-}
-
-@keyframes cloudFloat {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(calc(100vw + 100px)); }
-}
-
-@keyframes flowerBloom {
-    0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.8; }
-    50% { transform: scale(1.2) rotate(5deg); opacity: 1; }
-}
-
-@keyframes iconPulse {
-    0%, 100% { 
-        transform: scale(1); 
-        box-shadow: var(--shadow-medium);
-    }
-    50% { 
-        transform: scale(1.1); 
-        box-shadow: 0 0 30px var(--neon-color);
-    }
-}
-
-/* クリック時のキャラクターアニメーション */
-.character.clicked {
-    animation: characterClick 0.3s ease-out;
-}
-
-@keyframes characterClick {
-    0% { transform: scale(1) rotate(0deg); }
-    50% { transform: scale(1.2) rotate(10deg); }
-    100% { transform: scale(1) rotate(0deg); }
-}
-
-/* レベルアップ時のキャラクターエフェクト */
-.character.levelup {
-    animation: levelUpEffect 1s ease-out;
-}
-
-@keyframes levelUpEffect {
+@keyframes catSpin {
     0% { 
-        transform: scale(1); 
-        filter: brightness(1);
+        transform: rotate(0deg) scale(1); 
+    }
+    25% { 
+        transform: rotate(90deg) scale(1.1); 
     }
     50% { 
-        transform: scale(1.3); 
-        filter: brightness(1.5) drop-shadow(0 0 30px rgba(255, 182, 193, 0.8));
+        transform: rotate(180deg) scale(1.05); 
+    }
+    75% { 
+        transform: rotate(270deg) scale(1.1); 
     }
     100% { 
+        transform: rotate(360deg) scale(1); 
+    }
+}
+
+@keyframes catShake {
+    0%, 100% { 
+        transform: translateX(0px) rotate(0deg); 
+    }
+    10% { 
+        transform: translateX(-3px) rotate(-2deg); 
+    }
+    20% { 
+        transform: translateX(3px) rotate(2deg); 
+    }
+    30% { 
+        transform: translateX(-3px) rotate(-1deg); 
+    }
+    40% { 
+        transform: translateX(3px) rotate(1deg); 
+    }
+    50% { 
+        transform: translateX(-2px) rotate(-0.5deg); 
+    }
+    60% { 
+        transform: translateX(2px) rotate(0.5deg); 
+    }
+    70% { 
+        transform: translateX(-1px) rotate(-0.2deg); 
+    }
+    80% { 
+        transform: translateX(1px) rotate(0.2deg); 
+    }
+    90% { 
+        transform: translateX(0px) rotate(0deg); 
+    }
+}
+
+@keyframes catWiggle {
+    0%, 100% { 
+        transform: rotate(0deg) scale(1); 
+    }
+    20% { 
+        transform: rotate(3deg) scale(1.02); 
+    }
+    40% { 
+        transform: rotate(-2deg) scale(1.01); 
+    }
+    60% { 
+        transform: rotate(2deg) scale(1.03); 
+    }
+    80% { 
+        transform: rotate(-1deg) scale(1.01); 
+    }
+}
+
+@keyframes catPulse {
+    0%, 100% { 
         transform: scale(1); 
         filter: brightness(1);
     }
-}
-
-/* パーティクルエフェクト */
-.particle {
-    position: absolute;
-    pointer-events: none;
-    font-size: 1rem;
-    animation: particleFloat 2s ease-out forwards;
-    z-index: 5;
-}
-
-@keyframes particleFloat {
-    0% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-    100% {
-        opacity: 0;
-        transform: translateY(-100px) scale(0.5);
+    50% { 
+        transform: scale(1.05); 
+        filter: brightness(1.2);
     }
 }
 
-/* モバイル対応 */
-@media (max-width: 768px) {
-    .cat-character {
-        width: 150px;
-        height: 150px;
+@keyframes catRock {
+    0%, 100% { 
+        transform: rotate(0deg) translateY(0px); 
     }
-    
-    .floating-char {
-        font-size: 1.2rem;
+    25% { 
+        transform: rotate(2deg) translateY(-2px); 
     }
-    
-    .upgrade-icon {
-        font-size: 1.5rem;
-        width: 40px;
-        height: 40px;
+    50% { 
+        transform: rotate(0deg) translateY(-1px); 
     }
-    
-    .grass {
-        font-size: 1rem;
-    }
-    
-    .cloud {
-        font-size: 1.5rem;
-    }
-    
-    .flower {
-        font-size: 0.8rem;
+    75% { 
+        transform: rotate(-2deg) translateY(-3px); 
     }
 }
 
-@media (max-width: 480px) {
-    .cat-character {
-        width: 120px;
-        height: 120px;
+@keyframes catDance {
+    0%, 100% { 
+        transform: translateY(0px) rotate(0deg) scale(1); 
     }
-    
-    .floating-char {
-        font-size: 1rem;
+    12.5% { 
+        transform: translateY(-8px) rotate(5deg) scale(1.05); 
     }
-    
-    .upgrade-icon {
-        font-size: 1.2rem;
-        width: 35px;
-        height: 35px;
+    25% { 
+        transform: translateY(-4px) rotate(-3deg) scale(1.02); 
     }
-    
-    .grass {
-        font-size: 0.8rem;
+    37.5% { 
+        transform: translateY(-10px) rotate(2deg) scale(1.08); 
     }
-    
-    .cloud {
-        font-size: 1.2rem;
+    50% { 
+        transform: translateY(-2px) rotate(-1deg) scale(1.01); 
     }
-    
-    .flower {
-        font-size: 0.7rem;
+    62.5% { 
+        transform: translateY(-6px) rotate(4deg) scale(1.06); 
     }
-} 
+    75% { 
+        transform: translateY(-1px) rotate(-2deg) scale(1.03); 
+    }
+    87.5% { 
+        transform: translateY(-8px) rotate(3deg) scale(1.07); 
+    }
+}
+
+@keyframes catSway {
+    0%, 100% { 
+        transform: translateX(0px) rotate(0deg); 
+    }
+    25% { 
+        transform: translateX(5px) rotate(1deg); 
+    }
+    50% { 
+        transform: translateX(0px) rotate(0deg); 
+    }
+    75% { 
+        transform: translateX(-5px) rotate(-1deg); 
+    }
+}
+
+@keyframes catHop {
+    0%, 100% { 
+        transform: translateY(0px) scale(1); 
+    }
+    20% { 
+        transform: translateY(-3px) scale(1.02); 
+    }
+    40% { 
+        transform: translateY(-8px) scale(1.05); 
+    }
+    60% { 
+        transform: translateY(-12px) scale(1.08); 
+    }
+    80% { 
+        transform: translateY(-6px) scale(1.03); 
+    }
+}
+
+@keyframes catTwitch {
+    0%, 100% { 
+        transform: scale(1) rotate(0deg); 
+    }
+    10% { 
+        transform: scale(1.02) rotate(1deg); 
+    }
+    20% { 
+        transform: scale(1.01) rotate(-0.5deg); 
+    }
+    30% { 
+        transform: scale(1.03) rotate(0.5deg); 
+    }
+    40% { 
+        transform: scale(1) rotate(0deg); 
+    }
+    50% { 
+        transform: scale(1.02) rotate(-1deg); 
+    }
+    60% { 
+        transform: scale(1.01) rotate(0.5deg); 
+    }
+    70% { 
+        transform: scale(1.03) rotate(-0.5deg); 
+    }
+    80% { 
+        transform: scale(1) rotate(0deg); 
+    }
+    90% { 
+        transform: scale(1.02) rotate(1deg); 
+    }
+}
+
+@keyframes catGlow {
+    0%, 100% { 
+        filter: drop-shadow(0 0 10px rgba(255, 182, 193, 0.5));
+    }
+    25% { 
+        filter: drop-shadow(0 0 15px rgba(255, 182, 193, 0.7));
+    }
+    50% { 
+        filter: drop-shadow(0 0 20px rgba(255, 182, 193, 0.9));
+    }
+    75% { 
+        filter: drop-shadow(0 0 15px rgba(255, 182, 193, 0.7));
+    }
+}
+
+/* 特殊アニメーションクラス */
+.character.stretching {
+    animation: catStretch 2s ease-in-out;
+}
+
+.character.bouncing {
+    animation: catBounce 1.5s ease-in-out infinite;
+}
+
+.character.spinning {
+    animation: catSpin 1s ease-in-out;
+}
+
+.character.shaking {
+    animation: catShake 0.5s ease-in-out;
+}
+
+.character.wiggling {
+    animation: catWiggle 1s ease-in-out infinite;
+}
+
+.character.pulsing {
+    animation: catPulse 2s ease-in-out infinite;
+}
+
+.character.rocking {
+    animation: catRock 3s ease-in-out infinite;
+}
+
+.character.dancing {
+    animation: catDance 2s ease-in-out infinite;
+}
+
+.character.swaying {
+    animation: catSway 4s ease-in-out infinite;
+}
+
+.character.hopping {
+    animation: catHop 1s ease-in-out infinite;
+}
+
+.character.twitching {
+    animation: catTwitch 0.3s ease-in-out;
+}
+
+.character.glowing {
+    animation: catGlow 2s ease-in-out infinite;
+}

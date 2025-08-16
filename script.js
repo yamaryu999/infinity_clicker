@@ -167,6 +167,9 @@ const CharacterManager = {
         // キラキラエフェクト
         this.createSparkleEffect();
         
+        // ランダムな追加アニメーション
+        this.randomSpecialAnimation();
+        
         setTimeout(() => {
             mainCharacter.classList.remove('clicked');
             this.changeExpression('happy');
@@ -185,10 +188,80 @@ const CharacterManager = {
         // キラキラエフェクト強化
         this.createSparkleEffect(true);
         
+        // 特別なアニメーション
+        this.specialLevelUpAnimation();
+        
         setTimeout(() => {
             mainCharacter.classList.remove('levelup');
             this.changeExpression('happy');
         }, 1000);
+    },
+
+    // ランダムな特別アニメーション
+    randomSpecialAnimation: function() {
+        const animations = [
+            'stretching', 'bouncing', 'spinning', 'shaking', 
+            'wiggling', 'pulsing', 'rocking', 'dancing', 
+            'swaying', 'hopping', 'twitching', 'glowing'
+        ];
+        
+        const randomAnimation = animations[Math.floor(Math.random() * animations.length)];
+        
+        // 30%の確率で特別アニメーションを実行
+        if (Math.random() < 0.3) {
+            this.playSpecialAnimation(randomAnimation);
+        }
+    },
+
+    // 特別アニメーションを再生
+    playSpecialAnimation: function(animationType) {
+        // 既存のアニメーションクラスをクリア
+        mainCharacter.className = 'character';
+        
+        // 新しいアニメーションクラスを追加
+        mainCharacter.classList.add(animationType);
+        
+        // アニメーション終了後に通常の浮遊アニメーションに戻す
+        setTimeout(() => {
+            mainCharacter.className = 'character';
+            mainCharacter.style.animation = 'characterFloat 3s ease-in-out infinite';
+        }, this.getAnimationDuration(animationType));
+    },
+
+    // アニメーションの持続時間を取得
+    getAnimationDuration: function(animationType) {
+        const durations = {
+            'stretching': 2000,
+            'bouncing': 1500,
+            'spinning': 1000,
+            'shaking': 500,
+            'wiggling': 1000,
+            'pulsing': 2000,
+            'rocking': 3000,
+            'dancing': 2000,
+            'swaying': 4000,
+            'hopping': 1000,
+            'twitching': 300,
+            'glowing': 2000
+        };
+        return durations[animationType] || 1000;
+    },
+
+    // レベルアップ時の特別アニメーション
+    specialLevelUpAnimation: function() {
+        // 複数のアニメーションを順番に再生
+        const animations = ['spinning', 'glowing', 'dancing'];
+        let currentIndex = 0;
+        
+        const playNextAnimation = () => {
+            if (currentIndex < animations.length) {
+                this.playSpecialAnimation(animations[currentIndex]);
+                currentIndex++;
+                setTimeout(playNextAnimation, 500);
+            }
+        };
+        
+        playNextAnimation();
     },
 
     // キラキラエフェクト
@@ -207,6 +280,11 @@ const CharacterManager = {
         const expressions = ['happy', 'excited', 'surprised', 'cool', 'hungry', 'love'];
         const randomExpression = expressions[Math.floor(Math.random() * expressions.length)];
         this.changeExpression(randomExpression);
+        
+        // 表情変化時に特別アニメーションも追加
+        if (Math.random() < 0.4) {
+            this.randomSpecialAnimation();
+        }
         
         setTimeout(() => {
             this.changeExpression('happy');
@@ -690,6 +768,22 @@ document.addEventListener('DOMContentLoaded', function() {
             CharacterManager.randomExpression();
         }
     }, 8000);
+    
+    // 定期的にランダムな特別アニメーション
+    setInterval(() => {
+        if (Math.random() < 0.2) { // 20%の確率
+            const animations = ['stretching', 'bouncing', 'wiggling', 'pulsing', 'rocking', 'swaying', 'hopping'];
+            const randomAnimation = animations[Math.floor(Math.random() * animations.length)];
+            CharacterManager.playSpecialAnimation(randomAnimation);
+        }
+    }, 12000);
+    
+    // 定期的にキラキラエフェクト
+    setInterval(() => {
+        if (Math.random() < 0.15) { // 15%の確率
+            CharacterManager.createSparkleEffect(true);
+        }
+    }, 6000);
     
     // ゲームループ開始
     setInterval(gameLoop, 1000);
