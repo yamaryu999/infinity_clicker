@@ -9,7 +9,8 @@ let gameState = {
     criticalClickChance: 0, // 追加
     totalClicks: 0,
     totalPoints: 0,
-    achievements: []
+    achievements: [],
+    clickEffect: 'default' // 追加
 };
 
 // アップグレードコスト計算
@@ -52,6 +53,16 @@ const autoClickerSpeedLevelElement = document.getElementById('autoClickerSpeedLe
 const autoClickerSpeedCostElement = document.getElementById('autoClickerSpeedCost');
 const criticalClickLevelElement = document.getElementById('criticalClickLevel');
 const criticalClickCostElement = document.getElementById('criticalClickCost');
+
+// 装飾システム要素
+const decorationBtn = document.getElementById('decorationBtn');
+const decorationPanel = document.getElementById('decorationPanel');
+const closeDecorationBtn = document.getElementById('closeDecorationBtn');
+const hatsGrid = document.getElementById('hatsGrid');
+const ribbonsGrid = document.getElementById('ribbonsGrid');
+const glassesGrid = document.getElementById('glassesGrid');
+const backgroundsGrid = document.getElementById('backgroundsGrid');
+const effectsGrid = document.getElementById('effectsGrid');
 
 // モバイル検出
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -364,6 +375,307 @@ const CharacterManager = {
     }
 };
 
+// 装飾システム
+const DecorationSystem = {
+    // 装飾データ
+    decorations: {
+        hats: [
+            { id: 'none', name: 'なし', icon: '❌', unlocked: true },
+            { id: 'crown', name: '王冠', icon: '👑', unlocked: true },
+            { id: 'hat', name: '帽子', icon: '🎩', unlocked: true },
+            { id: 'party', name: 'パーティ帽', icon: '🎉', unlocked: true },
+            { id: 'santa', name: 'サンタ帽', icon: '🎅', unlocked: false, requirement: 1000 },
+            { id: 'wizard', name: '魔法使いの帽子', icon: '🧙‍♂️', unlocked: false, requirement: 5000 },
+            { id: 'cowboy', name: 'カウボーイハット', icon: '🤠', unlocked: false, requirement: 10000 },
+            { id: 'pirate', name: '海賊帽', icon: '🏴‍☠️', unlocked: false, requirement: 25000 }
+        ],
+        ribbons: [
+            { id: 'none', name: 'なし', icon: '❌', unlocked: true },
+            { id: 'pink', name: 'ピンクリボン', icon: '🎀', unlocked: true },
+            { id: 'blue', name: 'ブルーリボン', icon: '💙', unlocked: true },
+            { id: 'rainbow', name: 'レインボーリボン', icon: '🌈', unlocked: true },
+            { id: 'gold', name: 'ゴールドリボン', icon: '💛', unlocked: false, requirement: 2000 },
+            { id: 'diamond', name: 'ダイヤリボン', icon: '💎', unlocked: false, requirement: 7500 },
+            { id: 'star', name: 'スターリボン', icon: '⭐', unlocked: false, requirement: 15000 },
+            { id: 'crown', name: 'クラウンリボン', icon: '👑', unlocked: false, requirement: 30000 }
+        ],
+        glasses: [
+            { id: 'none', name: 'なし', icon: '❌', unlocked: true },
+            { id: 'sunglasses', name: 'サングラス', icon: '🕶️', unlocked: true },
+            { id: 'reading', name: '老眼鏡', icon: '👓', unlocked: true },
+            { id: 'cool', name: 'クールメガネ', icon: '😎', unlocked: true },
+            { id: 'nerd', name: 'オタクメガネ', icon: '🤓', unlocked: false, requirement: 1500 },
+            { id: 'monocle', name: 'モノクル', icon: '🧐', unlocked: false, requirement: 6000 },
+            { id: 'vr', name: 'VRゴーグル', icon: '🥽', unlocked: false, requirement: 12000 },
+            { id: 'laser', name: 'レーザーアイ', icon: '👁️', unlocked: false, requirement: 25000 }
+        ],
+        backgrounds: [
+            { id: 'default', name: 'デフォルト', icon: '🏠', unlocked: true },
+            { id: 'garden', name: 'ガーデン', icon: '🌸', unlocked: true },
+            { id: 'beach', name: 'ビーチ', icon: '🏖️', unlocked: true },
+            { id: 'forest', name: '森', icon: '🌲', unlocked: true },
+            { id: 'space', name: '宇宙', icon: '🚀', unlocked: false, requirement: 3000 },
+            { id: 'underwater', name: '海中', icon: '🐠', unlocked: false, requirement: 8000 },
+            { id: 'castle', name: 'お城', icon: '🏰', unlocked: false, requirement: 18000 },
+            { id: 'volcano', name: '火山', icon: '🌋', unlocked: false, requirement: 35000 }
+        ],
+        effects: [
+            { id: 'default', name: 'デフォルト', icon: '⭐', unlocked: true },
+            { id: 'sparkle', name: 'キラキラ', icon: '✨', unlocked: true },
+            { id: 'firework', name: '花火', icon: '🎆', unlocked: true },
+            { id: 'rainbow', name: 'レインボー', icon: '🌈', unlocked: true },
+            { id: 'magic', name: '魔法', icon: '🔮', unlocked: false, requirement: 2500 },
+            { id: 'laser', name: 'レーザー', icon: '⚡', unlocked: false, requirement: 7000 },
+            { id: 'galaxy', name: '銀河', icon: '🌌', unlocked: false, requirement: 15000 },
+            { id: 'dragon', name: 'ドラゴン', icon: '🐉', unlocked: false, requirement: 30000 }
+        ]
+    },
+
+    // 現在の装飾
+    currentDecorations: {
+        hat: 'none',
+        ribbon: 'none',
+        glasses: 'none',
+        background: 'default',
+        effect: 'default'
+    },
+
+    // 初期化
+    init: function() {
+        this.loadDecorations();
+        this.renderDecorationItems();
+        this.setupEventListeners();
+        this.applyDecorations();
+    },
+
+    // 装飾を読み込み
+    loadDecorations: function() {
+        const saved = localStorage.getItem('decorations');
+        if (saved) {
+            this.currentDecorations = JSON.parse(saved);
+        }
+    },
+
+    // 装飾を保存
+    saveDecorations: function() {
+        localStorage.setItem('decorations', JSON.stringify(this.currentDecorations));
+    },
+
+    // 装飾アイテムをレンダリング
+    renderDecorationItems: function() {
+        Object.keys(this.decorations).forEach(category => {
+            const grid = document.getElementById(category + 'Grid');
+            if (!grid) return;
+
+            grid.innerHTML = '';
+            this.decorations[category].forEach(item => {
+                const isUnlocked = this.isItemUnlocked(item);
+                const isSelected = this.currentDecorations[category] === item.id;
+                
+                const itemElement = document.createElement('div');
+                itemElement.className = `decoration-item ${isSelected ? 'selected' : ''} ${!isUnlocked ? 'locked' : ''}`;
+                itemElement.setAttribute('data-type', category);
+                itemElement.setAttribute('data-item', item.id);
+                
+                itemElement.innerHTML = `
+                    <span class="decoration-icon">${item.icon}</span>
+                    <span class="decoration-name">${item.name}</span>
+                `;
+                
+                if (isUnlocked) {
+                    itemElement.addEventListener('click', () => this.selectDecoration(category, item.id));
+                }
+                
+                grid.appendChild(itemElement);
+            });
+        });
+    },
+
+    // アイテムがアンロックされているかチェック
+    isItemUnlocked: function(item) {
+        if (item.unlocked) return true;
+        if (!item.requirement) return false;
+        return gameState.points >= item.requirement;
+    },
+
+    // 装飾を選択
+    selectDecoration: function(category, itemId) {
+        this.currentDecorations[category] = itemId;
+        this.saveDecorations();
+        this.renderDecorationItems();
+        this.applyDecorations();
+        
+        // 通知
+        const item = this.decorations[category].find(i => i.id === itemId);
+        showNotification(`🎨 ${item.name}を装備しました！`);
+    },
+
+    // 装飾を適用
+    applyDecorations: function() {
+        // 帽子の適用
+        this.applyHat();
+        
+        // リボンの適用
+        this.applyRibbon();
+        
+        // メガネの適用
+        this.applyGlasses();
+        
+        // 背景の適用
+        this.applyBackground();
+        
+        // エフェクトの適用
+        this.applyEffect();
+    },
+
+    // 帽子を適用
+    applyHat: function() {
+        const hatElement = document.querySelector('.cat-hat');
+        if (hatElement) hatElement.remove();
+        
+        const hat = this.decorations.hats.find(h => h.id === this.currentDecorations.hat);
+        if (hat && hat.id !== 'none') {
+            const hatElement = document.createElement('div');
+            hatElement.className = 'cat-hat';
+            hatElement.textContent = hat.icon;
+            hatElement.style.cssText = `
+                position: absolute;
+                top: -10px;
+                left: 50%;
+                transform: translateX(-50%);
+                font-size: 2rem;
+                z-index: 10;
+                filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+            `;
+            
+            const character = document.getElementById('mainCharacter');
+            character.appendChild(hatElement);
+        }
+    },
+
+    // リボンを適用
+    applyRibbon: function() {
+        const ribbonElement = document.querySelector('.cat-ribbon');
+        if (ribbonElement) ribbonElement.remove();
+        
+        const ribbon = this.decorations.ribbons.find(r => r.id === this.currentDecorations.ribbon);
+        if (ribbon && ribbon.id !== 'none') {
+            const ribbonElement = document.createElement('div');
+            ribbonElement.className = 'cat-ribbon';
+            ribbonElement.textContent = ribbon.icon;
+            ribbonElement.style.cssText = `
+                position: absolute;
+                top: 20px;
+                right: -5px;
+                font-size: 1.5rem;
+                z-index: 10;
+                filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+            `;
+            
+            const character = document.getElementById('mainCharacter');
+            character.appendChild(ribbonElement);
+        }
+    },
+
+    // メガネを適用
+    applyGlasses: function() {
+        const glassesElement = document.querySelector('.cat-glasses');
+        if (glassesElement) glassesElement.remove();
+        
+        const glasses = this.decorations.glasses.find(g => g.id === this.currentDecorations.glasses);
+        if (glasses && glasses.id !== 'none') {
+            const glassesElement = document.createElement('div');
+            glassesElement.className = 'cat-glasses';
+            glassesElement.textContent = glasses.icon;
+            glassesElement.style.cssText = `
+                position: absolute;
+                top: 70px;
+                left: 50%;
+                transform: translateX(-50%);
+                font-size: 1.8rem;
+                z-index: 10;
+                filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+            `;
+            
+            const character = document.getElementById('mainCharacter');
+            character.appendChild(glassesElement);
+        }
+    },
+
+    // 背景を適用
+    applyBackground: function() {
+        const background = this.decorations.backgrounds.find(b => b.id === this.currentDecorations.background);
+        if (background && background.id !== 'default') {
+            document.body.className = `background-${background.id}`;
+        } else {
+            document.body.className = '';
+        }
+    },
+
+    // エフェクトを適用
+    applyEffect: function() {
+        const effect = this.decorations.effects.find(e => e.id === this.currentDecorations.effect);
+        if (effect && effect.id !== 'default') {
+            // エフェクトの適用ロジック
+            this.applyClickEffect(effect.id);
+        }
+    },
+
+    // クリックエフェクトを適用
+    applyClickEffect: function(effectId) {
+        // エフェクトに応じたクリック時のパーティクルを変更
+        gameState.clickEffect = effectId;
+    },
+
+    // イベントリスナーを設定
+    setupEventListeners: function() {
+        const decorationBtn = document.getElementById('decorationBtn');
+        const decorationPanel = document.getElementById('decorationPanel');
+        const closeBtn = document.getElementById('closeDecorationBtn');
+
+        if (decorationBtn) {
+            decorationBtn.addEventListener('click', () => {
+                decorationPanel.classList.add('show');
+                this.renderDecorationItems(); // 最新の状態を反映
+            });
+        }
+
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                decorationPanel.classList.remove('show');
+            });
+        }
+
+        // パネル外クリックで閉じる
+        decorationPanel.addEventListener('click', (e) => {
+            if (e.target === decorationPanel) {
+                decorationPanel.classList.remove('show');
+            }
+        });
+    },
+
+    // 新しい装飾をアンロック
+    unlockDecoration: function(category, itemId) {
+        const item = this.decorations[category].find(i => i.id === itemId);
+        if (item) {
+            item.unlocked = true;
+            this.renderDecorationItems();
+            showNotification(`🎉 新しい装飾「${item.name}」をアンロックしました！`);
+        }
+    },
+
+    // 装飾の進捗をチェック
+    checkDecorationProgress: function() {
+        Object.keys(this.decorations).forEach(category => {
+            this.decorations[category].forEach(item => {
+                if (!item.unlocked && item.requirement && gameState.points >= item.requirement) {
+                    this.unlockDecoration(category, item.id);
+                }
+            });
+        });
+    }
+};
+
 // 初期化
 function init() {
     loadGame();
@@ -417,56 +729,96 @@ function handleTouchEnd(event) {
 
 // クリック処理を更新
 function handleClick() {
-    const points = gameState.clickMultiplier;
-    gameState.points += points;
+    // クリック数を増加
     gameState.totalClicks++;
-    gameState.totalPoints += points;
     
-    // クリティカルヒット判定
+    // 基本ポイント
+    let pointsGained = gameState.clickMultiplier;
+    
+    // クリティカルヒットの判定
     if (Math.random() < gameState.criticalClickChance) {
-        const criticalPoints = points * 3;
-        gameState.points += criticalPoints * 2; // 追加で3倍
-        gameState.totalPoints += criticalPoints * 2;
-        showNotification(`💥 クリティカルヒット! +${formatNumber(criticalPoints * 3)}`, 'critical');
-        CharacterManager.changeExpression('surprised');
-        CharacterManager.createParticleBurst(50, 50, 8);
-    } else {
-        showNotification(`+${formatNumber(points)}`, 'click');
-        CharacterManager.createParticle(50, 50, '⭐');
+        pointsGained *= 3;
+        showNotification('💥 クリティカルヒット！3倍のポイント！');
     }
+    
+    // ポイントを加算
+    gameState.points += pointsGained;
+    gameState.totalPoints += pointsGained;
     
     // キャラクターアニメーション
     CharacterManager.clickAnimation();
     
     // クリックエフェクト
-    createClickEffect();
+    const rect = clickButton.getBoundingClientRect();
+    const x = rect.left + Math.random() * rect.width;
+    const y = rect.top + Math.random() * rect.height;
+    createClickEffect(x, y);
     
+    // 表示を更新
     updateDisplay();
+    updateUpgradeButtons();
+    
+    // 実績をチェック
     checkAchievements();
 }
 
 // クリックエフェクト作成
-function createClickEffect() {
-    const effect = document.createElement('span');
-    effect.textContent = `+${gameState.clickMultiplier}`;
-    effect.style.color = '#ff6b6b';
-    effect.style.fontSize = '1.2rem';
-    effect.style.fontWeight = 'bold';
-    effect.style.position = 'absolute';
-    effect.style.pointerEvents = 'none';
-    effect.style.zIndex = '1000';
+function createClickEffect(x, y) {
+    const effect = document.createElement('div');
+    effect.className = 'click-effect';
+    effect.style.left = x + 'px';
+    effect.style.top = y + 'px';
     
-    // ランダムな位置に配置
-    const rect = clickButton.getBoundingClientRect();
-    const x = Math.random() * rect.width;
-    const y = Math.random() * rect.height;
+    // 装飾システムのエフェクトに応じてパーティクルを変更
+    const effectType = gameState.clickEffect || 'default';
+    let particles = ['⭐', '✨', '💫'];
     
-    effect.style.left = `${x}px`;
-    effect.style.top = `${y}px`;
+    switch(effectType) {
+        case 'sparkle':
+            particles = ['✨', '💫', '⭐', '🌟'];
+            break;
+        case 'firework':
+            particles = ['🎆', '🎇', '💥', '🔥'];
+            break;
+        case 'rainbow':
+            particles = ['🌈', '🎨', '💖', '💙', '💚', '💛', '🧡', '💜'];
+            break;
+        case 'magic':
+            particles = ['🔮', '✨', '💫', '🌟', '⭐'];
+            break;
+        case 'laser':
+            particles = ['⚡', '💥', '🔥', '⚡'];
+            break;
+        case 'galaxy':
+            particles = ['🌌', '⭐', '🌟', '✨', '💫'];
+            break;
+        case 'dragon':
+            particles = ['🐉', '🔥', '💥', '⚡'];
+            break;
+        default:
+            particles = ['⭐', '✨', '💫'];
+    }
     
-    clickEffect.appendChild(effect);
+    // 複数のパーティクルを生成
+    for (let i = 0; i < 5; i++) {
+        setTimeout(() => {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.textContent = particles[Math.floor(Math.random() * particles.length)];
+            particle.style.left = (x + (Math.random() - 0.5) * 100) + 'px';
+            particle.style.top = (y + (Math.random() - 0.5) * 100) + 'px';
+            particle.style.animation = `particleFloat 1s ease-out forwards`;
+            
+            document.body.appendChild(particle);
+            
+            setTimeout(() => {
+                particle.remove();
+            }, 1000);
+        }, i * 100);
+    }
     
-    // アニメーション終了後に要素を削除
+    document.body.appendChild(effect);
+    
     setTimeout(() => {
         effect.remove();
     }, 1000);
@@ -694,6 +1046,9 @@ function loadGame() {
             if (typeof loadedState.achievements === 'undefined') {
                 loadedState.achievements = [];
             }
+            if (typeof loadedState.clickEffect === 'undefined') {
+                loadedState.clickEffect = 'default';
+            }
             
             gameState = loadedState;
             showNotification('ゲームを読み込みました！');
@@ -704,13 +1059,14 @@ function loadGame() {
                 points: 0,
                 autoClickerLevel: 0,
                 clickMultiplierLevel: 1,
-                clickMultiplier: 1,
+                clickMultiplier: 1, // 追加
                 autoClickerSpeedLevel: 1,
                 criticalClickLevel: 0,
-                criticalClickChance: 0,
+                criticalClickChance: 0, // 追加
                 totalClicks: 0,
                 totalPoints: 0,
-                achievements: []
+                achievements: [],
+                clickEffect: 'default'
             };
         }
     }
@@ -729,7 +1085,8 @@ function resetGame() {
             criticalClickChance: 0, // 追加
             totalClicks: 0,
             totalPoints: 0,
-            achievements: []
+            achievements: [],
+            clickEffect: 'default'
         };
         localStorage.removeItem('idleClickerSave');
         updateDisplay();
@@ -741,6 +1098,21 @@ function resetGame() {
 // 自動クリッカー開始
 function startAutoClicker() {
     // 既に設定済み
+}
+
+// ゲームループ
+function gameLoop() {
+    // 自動クリッカーの処理
+    const autoClickerPoints = gameState.autoClickerLevel * gameState.autoClickerSpeedLevel * 0.1;
+    gameState.points += autoClickerPoints;
+    gameState.totalPoints += autoClickerPoints;
+    
+    // 装飾の進捗をチェック
+    DecorationSystem.checkDecorationProgress();
+    
+    // 表示を更新
+    updateDisplay();
+    updateUpgradeButtons();
 }
 
 // ページ読み込み時に初期化
@@ -785,6 +1157,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }, 6000);
     
+    // 装飾システムの初期化
+    DecorationSystem.init();
+    DecorationSystem.checkDecorationProgress();
+
     // ゲームループ開始
     setInterval(gameLoop, 1000);
     updateDisplay();

@@ -1853,20 +1853,30 @@ body::before {
 .particle {
     position: absolute;
     pointer-events: none;
-    font-size: 1rem;
-    animation: particleFloat 2s ease-out forwards;
-    z-index: 5;
+    font-size: 1.2rem;
+    z-index: 1000;
+    animation: particleFloat 1s ease-out forwards;
 }
 
 @keyframes particleFloat {
     0% {
         opacity: 1;
-        transform: translateY(0) scale(1);
+        transform: translateY(0) scale(1) rotate(0deg);
+    }
+    50% {
+        opacity: 0.8;
+        transform: translateY(-30px) scale(1.2) rotate(180deg);
     }
     100% {
         opacity: 0;
-        transform: translateY(-100px) scale(0.5);
+        transform: translateY(-60px) scale(0.5) rotate(360deg);
     }
+}
+
+.click-effect {
+    position: absolute;
+    pointer-events: none;
+    z-index: 999;
 }
 
 /* モバイル対応 */
@@ -2761,4 +2771,399 @@ body::before {
 
 .character.glowing {
     animation: catGlow 2s ease-in-out infinite;
+}
+
+/* 装飾システム */
+.decoration-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh;
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 2px solid var(--neon-color);
+    border-radius: 20px;
+    box-shadow: 0 0 30px rgba(255, 0, 110, 0.3);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.decoration-panel.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.decoration-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: linear-gradient(135deg, var(--neon-color), #ff6b9d);
+    color: white;
+    border-bottom: 2px solid var(--neon-color);
+}
+
+.decoration-header h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
+.decoration-content {
+    padding: 20px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.decoration-section {
+    margin-bottom: 30px;
+}
+
+.decoration-section h4 {
+    margin: 0 0 15px 0;
+    font-size: 1.2rem;
+    color: var(--neon-color);
+    text-shadow: 0 0 10px rgba(255, 0, 110, 0.3);
+}
+
+.decoration-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 15px;
+}
+
+.decoration-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid transparent;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.decoration-item:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: var(--neon-color);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(255, 0, 110, 0.2);
+}
+
+.decoration-item.selected {
+    background: linear-gradient(135deg, var(--neon-color), #ff6b9d);
+    border-color: var(--neon-color);
+    color: white;
+    box-shadow: 0 0 20px rgba(255, 0, 110, 0.5);
+}
+
+.decoration-item.locked {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.decoration-item.locked::after {
+    content: '🔒';
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 0.8rem;
+}
+
+.decoration-icon {
+    font-size: 2rem;
+    margin-bottom: 8px;
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
+}
+
+.decoration-name {
+    font-size: 0.8rem;
+    text-align: center;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.decoration-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--neon-color), #ff6b9d);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(255, 0, 110, 0.3);
+    transition: all 0.3s ease;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.decoration-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 25px rgba(255, 0, 110, 0.4);
+}
+
+.decoration-btn-icon {
+    font-size: 1.5rem;
+    color: white;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+/* 装飾アイテムのアニメーション */
+.decoration-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.decoration-item:hover::before {
+    left: 100%;
+}
+
+/* 装飾パネルのオーバーレイ */
+.decoration-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.decoration-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* モバイル対応 */
+@media (max-width: 768px) {
+    .decoration-panel {
+        width: 95%;
+        max-height: 85vh;
+    }
+    
+    .decoration-grid {
+        grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+        gap: 10px;
+    }
+    
+    .decoration-item {
+        padding: 12px 8px;
+    }
+    
+    .decoration-icon {
+        font-size: 1.5rem;
+    }
+    
+    .decoration-name {
+        font-size: 0.7rem;
+    }
+    
+    .decoration-btn {
+        width: 50px;
+        height: 50px;
+        bottom: 15px;
+        right: 15px;
+    }
+    
+    .decoration-btn-icon {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .decoration-panel {
+        width: 98%;
+        max-height: 90vh;
+    }
+    
+    .decoration-grid {
+        grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+        gap: 8px;
+    }
+    
+    .decoration-item {
+        padding: 10px 6px;
+    }
+    
+    .decoration-icon {
+        font-size: 1.3rem;
+    }
+    
+    .decoration-name {
+        font-size: 0.6rem;
+    }
+}
+
+/* 背景テーマ */
+.background-garden {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.background-garden::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(circle at 20% 80%, rgba(255, 182, 193, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 192, 203, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(255, 218, 185, 0.2) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+.background-beach {
+    background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+}
+
+.background-beach::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(circle at 30% 70%, rgba(255, 255, 255, 0.2) 0%, transparent 50%),
+        radial-gradient(circle at 70% 30%, rgba(173, 216, 230, 0.3) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+.background-forest {
+    background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+}
+
+.background-forest::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(circle at 25% 75%, rgba(34, 139, 34, 0.2) 0%, transparent 50%),
+        radial-gradient(circle at 75% 25%, rgba(50, 205, 50, 0.2) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+.background-space {
+    background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
+}
+
+.background-space::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(138, 43, 226, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+.background-underwater {
+    background: linear-gradient(135deg, #0984e3 0%, #74b9ff 100%);
+}
+
+.background-underwater::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(circle at 30% 30%, rgba(0, 191, 255, 0.2) 0%, transparent 50%),
+        radial-gradient(circle at 70% 70%, rgba(135, 206, 235, 0.2) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+.background-castle {
+    background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
+}
+
+.background-castle::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(circle at 25% 25%, rgba(255, 215, 0, 0.2) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+.background-volcano {
+    background: linear-gradient(135deg, #e17055 0%, #d63031 100%);
+}
+
+.background-volcano::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(circle at 50% 50%, rgba(255, 69, 0, 0.2) 0%, transparent 50%),
+        radial-gradient(circle at 20% 80%, rgba(255, 140, 0, 0.2) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
 }

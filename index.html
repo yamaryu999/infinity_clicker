@@ -202,6 +202,66 @@
             <button id="resetBtn" class="reset-btn" onclick="resetGame()" aria-label="ゲームをリセット" data-touch-action="manipulation">🔄 リセット</button>
             <div class="version">v2.1.0 - スマホ対応版</div>
         </footer>
+
+        <!-- 装飾システム -->
+        <div class="decoration-panel" id="decorationPanel">
+            <div class="decoration-header">
+                <h3>🎨 装飾</h3>
+                <button class="close-btn" id="closeDecorationBtn">×</button>
+            </div>
+            <div class="decoration-content">
+                <div class="decoration-section">
+                    <h4>👑 帽子</h4>
+                    <div class="decoration-grid" id="hatGrid">
+                        <div class="decoration-item" data-type="hat" data-item="none">
+                            <span class="decoration-icon">❌</span>
+                            <span class="decoration-name">なし</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="decoration-section">
+                    <h4>🎀 リボン</h4>
+                    <div class="decoration-grid" id="ribbonGrid">
+                        <div class="decoration-item" data-type="ribbon" data-item="none">
+                            <span class="decoration-icon">❌</span>
+                            <span class="decoration-name">なし</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="decoration-section">
+                    <h4>👓 メガネ</h4>
+                    <div class="decoration-grid" id="glassesGrid">
+                        <div class="decoration-item" data-type="glasses" data-item="none">
+                            <span class="decoration-icon">❌</span>
+                            <span class="decoration-name">なし</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="decoration-section">
+                    <h4>🎨 背景</h4>
+                    <div class="decoration-grid" id="backgroundGrid">
+                        <div class="decoration-item" data-type="background" data-item="default">
+                            <span class="decoration-icon">🏠</span>
+                            <span class="decoration-name">デフォルト</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="decoration-section">
+                    <h4>✨ エフェクト</h4>
+                    <div class="decoration-grid" id="effectGrid">
+                        <div class="decoration-item" data-type="effect" data-item="default">
+                            <span class="decoration-icon">⭐</span>
+                            <span class="decoration-name">デフォルト</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 装飾ボタン -->
+        <button class="decoration-btn" id="decorationBtn" aria-label="装飾を変更">
+            <span class="decoration-btn-icon">🎨</span>
+        </button>
     </div>
 
     <div id="notification" class="notification" role="alert" aria-live="polite"></div>
