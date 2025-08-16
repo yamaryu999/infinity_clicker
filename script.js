@@ -75,7 +75,21 @@ function calculateUpgradeCost(level, baseCost) {
         return 0;
     }
     
-    return Math.floor(baseCost * Math.pow(1.15, level));
+    // 各アップグレードの成長率を調整
+    let growthRate = 1.15; // デフォルト
+    
+    // アップグレードの種類に応じて成長率を調整
+    if (baseCost === 10) { // 自動クリッカー
+        growthRate = 1.15;
+    } else if (baseCost === 50) { // クリック倍率
+        growthRate = 1.2;
+    } else if (baseCost === 100) { // 自動クリッカー速度
+        growthRate = 1.25;
+    } else if (baseCost === 200) { // クリティカルクリック
+        growthRate = 1.3;
+    }
+    
+    return Math.floor(baseCost * Math.pow(growthRate, level));
 }
 
 // キャラクター管理
@@ -325,7 +339,7 @@ const CharacterManager = {
 
     // 複数パーティクルを生成
     createParticleBurst: function(x, y, count = 5) {
-        const emojis = ['⭐', '💎', '🚀', '🌟', '🎯', '💫', '✨', '🔥', '🌸', '🍀', '🌈', '🎪'];
+        const emojis = ['⭐', '💎', '🚀', '🌟', '🎯', '🎉', '✨', '🔥', '🌸', '🍀', '🌈', '🎪'];
         for (let i = 0; i < count; i++) {
             setTimeout(() => {
                 const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
@@ -736,6 +750,12 @@ function handleClick() {
     if (Math.random() < gameState.criticalClickChance) {
         pointsGained *= 3;
         showNotification('💥 クリティカルヒット！3倍のポイント！');
+        
+        // クリティカルヒットの実績をチェック
+        const criticalHitAchievement = achievements.find(a => a.id === 'critical_hit');
+        if (criticalHitAchievement && !gameState.achievements.includes('critical_hit')) {
+            unlockAchievement('critical_hit');
+        }
     }
     
     // ポイントを加算
@@ -956,7 +976,9 @@ function updateUpgradeButtons() {
     ];
     
     buttons.forEach((button, index) => {
-        button.disabled = gameState.points < costs[index];
+        if (button) {
+            button.disabled = gameState.points < costs[index];
+        }
     });
 }
 
@@ -982,7 +1004,7 @@ function checkAchievements() {
                     unlocked = gameState.autoClickerLevel >= achievement.requirement;
                     break;
                 case 'criticalHits':
-                    // この実績は別途処理
+                    // クリティカルヒットの実績は別途処理（クリック時にチェック）
                     break;
             }
             
@@ -1143,7 +1165,7 @@ function resetGame() {
 // ゲームループ
 function gameLoop() {
     // 自動クリッカーの処理
-    const autoClickerPoints = gameState.autoClickerLevel * gameState.autoClickerSpeedLevel * 0.1;
+    const autoClickerPoints = gameState.autoClickerLevel * gameState.autoClickerSpeedLevel;
     gameState.points += autoClickerPoints;
     gameState.totalPoints += autoClickerPoints;
     
