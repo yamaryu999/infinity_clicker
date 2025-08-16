@@ -58,11 +58,11 @@ const criticalClickCostElement = document.getElementById('criticalClickCost');
 const decorationBtn = document.getElementById('decorationBtn');
 const decorationPanel = document.getElementById('decorationPanel');
 const closeDecorationBtn = document.getElementById('closeDecorationBtn');
-const hatsGrid = document.getElementById('hatsGrid');
-const ribbonsGrid = document.getElementById('ribbonsGrid');
+const hatsGrid = document.getElementById('hatGrid');
+const ribbonsGrid = document.getElementById('ribbonGrid');
 const glassesGrid = document.getElementById('glassesGrid');
-const backgroundsGrid = document.getElementById('backgroundsGrid');
-const effectsGrid = document.getElementById('effectsGrid');
+const backgroundsGrid = document.getElementById('backgroundGrid');
+const effectsGrid = document.getElementById('effectGrid');
 
 // モバイル検出
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -465,7 +465,10 @@ const DecorationSystem = {
     renderDecorationItems: function() {
         Object.keys(this.decorations).forEach(category => {
             const grid = document.getElementById(category + 'Grid');
-            if (!grid) return;
+            if (!grid) {
+                console.warn(`Decoration grid not found: ${category}Grid`);
+                return;
+            }
 
             grid.innerHTML = '';
             this.decorations[category].forEach(item => {
@@ -535,6 +538,9 @@ const DecorationSystem = {
         
         const hat = this.decorations.hats.find(h => h.id === this.currentDecorations.hat);
         if (hat && hat.id !== 'none') {
+            const character = document.getElementById('mainCharacter');
+            if (!character) return;
+            
             const hatElement = document.createElement('div');
             hatElement.className = 'cat-hat';
             hatElement.textContent = hat.icon;
@@ -548,7 +554,6 @@ const DecorationSystem = {
                 filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
             `;
             
-            const character = document.getElementById('mainCharacter');
             character.appendChild(hatElement);
         }
     },
@@ -560,6 +565,9 @@ const DecorationSystem = {
         
         const ribbon = this.decorations.ribbons.find(r => r.id === this.currentDecorations.ribbon);
         if (ribbon && ribbon.id !== 'none') {
+            const character = document.getElementById('mainCharacter');
+            if (!character) return;
+            
             const ribbonElement = document.createElement('div');
             ribbonElement.className = 'cat-ribbon';
             ribbonElement.textContent = ribbon.icon;
@@ -572,7 +580,6 @@ const DecorationSystem = {
                 filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
             `;
             
-            const character = document.getElementById('mainCharacter');
             character.appendChild(ribbonElement);
         }
     },
@@ -584,6 +591,9 @@ const DecorationSystem = {
         
         const glasses = this.decorations.glasses.find(g => g.id === this.currentDecorations.glasses);
         if (glasses && glasses.id !== 'none') {
+            const character = document.getElementById('mainCharacter');
+            if (!character) return;
+            
             const glassesElement = document.createElement('div');
             glassesElement.className = 'cat-glasses';
             glassesElement.textContent = glasses.icon;
@@ -597,7 +607,6 @@ const DecorationSystem = {
                 filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
             `;
             
-            const character = document.getElementById('mainCharacter');
             character.appendChild(glassesElement);
         }
     },
@@ -633,25 +642,27 @@ const DecorationSystem = {
         const decorationPanel = document.getElementById('decorationPanel');
         const closeBtn = document.getElementById('closeDecorationBtn');
 
-        if (decorationBtn) {
+        if (decorationBtn && decorationPanel) {
             decorationBtn.addEventListener('click', () => {
                 decorationPanel.classList.add('show');
                 this.renderDecorationItems(); // 最新の状態を反映
             });
         }
 
-        if (closeBtn) {
+        if (closeBtn && decorationPanel) {
             closeBtn.addEventListener('click', () => {
                 decorationPanel.classList.remove('show');
             });
         }
 
         // パネル外クリックで閉じる
-        decorationPanel.addEventListener('click', (e) => {
-            if (e.target === decorationPanel) {
-                decorationPanel.classList.remove('show');
-            }
-        });
+        if (decorationPanel) {
+            decorationPanel.addEventListener('click', (e) => {
+                if (e.target === decorationPanel) {
+                    decorationPanel.classList.remove('show');
+                }
+            });
+        }
     },
 
     // 新しい装飾をアンロック
@@ -746,13 +757,17 @@ function handleClick() {
     gameState.totalPoints += pointsGained;
     
     // キャラクターアニメーション
-    CharacterManager.clickAnimation();
+    if (CharacterManager && typeof CharacterManager.clickAnimation === 'function') {
+        CharacterManager.clickAnimation();
+    }
     
     // クリックエフェクト
-    const rect = clickButton.getBoundingClientRect();
-    const x = rect.left + Math.random() * rect.width;
-    const y = rect.top + Math.random() * rect.height;
-    createClickEffect(x, y);
+    if (clickButton) {
+        const rect = clickButton.getBoundingClientRect();
+        const x = rect.left + Math.random() * rect.width;
+        const y = rect.top + Math.random() * rect.height;
+        createClickEffect(x, y);
+    }
     
     // 表示を更新
     updateDisplay();
@@ -764,6 +779,12 @@ function handleClick() {
 
 // クリックエフェクト作成
 function createClickEffect(x, y) {
+    // 座標の安全性チェック
+    if (typeof x !== 'number' || typeof y !== 'number' || isNaN(x) || isNaN(y)) {
+        console.warn('Invalid coordinates for click effect');
+        return;
+    }
+    
     const effect = document.createElement('div');
     effect.className = 'click-effect';
     effect.style.left = x + 'px';
@@ -805,14 +826,23 @@ function createClickEffect(x, y) {
             const particle = document.createElement('div');
             particle.className = 'particle';
             particle.textContent = particles[Math.floor(Math.random() * particles.length)];
-            particle.style.left = (x + (Math.random() - 0.5) * 100) + 'px';
-            particle.style.top = (y + (Math.random() - 0.5) * 100) + 'px';
+            
+            // 安全な座標計算
+            const offsetX = (Math.random() - 0.5) * 100;
+            const offsetY = (Math.random() - 0.5) * 100;
+            const particleX = x + offsetX;
+            const particleY = y + offsetY;
+            
+            particle.style.left = particleX + 'px';
+            particle.style.top = particleY + 'px';
             particle.style.animation = `particleFloat 1s ease-out forwards`;
             
             document.body.appendChild(particle);
             
             setTimeout(() => {
-                particle.remove();
+                if (particle.parentNode) {
+                    particle.remove();
+                }
             }, 1000);
         }, i * 100);
     }
@@ -820,7 +850,9 @@ function createClickEffect(x, y) {
     document.body.appendChild(effect);
     
     setTimeout(() => {
-        effect.remove();
+        if (effect.parentNode) {
+            effect.remove();
+        }
     }, 1000);
 }
 
@@ -840,12 +872,16 @@ function buyAutoClicker() {
         gameState.points -= cost;
         gameState.autoClickerLevel++;
         showNotification(`🤖 自動クリッカー Lv.${gameState.autoClickerLevel} 購入!`, 'upgrade');
-        CharacterManager.changeExpression('excited');
+        if (CharacterManager && typeof CharacterManager.changeExpression === 'function') {
+            CharacterManager.changeExpression('excited');
+        }
         updateDisplay();
         checkAchievements();
     } else {
         showNotification('❌ ポイントが足りません!', 'error');
-        CharacterManager.changeExpression('sleepy');
+        if (CharacterManager && typeof CharacterManager.changeExpression === 'function') {
+            CharacterManager.changeExpression('sleepy');
+        }
     }
 }
 
@@ -856,12 +892,16 @@ function buyClickMultiplier() {
         gameState.clickMultiplierLevel++;
         gameState.clickMultiplier = gameState.clickMultiplierLevel; // 確実に更新
         showNotification(`⚡ クリック倍率 Lv.${gameState.clickMultiplierLevel} 購入!`, 'upgrade');
-        CharacterManager.changeExpression('cool');
+        if (CharacterManager && typeof CharacterManager.changeExpression === 'function') {
+            CharacterManager.changeExpression('cool');
+        }
         updateDisplay();
         checkAchievements();
     } else {
         showNotification('❌ ポイントが足りません!', 'error');
-        CharacterManager.changeExpression('sleepy');
+        if (CharacterManager && typeof CharacterManager.changeExpression === 'function') {
+            CharacterManager.changeExpression('sleepy');
+        }
     }
 }
 
@@ -871,12 +911,16 @@ function buyAutoClickerSpeed() {
         gameState.points -= cost;
         gameState.autoClickerSpeedLevel++;
         showNotification(`🚀 自動クリッカー速度 Lv.${gameState.autoClickerSpeedLevel} 購入!`, 'upgrade');
-        CharacterManager.changeExpression('excited');
+        if (CharacterManager && typeof CharacterManager.changeExpression === 'function') {
+            CharacterManager.changeExpression('excited');
+        }
         updateDisplay();
         checkAchievements();
     } else {
         showNotification('❌ ポイントが足りません!', 'error');
-        CharacterManager.changeExpression('sleepy');
+        if (CharacterManager && typeof CharacterManager.changeExpression === 'function') {
+            CharacterManager.changeExpression('sleepy');
+        }
     }
 }
 
@@ -887,34 +931,38 @@ function buyCriticalClick() {
         gameState.criticalClickLevel++;
         gameState.criticalClickChance = gameState.criticalClickLevel * 0.01;
         showNotification(`💥 クリティカルクリック Lv.${gameState.criticalClickLevel} 購入!`, 'upgrade');
-        CharacterManager.changeExpression('surprised');
+        if (CharacterManager && typeof CharacterManager.changeExpression === 'function') {
+            CharacterManager.changeExpression('surprised');
+        }
         updateDisplay();
         checkAchievements();
     } else {
         showNotification('❌ ポイントが足りません!', 'error');
-        CharacterManager.changeExpression('sleepy');
+        if (CharacterManager && typeof CharacterManager.changeExpression === 'function') {
+            CharacterManager.changeExpression('sleepy');
+        }
     }
 }
 
 // 表示更新
 function updateDisplay() {
     // ポイント表示
-    pointsElement.textContent = formatNumber(gameState.points);
-    pointsPerSecondElement.textContent = formatNumber(gameState.autoClickerLevel * gameState.autoClickerSpeedLevel);
-    clickMultiplierElement.textContent = gameState.clickMultiplier;
+    if (pointsElement) pointsElement.textContent = formatNumber(gameState.points);
+    if (pointsPerSecondElement) pointsPerSecondElement.textContent = formatNumber(gameState.autoClickerLevel * gameState.autoClickerSpeedLevel);
+    if (clickMultiplierElement) clickMultiplierElement.textContent = gameState.clickMultiplier;
     
     // アップグレード情報更新
-    autoClickerLevelElement.textContent = gameState.autoClickerLevel;
-    autoClickerCostElement.textContent = formatNumber(calculateUpgradeCost(gameState.autoClickerLevel, 10));
+    if (autoClickerLevelElement) autoClickerLevelElement.textContent = gameState.autoClickerLevel;
+    if (autoClickerCostElement) autoClickerCostElement.textContent = formatNumber(calculateUpgradeCost(gameState.autoClickerLevel, 10));
     
-    clickMultiplierLevelElement.textContent = gameState.clickMultiplierLevel;
-    clickMultiplierCostElement.textContent = formatNumber(calculateUpgradeCost(gameState.clickMultiplierLevel, 50));
+    if (clickMultiplierLevelElement) clickMultiplierLevelElement.textContent = gameState.clickMultiplierLevel;
+    if (clickMultiplierCostElement) clickMultiplierCostElement.textContent = formatNumber(calculateUpgradeCost(gameState.clickMultiplierLevel, 50));
     
-    autoClickerSpeedLevelElement.textContent = gameState.autoClickerSpeedLevel;
-    autoClickerSpeedCostElement.textContent = formatNumber(calculateUpgradeCost(gameState.autoClickerSpeedLevel, 100));
+    if (autoClickerSpeedLevelElement) autoClickerSpeedLevelElement.textContent = gameState.autoClickerSpeedLevel;
+    if (autoClickerSpeedCostElement) autoClickerSpeedCostElement.textContent = formatNumber(calculateUpgradeCost(gameState.autoClickerSpeedLevel, 100));
     
-    criticalClickLevelElement.textContent = gameState.criticalClickLevel;
-    criticalClickCostElement.textContent = formatNumber(calculateUpgradeCost(gameState.criticalClickLevel, 200));
+    if (criticalClickLevelElement) criticalClickLevelElement.textContent = gameState.criticalClickLevel;
+    if (criticalClickCostElement) criticalClickCostElement.textContent = formatNumber(calculateUpgradeCost(gameState.criticalClickLevel, 200));
     
     // ボタンの有効/無効状態更新
     updateUpgradeButtons();
@@ -975,8 +1023,12 @@ function unlockAchievement(achievementId) {
         const achievement = achievements.find(a => a.id === achievementId);
         if (achievement) {
             showNotification(`🏆 実績解除: ${achievement.name}`, 'achievement');
-            CharacterManager.levelUpAnimation();
-            CharacterManager.createParticleBurst(50, 50, 10);
+            if (CharacterManager && typeof CharacterManager.levelUpAnimation === 'function') {
+                CharacterManager.levelUpAnimation();
+            }
+            if (CharacterManager && typeof CharacterManager.createParticleBurst === 'function') {
+                CharacterManager.createParticleBurst(50, 50, 10);
+            }
             renderAchievements();
         }
     }
@@ -984,6 +1036,8 @@ function unlockAchievement(achievementId) {
 
 // 実績表示
 function renderAchievements() {
+    if (!achievementsElement) return;
+    
     achievementsElement.innerHTML = '';
     
     achievements.forEach(achievement => {
@@ -1000,11 +1054,15 @@ function renderAchievements() {
 
 // 通知表示
 function showNotification(message, type = 'success') {
+    if (!notification) return;
+    
     notification.textContent = message;
     notification.className = `notification show ${type}`;
     
     setTimeout(() => {
-        notification.classList.remove('show');
+        if (notification) {
+            notification.classList.remove('show');
+        }
     }, 3000);
 }
 
@@ -1108,7 +1166,9 @@ function gameLoop() {
     gameState.totalPoints += autoClickerPoints;
     
     // 装飾の進捗をチェック
-    DecorationSystem.checkDecorationProgress();
+    if (typeof DecorationSystem !== 'undefined' && typeof DecorationSystem.checkDecorationProgress === 'function') {
+        DecorationSystem.checkDecorationProgress();
+    }
     
     // 表示を更新
     updateDisplay();
@@ -1122,28 +1182,34 @@ document.addEventListener('DOMContentLoaded', function() {
     setupMobileOptimizations();
     
     // キャラクターの初期設定
-    CharacterManager.changeExpression('happy');
+    if (CharacterManager && typeof CharacterManager.changeExpression === 'function') {
+        CharacterManager.changeExpression('happy');
+    }
     
     // 定期的に浮遊キャラクターを変更
     setInterval(() => {
-        CharacterManager.randomizeFloatingChars();
+        if (CharacterManager && typeof CharacterManager.randomizeFloatingChars === 'function') {
+            CharacterManager.randomizeFloatingChars();
+        }
     }, 10000);
     
     // 定期的に環境エフェクトを更新
     setInterval(() => {
-        CharacterManager.updateEnvironment();
+        if (CharacterManager && typeof CharacterManager.updateEnvironment === 'function') {
+            CharacterManager.updateEnvironment();
+        }
     }, 15000);
     
     // 定期的にランダムな表情変化
     setInterval(() => {
-        if (Math.random() < 0.3) { // 30%の確率
+        if (Math.random() < 0.3 && CharacterManager && typeof CharacterManager.randomExpression === 'function') { // 30%の確率
             CharacterManager.randomExpression();
         }
     }, 8000);
     
     // 定期的にランダムな特別アニメーション
     setInterval(() => {
-        if (Math.random() < 0.2) { // 20%の確率
+        if (Math.random() < 0.2 && CharacterManager && typeof CharacterManager.playSpecialAnimation === 'function') { // 20%の確率
             const animations = ['stretching', 'bouncing', 'wiggling', 'pulsing', 'rocking', 'swaying', 'hopping'];
             const randomAnimation = animations[Math.floor(Math.random() * animations.length)];
             CharacterManager.playSpecialAnimation(randomAnimation);
@@ -1152,14 +1218,16 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 定期的にキラキラエフェクト
     setInterval(() => {
-        if (Math.random() < 0.15) { // 15%の確率
+        if (Math.random() < 0.15 && CharacterManager && typeof CharacterManager.createSparkleEffect === 'function') { // 15%の確率
             CharacterManager.createSparkleEffect(true);
         }
     }, 6000);
     
     // 装飾システムの初期化
-    DecorationSystem.init();
-    DecorationSystem.checkDecorationProgress();
+    if (typeof DecorationSystem !== 'undefined') {
+        DecorationSystem.init();
+        DecorationSystem.checkDecorationProgress();
+    }
 
     // ゲームループ開始
     setInterval(gameLoop, 1000);
