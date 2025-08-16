@@ -3,8 +3,10 @@ let gameState = {
     points: 0,
     autoClickerLevel: 0,
     clickMultiplierLevel: 1,
+    clickMultiplier: 1, // 追加
     autoClickerSpeedLevel: 1,
     criticalClickLevel: 0,
+    criticalClickChance: 0, // 追加
     totalClicks: 0,
     totalPoints: 0,
     achievements: []
@@ -292,7 +294,7 @@ function buyClickMultiplier() {
     if (gameState.points >= cost) {
         gameState.points -= cost;
         gameState.clickMultiplierLevel++;
-        gameState.clickMultiplier = gameState.clickMultiplierLevel;
+        gameState.clickMultiplier = gameState.clickMultiplierLevel; // 確実に更新
         showNotification(`⚡ クリック倍率 Lv.${gameState.clickMultiplierLevel} 購入!`, 'upgrade');
         CharacterManager.changeExpression('cool');
         updateDisplay();
@@ -339,7 +341,7 @@ function updateDisplay() {
     // ポイント表示
     pointsElement.textContent = formatNumber(gameState.points);
     pointsPerSecondElement.textContent = formatNumber(gameState.autoClickerLevel * gameState.autoClickerSpeedLevel);
-    clickMultiplierElement.textContent = gameState.clickMultiplierLevel;
+    clickMultiplierElement.textContent = gameState.clickMultiplier;
     
     // アップグレード情報更新
     autoClickerLevelElement.textContent = gameState.autoClickerLevel;
@@ -466,10 +468,42 @@ function loadGame() {
     const saved = localStorage.getItem('idleClickerSave');
     if (saved) {
         try {
-            gameState = JSON.parse(saved);
+            const loadedState = JSON.parse(saved);
+            
+            // 新しいプロパティのデフォルト値を設定
+            if (typeof loadedState.clickMultiplier === 'undefined') {
+                loadedState.clickMultiplier = loadedState.clickMultiplierLevel || 1;
+            }
+            if (typeof loadedState.criticalClickChance === 'undefined') {
+                loadedState.criticalClickChance = (loadedState.criticalClickLevel || 0) * 0.01;
+            }
+            if (typeof loadedState.totalClicks === 'undefined') {
+                loadedState.totalClicks = 0;
+            }
+            if (typeof loadedState.totalPoints === 'undefined') {
+                loadedState.totalPoints = loadedState.points || 0;
+            }
+            if (typeof loadedState.achievements === 'undefined') {
+                loadedState.achievements = [];
+            }
+            
+            gameState = loadedState;
             showNotification('ゲームを読み込みました！');
         } catch (e) {
             console.error('セーブデータの読み込みに失敗しました:', e);
+            // エラーが発生した場合はデフォルト状態で開始
+            gameState = {
+                points: 0,
+                autoClickerLevel: 0,
+                clickMultiplierLevel: 1,
+                clickMultiplier: 1,
+                autoClickerSpeedLevel: 1,
+                criticalClickLevel: 0,
+                criticalClickChance: 0,
+                totalClicks: 0,
+                totalPoints: 0,
+                achievements: []
+            };
         }
     }
 }
@@ -481,8 +515,10 @@ function resetGame() {
             points: 0,
             autoClickerLevel: 0,
             clickMultiplierLevel: 1,
+            clickMultiplier: 1, // 追加
             autoClickerSpeedLevel: 1,
             criticalClickLevel: 0,
+            criticalClickChance: 0, // 追加
             totalClicks: 0,
             totalPoints: 0,
             achievements: []
