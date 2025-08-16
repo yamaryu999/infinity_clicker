@@ -92,6 +92,8 @@ body::before {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    perspective: 1000px;
+    transform-style: preserve-3d;
 }
 
 /* モダンなヘッダー */
@@ -280,6 +282,7 @@ body::before {
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
     user-select: none;
+    transform-style: preserve-3d;
 }
 
 .click-button::before {
@@ -295,8 +298,10 @@ body::before {
 }
 
 .click-button:hover {
-    transform: scale(1.1);
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 30px rgba(255, 0, 110, 0.5);
+    transform: translateZ(20px) scale(1.05);
+    box-shadow: 
+        0 10px 30px rgba(255, 0, 110, 0.4),
+        0 0 50px rgba(255, 0, 110, 0.2);
 }
 
 .click-button:hover::before {
@@ -304,7 +309,7 @@ body::before {
 }
 
 .click-button:active {
-    transform: scale(0.95);
+    transform: translateZ(10px) scale(0.95);
 }
 
 .click-text {
@@ -2150,6 +2155,7 @@ body::before {
 .floating-char:hover {
     transform: scale(1.2);
     opacity: 1;
+    filter: drop-shadow(0 0 15px rgba(255, 107, 157, 0.6));
 }
 
 .floating-char:nth-child(1) {
@@ -3166,4 +3172,458 @@ body::before {
         radial-gradient(circle at 20% 80%, rgba(255, 140, 0, 0.2) 0%, transparent 50%);
     pointer-events: none;
     z-index: -1;
+}
+
+/* ビジュアル強化 - パーティクルシステム */
+.particle-system {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.floating-particle {
+    position: absolute;
+    pointer-events: none;
+    animation: floatParticle 8s linear infinite;
+    opacity: 0.6;
+    filter: blur(0.5px);
+}
+
+@keyframes floatParticle {
+    0% {
+        transform: translateY(100vh) translateX(0) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.6;
+    }
+    90% {
+        opacity: 0.6;
+    }
+    100% {
+        transform: translateY(-100px) translateX(100px) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* 物理演算エフェクト */
+.physics-particle {
+    position: absolute;
+    pointer-events: none;
+    animation: physicsBounce 2s ease-out forwards;
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+}
+
+@keyframes physicsBounce {
+    0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+    25% {
+        transform: translateY(-20px) scale(1.1);
+        opacity: 0.9;
+    }
+    50% {
+        transform: translateY(-10px) scale(0.9);
+        opacity: 0.8;
+    }
+    75% {
+        transform: translateY(-5px) scale(1.05);
+        opacity: 0.6;
+    }
+    100% {
+        transform: translateY(0) scale(1);
+        opacity: 0;
+    }
+}
+
+/* 3D効果とライティング */
+.game-container {
+    perspective: 1000px;
+    transform-style: preserve-3d;
+}
+
+.click-button {
+    transform-style: preserve-3d;
+    transition: all 0.3s ease;
+}
+
+.click-button:hover {
+    transform: translateZ(20px) scale(1.05);
+    box-shadow: 
+        0 10px 30px rgba(255, 0, 110, 0.4),
+        0 0 50px rgba(255, 0, 110, 0.2);
+}
+
+.click-button:active {
+    transform: translateZ(10px) scale(0.95);
+}
+
+/* 動的な背景エフェクト */
+.dynamic-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+    background: 
+        radial-gradient(circle at 20% 80%, rgba(255, 182, 193, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 192, 203, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(255, 218, 185, 0.05) 0%, transparent 50%);
+    animation: backgroundShift 20s ease-in-out infinite;
+}
+
+@keyframes backgroundShift {
+    0%, 100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 0.5;
+    }
+    25% {
+        transform: scale(1.1) rotate(1deg);
+        opacity: 0.7;
+    }
+    50% {
+        transform: scale(1.05) rotate(-1deg);
+        opacity: 0.6;
+    }
+    75% {
+        transform: scale(1.15) rotate(0.5deg);
+        opacity: 0.8;
+    }
+}
+
+/* 光のエフェクト */
+.light-effect {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    animation: lightPulse 3s ease-in-out infinite;
+}
+
+@keyframes lightPulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.3;
+    }
+    50% {
+        transform: scale(1.5);
+        opacity: 0.6;
+    }
+}
+
+/* 虹色エフェクト */
+.rainbow-effect {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    background: conic-gradient(
+        from 0deg,
+        #ff0000, #ff8000, #ffff00, #80ff00, 
+        #00ff00, #00ff80, #00ffff, #0080ff,
+        #0000ff, #8000ff, #ff00ff, #ff0080, #ff0000
+    );
+    border-radius: 50%;
+    pointer-events: none;
+    animation: rainbowRotate 4s linear infinite;
+    filter: blur(10px);
+    opacity: 0.3;
+}
+
+@keyframes rainbowRotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* 星のエフェクト */
+.star-effect {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: white;
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    animation: starTwinkle 2s ease-in-out infinite;
+}
+
+@keyframes starTwinkle {
+    0%, 100% {
+        opacity: 0.3;
+        transform: scale(1) rotate(0deg);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.5) rotate(180deg);
+    }
+}
+
+/* 魔法のエフェクト */
+.magic-effect {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    background: 
+        radial-gradient(circle at 30% 30%, rgba(138, 43, 226, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 70% 70%, rgba(255, 20, 147, 0.3) 0%, transparent 50%);
+    border-radius: 50%;
+    pointer-events: none;
+    animation: magicFloat 5s ease-in-out infinite;
+    filter: blur(5px);
+}
+
+@keyframes magicFloat {
+    0%, 100% {
+        transform: translateY(0px) rotate(0deg) scale(1);
+        opacity: 0.3;
+    }
+    25% {
+        transform: translateY(-20px) rotate(90deg) scale(1.1);
+        opacity: 0.5;
+    }
+    50% {
+        transform: translateY(-10px) rotate(180deg) scale(0.9);
+        opacity: 0.4;
+    }
+    75% {
+        transform: translateY(-30px) rotate(270deg) scale(1.2);
+        opacity: 0.6;
+    }
+}
+
+/* 炎のエフェクト */
+.fire-effect {
+    position: absolute;
+    width: 100px;
+    height: 120px;
+    background: 
+        radial-gradient(ellipse at bottom, #ff4500 0%, #ff8c00 30%, transparent 70%),
+        radial-gradient(ellipse at center, #ff6347 0%, #ff4500 50%, transparent 100%);
+    border-radius: 50% 50% 20% 20%;
+    pointer-events: none;
+    animation: fireFlicker 0.5s ease-in-out infinite;
+    filter: blur(2px);
+}
+
+@keyframes fireFlicker {
+    0%, 100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 0.8;
+    }
+    25% {
+        transform: scale(1.1) rotate(2deg);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(0.9) rotate(-1deg);
+        opacity: 0.7;
+    }
+    75% {
+        transform: scale(1.05) rotate(1deg);
+        opacity: 0.9;
+    }
+}
+
+/* 水のエフェクト */
+.water-effect {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    background: 
+        radial-gradient(circle at 30% 30%, rgba(0, 191, 255, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 70% 70%, rgba(135, 206, 235, 0.3) 0%, transparent 50%);
+    border-radius: 50%;
+    pointer-events: none;
+    animation: waterRipple 3s ease-in-out infinite;
+    filter: blur(8px);
+}
+
+@keyframes waterRipple {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.3;
+    }
+    50% {
+        transform: scale(1.3);
+        opacity: 0.6;
+    }
+}
+
+/* 強化されたクリックエフェクト */
+.enhanced-click-effect {
+    position: absolute;
+    pointer-events: none;
+    z-index: 1001;
+    animation: enhancedClickPulse 0.6s ease-out forwards;
+}
+
+@keyframes enhancedClickPulse {
+    0% {
+        transform: scale(0) rotate(0deg);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.5) rotate(180deg);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(2) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* レベルアップエフェクト強化 */
+.level-up-effect {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 1002;
+    animation: levelUpShine 2s ease-out forwards;
+}
+
+@keyframes levelUpShine {
+    0% {
+        transform: translate(-50%, -50%) scale(0) rotate(0deg);
+        opacity: 0;
+    }
+    25% {
+        transform: translate(-50%, -50%) scale(1.2) rotate(90deg);
+        opacity: 1;
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.5) rotate(180deg);
+        opacity: 0.8;
+    }
+    75% {
+        transform: translate(-50%, -50%) scale(1.8) rotate(270deg);
+        opacity: 0.6;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(2) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* 装飾アイテムの強化エフェクト */
+.decoration-item {
+    position: relative;
+    overflow: hidden;
+}
+
+.decoration-item::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transform: rotate(45deg);
+    transition: all 0.5s ease;
+    opacity: 0;
+}
+
+.decoration-item:hover::after {
+    opacity: 1;
+    transform: rotate(45deg) translateX(100%);
+}
+
+/* アップグレードカードの強化 */
+.upgrade-card {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.upgrade-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.upgrade-card:hover::before {
+    left: 100%;
+}
+
+.upgrade-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 15px 35px rgba(255, 0, 110, 0.3);
+}
+
+/* 統計表示の強化 */
+.stat-item {
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-value {
+    position: relative;
+    display: inline-block;
+    animation: numberCount 0.5s ease-out;
+}
+
+@keyframes numberCount {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* モバイル対応の強化 */
+@media (max-width: 768px) {
+    .floating-particle {
+        font-size: 0.8rem;
+    }
+    
+    .physics-particle {
+        font-size: 0.9rem;
+    }
+    
+    .light-effect {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .rainbow-effect {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .magic-effect {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .fire-effect {
+        width: 60px;
+        height: 80px;
+    }
+    
+    .water-effect {
+        width: 120px;
+        height: 120px;
+    }
 }

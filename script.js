@@ -706,6 +706,244 @@ const DecorationSystem = {
     }
 };
 
+// ビジュアル強化システム
+const VisualEnhancementSystem = {
+    // パーティクルシステム
+    particleSystem: null,
+    
+    // 初期化
+    init: function() {
+        this.particleSystem = document.getElementById('particleSystem');
+        this.startFloatingParticles();
+        this.createLightEffects();
+        this.createStarEffects();
+    },
+    
+    // 浮遊パーティクルを開始
+    startFloatingParticles: function() {
+        if (!this.particleSystem) return;
+        
+        const particles = ['✨', '💫', '⭐', '🌟', '🎀', '🌸', '🍀', '🌈'];
+        
+        setInterval(() => {
+            if (Math.random() < 0.3) { // 30%の確率でパーティクル生成
+                this.createFloatingParticle(particles[Math.floor(Math.random() * particles.length)]);
+            }
+        }, 2000);
+    },
+    
+    // 浮遊パーティクルを作成
+    createFloatingParticle: function(emoji) {
+        if (!this.particleSystem) return;
+        
+        const particle = document.createElement('div');
+        particle.className = 'floating-particle';
+        particle.textContent = emoji;
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.fontSize = (Math.random() * 0.5 + 0.8) + 'rem';
+        
+        this.particleSystem.appendChild(particle);
+        
+        setTimeout(() => {
+            if (particle.parentNode) {
+                particle.remove();
+            }
+        }, 8000);
+    },
+    
+    // 光のエフェクトを作成
+    createLightEffects: function() {
+        const lightPositions = [
+            { x: '10%', y: '20%' },
+            { x: '80%', y: '30%' },
+            { x: '50%', y: '70%' },
+            { x: '20%', y: '80%' },
+            { x: '90%', y: '60%' }
+        ];
+        
+        lightPositions.forEach((pos, index) => {
+            setTimeout(() => {
+                this.createLightEffect(pos.x, pos.y);
+            }, index * 1000);
+        });
+    },
+    
+    // 光のエフェクトを作成
+    createLightEffect: function(x, y) {
+        const light = document.createElement('div');
+        light.className = 'light-effect';
+        light.style.left = x;
+        light.style.top = y;
+        
+        document.body.appendChild(light);
+        
+        setTimeout(() => {
+            if (light.parentNode) {
+                light.remove();
+            }
+        }, 3000);
+    },
+    
+    // 星のエフェクトを作成
+    createStarEffects: function() {
+        setInterval(() => {
+            if (Math.random() < 0.2) { // 20%の確率で星を生成
+                this.createStarEffect();
+            }
+        }, 3000);
+    },
+    
+    // 星のエフェクトを作成
+    createStarEffect: function() {
+        const star = document.createElement('div');
+        star.className = 'star-effect';
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        
+        document.body.appendChild(star);
+        
+        setTimeout(() => {
+            if (star.parentNode) {
+                star.remove();
+            }
+        }, 2000);
+    },
+    
+    // 強化されたクリックエフェクト
+    createEnhancedClickEffect: function(x, y, type = 'default') {
+        const effect = document.createElement('div');
+        effect.className = 'enhanced-click-effect';
+        effect.style.left = x + 'px';
+        effect.style.top = y + 'px';
+        
+        // エフェクトタイプに応じて内容を変更
+        switch(type) {
+            case 'rainbow':
+                effect.innerHTML = '<div class="rainbow-effect"></div>';
+                break;
+            case 'magic':
+                effect.innerHTML = '<div class="magic-effect"></div>';
+                break;
+            case 'fire':
+                effect.innerHTML = '<div class="fire-effect"></div>';
+                break;
+            case 'water':
+                effect.innerHTML = '<div class="water-effect"></div>';
+                break;
+            default:
+                effect.innerHTML = '<div class="light-effect"></div>';
+        }
+        
+        document.body.appendChild(effect);
+        
+        setTimeout(() => {
+            if (effect.parentNode) {
+                effect.remove();
+            }
+        }, 600);
+    },
+    
+    // レベルアップエフェクト強化
+    createLevelUpEffect: function() {
+        const effect = document.createElement('div');
+        effect.className = 'level-up-effect';
+        effect.innerHTML = `
+            <div style="font-size: 3rem; color: #FFD700; text-shadow: 0 0 20px #FFD700;">🎉</div>
+            <div style="font-size: 1.5rem; color: white; text-shadow: 0 0 10px white; margin-top: 10px;">LEVEL UP!</div>
+        `;
+        
+        document.body.appendChild(effect);
+        
+        setTimeout(() => {
+            if (effect.parentNode) {
+                effect.remove();
+            }
+        }, 2000);
+    },
+    
+    // 物理演算パーティクル
+    createPhysicsParticle: function(x, y, emoji) {
+        const particle = document.createElement('div');
+        particle.className = 'physics-particle';
+        particle.textContent = emoji;
+        particle.style.left = x + 'px';
+        particle.style.top = y + 'px';
+        particle.style.fontSize = (Math.random() * 0.5 + 1) + 'rem';
+        
+        document.body.appendChild(particle);
+        
+        setTimeout(() => {
+            if (particle.parentNode) {
+                particle.remove();
+            }
+        }, 2000);
+    },
+    
+    // 魔法のエフェクト
+    createMagicEffect: function(x, y) {
+        const magic = document.createElement('div');
+        magic.className = 'magic-effect';
+        magic.style.left = (x - 75) + 'px';
+        magic.style.top = (y - 75) + 'px';
+        
+        document.body.appendChild(magic);
+        
+        setTimeout(() => {
+            if (magic.parentNode) {
+                magic.remove();
+            }
+        }, 5000);
+    },
+    
+    // 炎のエフェクト
+    createFireEffect: function(x, y) {
+        const fire = document.createElement('div');
+        fire.className = 'fire-effect';
+        fire.style.left = (x - 50) + 'px';
+        fire.style.top = (y - 60) + 'px';
+        
+        document.body.appendChild(fire);
+        
+        setTimeout(() => {
+            if (fire.parentNode) {
+                fire.remove();
+            }
+        }, 3000);
+    },
+    
+    // 水のエフェクト
+    createWaterEffect: function(x, y) {
+        const water = document.createElement('div');
+        water.className = 'water-effect';
+        water.style.left = (x - 100) + 'px';
+        water.style.top = (y - 100) + 'px';
+        
+        document.body.appendChild(water);
+        
+        setTimeout(() => {
+            if (water.parentNode) {
+                water.remove();
+            }
+        }, 3000);
+    },
+    
+    // 虹色エフェクト
+    createRainbowEffect: function(x, y) {
+        const rainbow = document.createElement('div');
+        rainbow.className = 'rainbow-effect';
+        rainbow.style.left = (x - 100) + 'px';
+        rainbow.style.top = (y - 100) + 'px';
+        
+        document.body.appendChild(rainbow);
+        
+        setTimeout(() => {
+            if (rainbow.parentNode) {
+                rainbow.remove();
+            }
+        }, 4000);
+    }
+};
+
 // イベントリスナー設定
 function setupEventListeners() {
     // クリックイベント
@@ -791,11 +1029,6 @@ function createClickEffect(x, y) {
         return;
     }
     
-    const effect = document.createElement('div');
-    effect.className = 'click-effect';
-    effect.style.left = x + 'px';
-    effect.style.top = y + 'px';
-    
     // 装飾システムのエフェクトに応じてパーティクルを変更
     const effectType = gameState.clickEffect || 'default';
     let particles = ['⭐', '✨', '💫'];
@@ -826,7 +1059,39 @@ function createClickEffect(x, y) {
             particles = ['⭐', '✨', '💫'];
     }
     
-    // 複数のパーティクルを生成
+    // 強化されたクリックエフェクト
+    if (typeof VisualEnhancementSystem !== 'undefined') {
+        VisualEnhancementSystem.createEnhancedClickEffect(x, y, effectType);
+        
+        // 物理演算パーティクル
+        for (let i = 0; i < 3; i++) {
+            setTimeout(() => {
+                const particle = particles[Math.floor(Math.random() * particles.length)];
+                const offsetX = (Math.random() - 0.5) * 150;
+                const offsetY = (Math.random() - 0.5) * 150;
+                VisualEnhancementSystem.createPhysicsParticle(x + offsetX, y + offsetY, particle);
+            }, i * 100);
+        }
+        
+        // エフェクトタイプに応じた特別なエフェクト
+        switch(effectType) {
+            case 'rainbow':
+                VisualEnhancementSystem.createRainbowEffect(x, y);
+                break;
+            case 'magic':
+                VisualEnhancementSystem.createMagicEffect(x, y);
+                break;
+            case 'fire':
+            case 'dragon':
+                VisualEnhancementSystem.createFireEffect(x, y);
+                break;
+            case 'water':
+                VisualEnhancementSystem.createWaterEffect(x, y);
+                break;
+        }
+    }
+    
+    // 従来のパーティクルエフェクト（後方互換性）
     for (let i = 0; i < 5; i++) {
         setTimeout(() => {
             const particle = document.createElement('div');
@@ -852,14 +1117,6 @@ function createClickEffect(x, y) {
             }, 1000);
         }, i * 100);
     }
-    
-    document.body.appendChild(effect);
-    
-    setTimeout(() => {
-        if (effect.parentNode) {
-            effect.remove();
-        }
-    }, 1000);
 }
 
 // アップグレード購入関数を更新
@@ -1022,6 +1279,12 @@ function unlockAchievement(achievementId) {
         const achievement = achievements.find(a => a.id === achievementId);
         if (achievement) {
             showNotification(`🏆 実績解除: ${achievement.name}`, 'achievement');
+            
+            // 強化されたレベルアップエフェクト
+            if (typeof VisualEnhancementSystem !== 'undefined') {
+                VisualEnhancementSystem.createLevelUpEffect();
+            }
+            
             if (CharacterManager && typeof CharacterManager.levelUpAnimation === 'function') {
                 CharacterManager.levelUpAnimation();
             }
@@ -1230,6 +1493,11 @@ document.addEventListener('DOMContentLoaded', function() {
     if (typeof DecorationSystem !== 'undefined') {
         DecorationSystem.init();
         DecorationSystem.checkDecorationProgress();
+    }
+
+    // ビジュアル強化システムの初期化
+    if (typeof VisualEnhancementSystem !== 'undefined') {
+        VisualEnhancementSystem.init();
     }
 
     // ゲームループ開始
