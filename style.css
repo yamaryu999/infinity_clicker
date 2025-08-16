@@ -1052,7 +1052,8 @@ body::before {
     justify-content: center;
     align-items: center;
     margin-bottom: 20px;
-    min-height: 120px;
+    min-height: 150px;
+    overflow: hidden;
 }
 
 /* メインキャラクター */
@@ -1063,6 +1064,7 @@ body::before {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     animation: characterFloat 3s ease-in-out infinite;
     z-index: 10;
+    transform-origin: center bottom;
 }
 
 .character:hover {
@@ -1073,6 +1075,7 @@ body::before {
 .character-body {
     position: relative;
     z-index: 2;
+    animation: bodyWiggle 2s ease-in-out infinite;
 }
 
 .character-eyes {
@@ -1088,6 +1091,7 @@ body::before {
 .eye {
     font-size: 1.5rem;
     animation: eyeBlink 4s infinite;
+    transition: all 0.3s ease;
 }
 
 .left-eye {
@@ -1106,6 +1110,55 @@ body::before {
     font-size: 1.2rem;
     z-index: 3;
     animation: mouthMove 2s ease-in-out infinite;
+    transition: all 0.3s ease;
+}
+
+/* 動物特有の要素 */
+.character-ears {
+    position: absolute;
+    top: -10%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 20px;
+    z-index: 1;
+}
+
+.ear {
+    font-size: 1.2rem;
+    animation: earWiggle 3s ease-in-out infinite;
+    transition: all 0.3s ease;
+}
+
+.left-ear {
+    animation-delay: 0s;
+}
+
+.right-ear {
+    animation-delay: 1.5s;
+}
+
+.character-tail {
+    position: absolute;
+    bottom: 10%;
+    right: -20%;
+    font-size: 1.5rem;
+    z-index: 1;
+    animation: tailWag 2s ease-in-out infinite;
+    transform-origin: center left;
+}
+
+.character-shadow {
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 20px;
+    background: radial-gradient(ellipse, rgba(0,0,0,0.3) 0%, transparent 70%);
+    border-radius: 50%;
+    z-index: 1;
+    animation: shadowPulse 2s ease-in-out infinite;
 }
 
 .character-particles {
@@ -1134,36 +1187,119 @@ body::before {
     font-size: 1.5rem;
     animation: float 6s ease-in-out infinite;
     opacity: 0.7;
+    transition: all 0.3s ease;
+}
+
+.floating-char:hover {
+    transform: scale(1.2);
+    opacity: 1;
 }
 
 .floating-char:nth-child(1) {
     top: 10%;
     left: 10%;
     animation-delay: 0s;
+    animation-name: butterflyFloat;
 }
 
 .floating-char:nth-child(2) {
     top: 20%;
     right: 15%;
     animation-delay: 1s;
+    animation-name: beeFloat;
 }
 
 .floating-char:nth-child(3) {
     bottom: 30%;
     left: 20%;
     animation-delay: 2s;
+    animation-name: birdFloat;
 }
 
 .floating-char:nth-child(4) {
     bottom: 20%;
     right: 10%;
     animation-delay: 3s;
+    animation-name: squirrelFloat;
 }
 
 .floating-char:nth-child(5) {
     top: 50%;
     left: 50%;
     animation-delay: 4s;
+    animation-name: foxFloat;
+}
+
+.floating-char:nth-child(6) {
+    top: 30%;
+    left: 30%;
+    animation-delay: 5s;
+    animation-name: rabbitFloat;
+}
+
+.floating-char:nth-child(7) {
+    bottom: 40%;
+    left: 50%;
+    animation-delay: 6s;
+    animation-name: raccoonFloat;
+}
+
+.floating-char:nth-child(8) {
+    top: 60%;
+    right: 30%;
+    animation-delay: 7s;
+    animation-name: kangarooFloat;
+}
+
+/* 環境エフェクト */
+.environment-effects {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.grass {
+    position: absolute;
+    bottom: 0;
+    font-size: 1.2rem;
+    animation: grassSway 4s ease-in-out infinite;
+}
+
+.grass-1 {
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.grass-2 {
+    left: 50%;
+    animation-delay: 1s;
+}
+
+.grass-3 {
+    right: 15%;
+    animation-delay: 2s;
+}
+
+.cloud {
+    position: absolute;
+    top: 10%;
+    font-size: 2rem;
+    opacity: 0.6;
+    animation: cloudFloat 20s linear infinite;
+}
+
+.cloud-1 {
+    left: -10%;
+    animation-delay: 0s;
+}
+
+.cloud-2 {
+    right: -10%;
+    animation-delay: 10s;
 }
 
 /* アップグレードアイコン */
@@ -1183,15 +1319,23 @@ body::before {
     animation: iconPulse 2s ease-in-out infinite;
 }
 
-/* アニメーション */
+/* 豊富なアニメーション */
 @keyframes characterFloat {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    25% { transform: translateY(-8px) rotate(1deg); }
+    50% { transform: translateY(-12px) rotate(0deg); }
+    75% { transform: translateY(-8px) rotate(-1deg); }
+}
+
+@keyframes bodyWiggle {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(2deg); }
+    75% { transform: rotate(-2deg); }
 }
 
 @keyframes eyeBlink {
-    0%, 90%, 100% { opacity: 1; }
-    95% { opacity: 0; }
+    0%, 90%, 100% { opacity: 1; transform: scaleY(1); }
+    95% { opacity: 0; transform: scaleY(0.1); }
 }
 
 @keyframes mouthMove {
@@ -1199,23 +1343,168 @@ body::before {
     50% { transform: translateX(-50%) scale(1.1); }
 }
 
-@keyframes float {
+@keyframes earWiggle {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(5deg); }
+    75% { transform: rotate(-5deg); }
+}
+
+@keyframes tailWag {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(15deg); }
+    75% { transform: rotate(-15deg); }
+}
+
+@keyframes shadowPulse {
+    0%, 100% { 
+        transform: translateX(-50%) scale(1); 
+        opacity: 0.3;
+    }
+    50% { 
+        transform: translateX(-50%) scale(1.1); 
+        opacity: 0.5;
+    }
+}
+
+/* 動物特有の浮遊アニメーション */
+@keyframes butterflyFloat {
+    0%, 100% { 
+        transform: translateY(0px) rotate(0deg) scale(1); 
+        opacity: 0.7;
+    }
+    25% { 
+        transform: translateY(-20px) rotate(10deg) scale(1.1); 
+        opacity: 1;
+    }
+    50% { 
+        transform: translateY(-10px) rotate(-5deg) scale(0.9); 
+        opacity: 0.8;
+    }
+    75% { 
+        transform: translateY(-15px) rotate(5deg) scale(1.05); 
+        opacity: 0.9;
+    }
+}
+
+@keyframes beeFloat {
+    0%, 100% { 
+        transform: translateY(0px) rotate(0deg); 
+        opacity: 0.7;
+    }
+    50% { 
+        transform: translateY(-15px) rotate(180deg); 
+        opacity: 1;
+    }
+}
+
+@keyframes birdFloat {
+    0%, 100% { 
+        transform: translateY(0px) scale(1); 
+        opacity: 0.7;
+    }
+    25% { 
+        transform: translateY(-25px) scale(1.2); 
+        opacity: 1;
+    }
+    50% { 
+        transform: translateY(-10px) scale(0.8); 
+        opacity: 0.8;
+    }
+    75% { 
+        transform: translateY(-20px) scale(1.1); 
+        opacity: 0.9;
+    }
+}
+
+@keyframes squirrelFloat {
     0%, 100% { 
         transform: translateY(0px) rotate(0deg); 
         opacity: 0.7;
     }
     25% { 
-        transform: translateY(-20px) rotate(5deg); 
+        transform: translateY(-18px) rotate(5deg); 
         opacity: 1;
     }
     50% { 
-        transform: translateY(-10px) rotate(-5deg); 
+        transform: translateY(-8px) rotate(-3deg); 
         opacity: 0.8;
     }
     75% { 
-        transform: translateY(-15px) rotate(3deg); 
+        transform: translateY(-15px) rotate(2deg); 
         opacity: 0.9;
     }
+}
+
+@keyframes foxFloat {
+    0%, 100% { 
+        transform: translateY(0px) scale(1); 
+        opacity: 0.7;
+    }
+    50% { 
+        transform: translateY(-20px) scale(1.1); 
+        opacity: 1;
+    }
+}
+
+@keyframes rabbitFloat {
+    0%, 100% { 
+        transform: translateY(0px) rotate(0deg); 
+        opacity: 0.7;
+    }
+    25% { 
+        transform: translateY(-22px) rotate(8deg); 
+        opacity: 1;
+    }
+    50% { 
+        transform: translateY(-12px) rotate(-4deg); 
+        opacity: 0.8;
+    }
+    75% { 
+        transform: translateY(-18px) rotate(3deg); 
+        opacity: 0.9;
+    }
+}
+
+@keyframes raccoonFloat {
+    0%, 100% { 
+        transform: translateY(0px) scale(1); 
+        opacity: 0.7;
+    }
+    50% { 
+        transform: translateY(-16px) scale(1.05); 
+        opacity: 1;
+    }
+}
+
+@keyframes kangarooFloat {
+    0%, 100% { 
+        transform: translateY(0px) rotate(0deg); 
+        opacity: 0.7;
+    }
+    25% { 
+        transform: translateY(-30px) rotate(5deg); 
+        opacity: 1;
+    }
+    50% { 
+        transform: translateY(-15px) rotate(-2deg); 
+        opacity: 0.8;
+    }
+    75% { 
+        transform: translateY(-25px) rotate(3deg); 
+        opacity: 0.9;
+    }
+}
+
+/* 環境アニメーション */
+@keyframes grassSway {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(3deg); }
+    75% { transform: rotate(-3deg); }
+}
+
+@keyframes cloudFloat {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(calc(100vw + 100px)); }
 }
 
 @keyframes iconPulse {
@@ -1235,9 +1524,9 @@ body::before {
 }
 
 @keyframes characterClick {
-    0% { transform: scale(1); }
+    0% { transform: scale(1) rotate(0deg); }
     50% { transform: scale(1.2) rotate(10deg); }
-    100% { transform: scale(1); }
+    100% { transform: scale(1) rotate(0deg); }
 }
 
 /* レベルアップ時のキャラクターエフェクト */
@@ -1294,6 +1583,14 @@ body::before {
         font-size: 1rem;
     }
     
+    .ear {
+        font-size: 1rem;
+    }
+    
+    .character-tail {
+        font-size: 1.2rem;
+    }
+    
     .floating-char {
         font-size: 1.2rem;
     }
@@ -1302,6 +1599,14 @@ body::before {
         font-size: 1.5rem;
         width: 40px;
         height: 40px;
+    }
+    
+    .grass {
+        font-size: 1rem;
+    }
+    
+    .cloud {
+        font-size: 1.5rem;
     }
 }
 
@@ -1318,6 +1623,14 @@ body::before {
         font-size: 0.8rem;
     }
     
+    .ear {
+        font-size: 0.8rem;
+    }
+    
+    .character-tail {
+        font-size: 1rem;
+    }
+    
     .floating-char {
         font-size: 1rem;
     }
@@ -1326,5 +1639,13 @@ body::before {
         font-size: 1.2rem;
         width: 35px;
         height: 35px;
+    }
+    
+    .grass {
+        font-size: 0.8rem;
+    }
+    
+    .cloud {
+        font-size: 1.2rem;
     }
 } 

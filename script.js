@@ -64,54 +64,118 @@ function calculateUpgradeCost(level, baseCost) {
 
 // キャラクター管理
 const CharacterManager = {
+    // 動物の種類
+    animalTypes: ['🐱', '🐶', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯', '🦁', '🐸', '🐷', '🐮'],
+    currentAnimal: 0,
+    
     // キャラクターの表情を変更
     changeExpression: function(expression) {
         const mouth = mainCharacter.querySelector('.character-mouth');
         const eyes = mainCharacter.querySelectorAll('.eye');
+        const ears = mainCharacter.querySelectorAll('.ear');
         
         switch(expression) {
             case 'happy':
                 mouth.textContent = '😊';
                 eyes.forEach(eye => eye.textContent = '👁️');
+                ears.forEach(ear => ear.style.transform = 'rotate(0deg)');
                 break;
             case 'excited':
                 mouth.textContent = '😄';
                 eyes.forEach(eye => eye.textContent = '🤩');
+                ears.forEach(ear => ear.style.transform = 'rotate(5deg)');
                 break;
             case 'surprised':
                 mouth.textContent = '😲';
                 eyes.forEach(eye => eye.textContent = '😳');
+                ears.forEach(ear => ear.style.transform = 'rotate(10deg)');
                 break;
             case 'cool':
                 mouth.textContent = '😎';
                 eyes.forEach(eye => eye.textContent = '😏');
+                ears.forEach(ear => ear.style.transform = 'rotate(-3deg)');
                 break;
             case 'sleepy':
                 mouth.textContent = '😴';
                 eyes.forEach(eye => eye.textContent = '😪');
+                ears.forEach(ear => ear.style.transform = 'rotate(-5deg)');
+                break;
+            case 'hungry':
+                mouth.textContent = '😋';
+                eyes.forEach(eye => eye.textContent = '🥺');
+                ears.forEach(ear => ear.style.transform = 'rotate(3deg)');
+                break;
+            case 'angry':
+                mouth.textContent = '😠';
+                eyes.forEach(eye => eye.textContent = '😤');
+                ears.forEach(ear => ear.style.transform = 'rotate(-8deg)');
+                break;
+            case 'love':
+                mouth.textContent = '🥰';
+                eyes.forEach(eye => eye.textContent = '😍');
+                ears.forEach(ear => ear.style.transform = 'rotate(2deg)');
                 break;
             default:
                 mouth.textContent = '😊';
                 eyes.forEach(eye => eye.textContent = '👁️');
+                ears.forEach(ear => ear.style.transform = 'rotate(0deg)');
         }
     },
 
     // キャラクターをクリックアニメーション
     clickAnimation: function() {
         mainCharacter.classList.add('clicked');
+        this.changeExpression('excited');
+        
+        // 尻尾を振る
+        const tail = mainCharacter.querySelector('.character-tail');
+        tail.style.animation = 'tailWag 0.5s ease-in-out';
+        
         setTimeout(() => {
             mainCharacter.classList.remove('clicked');
+            this.changeExpression('happy');
+            tail.style.animation = 'tailWag 2s ease-in-out infinite';
         }, 300);
     },
 
     // レベルアップアニメーション
     levelUpAnimation: function() {
         mainCharacter.classList.add('levelup');
-        this.changeExpression('excited');
+        this.changeExpression('love');
+        
+        // 特別なパーティクルエフェクト
+        this.createParticleBurst(50, 50, 15);
+        
         setTimeout(() => {
             mainCharacter.classList.remove('levelup');
             this.changeExpression('happy');
         }, 1000);
+    },
+
+    // 動物を変更
+    changeAnimal: function() {
+        this.currentAnimal = (this.currentAnimal + 1) % this.animalTypes.length;
+        const body = mainCharacter.querySelector('.character-body');
+        body.textContent = this.animalTypes[this.currentAnimal];
+        
+        // 変更時のアニメーション
+        mainCharacter.style.animation = 'characterClick 0.5s ease-out';
+        setTimeout(() => {
+            mainCharacter.style.animation = 'characterFloat 3s ease-in-out infinite';
+        }, 500);
+        
+        showNotification(`🐾 新しい動物: ${this.animalTypes[this.currentAnimal]}`, 'achievement');
+    },
+
+    // ランダムな表情変化
+    randomExpression: function() {
+        const expressions = ['happy', 'excited', 'surprised', 'cool', 'hungry', 'love'];
+        const randomExpression = expressions[Math.floor(Math.random() * expressions.length)];
+        this.changeExpression(randomExpression);
+        
+        setTimeout(() => {
+            this.changeExpression('happy');
+        }, 2000);
     },
 
     // パーティクルエフェクトを生成
@@ -132,7 +196,7 @@ const CharacterManager = {
 
     // 複数パーティクルを生成
     createParticleBurst: function(x, y, count = 5) {
-        const emojis = ['⭐', '💎', '🚀', '🌟', '🎯', '💫', '✨', '🔥'];
+        const emojis = ['⭐', '💎', '🚀', '🌟', '🎯', '💫', '✨', '🔥', '🌸', '🍀', '🌈', '🎪'];
         for (let i = 0; i < count; i++) {
             setTimeout(() => {
                 const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
@@ -146,12 +210,34 @@ const CharacterManager = {
     // 浮遊キャラクターをランダムに変更
     randomizeFloatingChars: function() {
         const floatingChars = document.querySelectorAll('.floating-char');
-        const emojis = ['🚀', '⭐', '💎', '🎯', '🌟', '💫', '✨', '🔥', '🎪', '🎨', '🎭', '🎪'];
+        const animalEmojis = ['🦋', '🐝', '🦜', '🐿️', '🦊', '🐰', '🦝', '🦘', '🦒', '🦛', '🦘', '🦡', '🦃', '🦚', '🦜', '🦢'];
         
         floatingChars.forEach(char => {
-            const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+            const randomEmoji = animalEmojis[Math.floor(Math.random() * animalEmojis.length)];
             char.textContent = randomEmoji;
             char.setAttribute('data-char', randomEmoji);
+        });
+    },
+
+    // 環境エフェクトの更新
+    updateEnvironment: function() {
+        const grass = document.querySelectorAll('.grass');
+        const clouds = document.querySelectorAll('.cloud');
+        
+        // 草の色をランダムに変更
+        grass.forEach(g => {
+            const grassTypes = ['🌱', '🌿', '🍃', '🌾', '🌺', '🌸'];
+            if (Math.random() < 0.1) { // 10%の確率で変更
+                g.textContent = grassTypes[Math.floor(Math.random() * grassTypes.length)];
+            }
+        });
+        
+        // 雲の形をランダムに変更
+        clouds.forEach(c => {
+            const cloudTypes = ['☁️', '⛅', '🌤️', '🌥️'];
+            if (Math.random() < 0.05) { // 5%の確率で変更
+                c.textContent = cloudTypes[Math.floor(Math.random() * cloudTypes.length)];
+            }
         });
     }
 };
@@ -548,6 +634,23 @@ document.addEventListener('DOMContentLoaded', function() {
     setInterval(() => {
         CharacterManager.randomizeFloatingChars();
     }, 10000);
+    
+    // 定期的に環境エフェクトを更新
+    setInterval(() => {
+        CharacterManager.updateEnvironment();
+    }, 15000);
+    
+    // 定期的にランダムな表情変化
+    setInterval(() => {
+        if (Math.random() < 0.3) { // 30%の確率
+            CharacterManager.randomExpression();
+        }
+    }, 8000);
+    
+    // ダブルクリックで動物を変更
+    mainCharacter.addEventListener('dblclick', () => {
+        CharacterManager.changeAnimal();
+    });
     
     // ゲームループ開始
     setInterval(gameLoop, 1000);
