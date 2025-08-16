@@ -64,71 +64,94 @@ function calculateUpgradeCost(level, baseCost) {
 
 // キャラクター管理
 const CharacterManager = {
-    // 動物の種類
-    animalTypes: ['🐱', '🐶', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯', '🦁', '🐸', '🐷', '🐮'],
-    currentAnimal: 0,
-    
-    // キャラクターの表情を変更
+    // 猫の表情を変更
     changeExpression: function(expression) {
-        const mouth = mainCharacter.querySelector('.character-mouth');
-        const eyes = mainCharacter.querySelectorAll('.eye');
-        const ears = mainCharacter.querySelectorAll('.ear');
-        const cheeks = mainCharacter.querySelectorAll('.cheek');
+        const mouth = mainCharacter.querySelector('.cat-mouth');
+        const eyes = mainCharacter.querySelectorAll('.cat-eye');
+        const ears = mainCharacter.querySelectorAll('.cat-ear');
+        const cheeks = mainCharacter.querySelectorAll('.cat-cheek');
         
         switch(expression) {
             case 'happy':
-                mouth.textContent = '😊';
-                eyes.forEach(eye => eye.textContent = '👁️');
+                mouth.setAttribute('d', 'M100 85 Q95 90 100 95 Q105 90 100 85');
+                eyes.forEach(eye => {
+                    eye.setAttribute('ry', '8');
+                    eye.style.fill = '#87CEEB';
+                });
                 ears.forEach(ear => ear.style.transform = 'rotate(0deg)');
-                cheeks.forEach(cheek => cheek.style.opacity = '0.7');
+                cheeks.forEach(cheek => cheek.style.opacity = '0.6');
                 break;
             case 'excited':
-                mouth.textContent = '😄';
-                eyes.forEach(eye => eye.textContent = '🤩');
+                mouth.setAttribute('d', 'M100 85 Q95 88 100 92 Q105 88 100 85');
+                eyes.forEach(eye => {
+                    eye.setAttribute('ry', '6');
+                    eye.style.fill = '#FFD700';
+                });
                 ears.forEach(ear => ear.style.transform = 'rotate(5deg)');
                 cheeks.forEach(cheek => cheek.style.opacity = '1');
                 break;
             case 'surprised':
-                mouth.textContent = '😲';
-                eyes.forEach(eye => eye.textContent = '😳');
+                mouth.setAttribute('d', 'M100 85 Q95 82 100 85 Q105 82 100 85');
+                eyes.forEach(eye => {
+                    eye.setAttribute('ry', '10');
+                    eye.style.fill = '#FF6B6B';
+                });
                 ears.forEach(ear => ear.style.transform = 'rotate(10deg)');
                 cheeks.forEach(cheek => cheek.style.opacity = '0.9');
                 break;
             case 'cool':
-                mouth.textContent = '😎';
-                eyes.forEach(eye => eye.textContent = '😏');
+                mouth.setAttribute('d', 'M100 85 Q95 87 100 89 Q105 87 100 85');
+                eyes.forEach(eye => {
+                    eye.setAttribute('ry', '7');
+                    eye.style.fill = '#9370DB';
+                });
                 ears.forEach(ear => ear.style.transform = 'rotate(-3deg)');
                 cheeks.forEach(cheek => cheek.style.opacity = '0.6');
                 break;
             case 'sleepy':
-                mouth.textContent = '😴';
-                eyes.forEach(eye => eye.textContent = '😪');
+                mouth.setAttribute('d', 'M100 85 Q95 86 100 87 Q105 86 100 85');
+                eyes.forEach(eye => {
+                    eye.setAttribute('ry', '4');
+                    eye.style.fill = '#A9A9A9';
+                });
                 ears.forEach(ear => ear.style.transform = 'rotate(-5deg)');
                 cheeks.forEach(cheek => cheek.style.opacity = '0.5');
                 break;
             case 'hungry':
-                mouth.textContent = '😋';
-                eyes.forEach(eye => eye.textContent = '🥺');
+                mouth.setAttribute('d', 'M100 85 Q95 88 100 91 Q105 88 100 85');
+                eyes.forEach(eye => {
+                    eye.setAttribute('ry', '9');
+                    eye.style.fill = '#FFA500';
+                });
                 ears.forEach(ear => ear.style.transform = 'rotate(3deg)');
                 cheeks.forEach(cheek => cheek.style.opacity = '0.8');
                 break;
             case 'angry':
-                mouth.textContent = '😠';
-                eyes.forEach(eye => eye.textContent = '😤');
+                mouth.setAttribute('d', 'M100 85 Q95 83 100 85 Q105 83 100 85');
+                eyes.forEach(eye => {
+                    eye.setAttribute('ry', '5');
+                    eye.style.fill = '#FF0000';
+                });
                 ears.forEach(ear => ear.style.transform = 'rotate(-8deg)');
                 cheeks.forEach(cheek => cheek.style.opacity = '0.4');
                 break;
             case 'love':
-                mouth.textContent = '🥰';
-                eyes.forEach(eye => eye.textContent = '😍');
+                mouth.setAttribute('d', 'M100 85 Q95 90 100 95 Q105 90 100 85');
+                eyes.forEach(eye => {
+                    eye.setAttribute('ry', '8');
+                    eye.style.fill = '#FF69B4';
+                });
                 ears.forEach(ear => ear.style.transform = 'rotate(2deg)');
                 cheeks.forEach(cheek => cheek.style.opacity = '1');
                 break;
             default:
-                mouth.textContent = '😊';
-                eyes.forEach(eye => eye.textContent = '👁️');
+                mouth.setAttribute('d', 'M100 85 Q95 90 100 95 Q105 90 100 85');
+                eyes.forEach(eye => {
+                    eye.setAttribute('ry', '8');
+                    eye.style.fill = '#87CEEB';
+                });
                 ears.forEach(ear => ear.style.transform = 'rotate(0deg)');
-                cheeks.forEach(cheek => cheek.style.opacity = '0.7');
+                cheeks.forEach(cheek => cheek.style.opacity = '0.6');
         }
     },
 
@@ -138,7 +161,7 @@ const CharacterManager = {
         this.changeExpression('excited');
         
         // 尻尾を振る
-        const tail = mainCharacter.querySelector('.character-tail');
+        const tail = mainCharacter.querySelector('.cat-tail');
         tail.style.animation = 'tailWag 0.5s ease-in-out';
         
         // キラキラエフェクト
@@ -177,25 +200,6 @@ const CharacterManager = {
                 sparkle.style.animation = 'sparkleTwinkle 3s ease-in-out infinite';
             }, intense ? 500 : 1000);
         });
-    },
-
-    // 動物を変更
-    changeAnimal: function() {
-        this.currentAnimal = (this.currentAnimal + 1) % this.animalTypes.length;
-        const body = mainCharacter.querySelector('.character-body');
-        body.textContent = this.animalTypes[this.currentAnimal];
-        
-        // 変更時のアニメーション
-        mainCharacter.style.animation = 'characterClick 0.5s ease-out';
-        
-        // キラキラエフェクト
-        this.createSparkleEffect(true);
-        
-        setTimeout(() => {
-            mainCharacter.style.animation = 'characterFloat 3s ease-in-out infinite';
-        }, 500);
-        
-        showNotification(`🐾 新しい動物: ${this.animalTypes[this.currentAnimal]}`, 'achievement');
     },
 
     // ランダムな表情変化
@@ -686,11 +690,6 @@ document.addEventListener('DOMContentLoaded', function() {
             CharacterManager.randomExpression();
         }
     }, 8000);
-    
-    // ダブルクリックで動物を変更
-    mainCharacter.addEventListener('dblclick', () => {
-        CharacterManager.changeAnimal();
-    });
     
     // ゲームループ開始
     setInterval(gameLoop, 1000);

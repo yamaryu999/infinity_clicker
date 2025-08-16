@@ -1957,3 +1957,740 @@ body::before {
         font-size: 0.7rem;
     }
 } 
+
+/* キャラクターコンテナ */
+.character-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    min-height: 150px;
+    overflow: hidden;
+}
+
+/* オリジナル猫キャラクター */
+.character {
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: characterFloat 3s ease-in-out infinite;
+    z-index: 10;
+    transform-origin: center bottom;
+}
+
+.character:hover {
+    transform: scale(1.1) rotate(5deg);
+    filter: drop-shadow(0 0 20px rgba(255, 182, 193, 0.8));
+}
+
+.cat-character {
+    width: 200px;
+    height: 200px;
+    filter: drop-shadow(0 0 10px rgba(255, 182, 193, 0.5));
+}
+
+/* 猫の体のアニメーション */
+.cat-body {
+    animation: bodyWiggle 2s ease-in-out infinite;
+    transform-origin: center;
+}
+
+.cat-head {
+    animation: headBob 3s ease-in-out infinite;
+    transform-origin: center;
+}
+
+/* 猫の耳のアニメーション */
+.cat-ear {
+    transform-origin: center bottom;
+    transition: all 0.3s ease;
+}
+
+.left-ear {
+    animation: earWiggle 3s ease-in-out infinite;
+}
+
+.right-ear {
+    animation: earWiggle 3s ease-in-out infinite;
+    animation-delay: 1.5s;
+}
+
+.ear-inside {
+    transition: all 0.3s ease;
+}
+
+/* 猫の目のアニメーション */
+.cat-eye {
+    animation: eyeBlink 4s infinite;
+    transform-origin: center;
+}
+
+.left-eye {
+    animation-delay: 0s;
+}
+
+.right-eye {
+    animation-delay: 0.5s;
+}
+
+.eye-highlight {
+    animation: eyeSparkle 2s ease-in-out infinite;
+}
+
+.left-highlight {
+    animation-delay: 0s;
+}
+
+.right-highlight {
+    animation-delay: 1s;
+}
+
+/* 猫の口のアニメーション */
+.cat-mouth {
+    animation: mouthMove 2s ease-in-out infinite;
+    transform-origin: center;
+}
+
+/* 猫の頬のアニメーション */
+.cat-cheek {
+    animation: cheekBlush 4s ease-in-out infinite;
+    transition: all 0.3s ease;
+}
+
+.left-cheek {
+    animation-delay: 0s;
+}
+
+.right-cheek {
+    animation-delay: 2s;
+}
+
+/* 猫の尻尾のアニメーション */
+.cat-tail {
+    animation: tailWag 2s ease-in-out infinite;
+    transform-origin: center left;
+}
+
+/* 猫の足のアニメーション */
+.cat-paw {
+    animation: pawTap 4s ease-in-out infinite;
+    transform-origin: center;
+}
+
+.front-left {
+    animation-delay: 0s;
+}
+
+.front-right {
+    animation-delay: 1s;
+}
+
+.back-left {
+    animation-delay: 2s;
+}
+
+.back-right {
+    animation-delay: 3s;
+}
+
+/* 猫の模様 */
+.cat-pattern {
+    animation: patternGlow 3s ease-in-out infinite;
+    transform-origin: center;
+}
+
+/* キラキラエフェクト */
+.sparkles .sparkle {
+    animation: sparkleTwinkle 3s ease-in-out infinite;
+    transform-origin: center;
+}
+
+.sparkle-1 {
+    animation-delay: 0s;
+}
+
+.sparkle-2 {
+    animation-delay: 1s;
+}
+
+.sparkle-3 {
+    animation-delay: 2s;
+}
+
+/* 浮遊キャラクター */
+.floating-characters {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.floating-char {
+    position: absolute;
+    font-size: 1.5rem;
+    animation: float 6s ease-in-out infinite;
+    opacity: 0.7;
+    transition: all 0.3s ease;
+}
+
+.floating-char:hover {
+    transform: scale(1.2);
+    opacity: 1;
+}
+
+.floating-char:nth-child(1) {
+    top: 10%;
+    left: 10%;
+    animation-delay: 0s;
+    animation-name: butterflyFloat;
+}
+
+.floating-char:nth-child(2) {
+    top: 20%;
+    right: 15%;
+    animation-delay: 1s;
+    animation-name: beeFloat;
+}
+
+.floating-char:nth-child(3) {
+    bottom: 30%;
+    left: 20%;
+    animation-delay: 2s;
+    animation-name: birdFloat;
+}
+
+.floating-char:nth-child(4) {
+    bottom: 20%;
+    right: 10%;
+    animation-delay: 3s;
+    animation-name: squirrelFloat;
+}
+
+.floating-char:nth-child(5) {
+    top: 50%;
+    left: 50%;
+    animation-delay: 4s;
+    animation-name: foxFloat;
+}
+
+.floating-char:nth-child(6) {
+    top: 30%;
+    left: 30%;
+    animation-delay: 5s;
+    animation-name: rabbitFloat;
+}
+
+.floating-char:nth-child(7) {
+    bottom: 40%;
+    left: 50%;
+    animation-delay: 6s;
+    animation-name: raccoonFloat;
+}
+
+.floating-char:nth-child(8) {
+    top: 60%;
+    right: 30%;
+    animation-delay: 7s;
+    animation-name: kangarooFloat;
+}
+
+/* 環境エフェクト */
+.environment-effects {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.grass {
+    position: absolute;
+    bottom: 0;
+    font-size: 1.2rem;
+    animation: grassSway 4s ease-in-out infinite;
+}
+
+.grass-1 {
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.grass-2 {
+    left: 50%;
+    animation-delay: 1s;
+}
+
+.grass-3 {
+    right: 15%;
+    animation-delay: 2s;
+}
+
+.cloud {
+    position: absolute;
+    top: 10%;
+    font-size: 2rem;
+    opacity: 0.6;
+    animation: cloudFloat 20s linear infinite;
+}
+
+.cloud-1 {
+    left: -10%;
+    animation-delay: 0s;
+}
+
+.cloud-2 {
+    right: -10%;
+    animation-delay: 10s;
+}
+
+.flowers {
+    position: absolute;
+    bottom: 5%;
+    left: 0;
+    width: 100%;
+    height: 30px;
+}
+
+.flower {
+    position: absolute;
+    font-size: 1rem;
+    animation: flowerBloom 5s ease-in-out infinite;
+    opacity: 0.8;
+}
+
+.flower-1 {
+    left: 15%;
+    animation-delay: 0s;
+}
+
+.flower-2 {
+    left: 60%;
+    animation-delay: 2s;
+}
+
+.flower-3 {
+    right: 20%;
+    animation-delay: 4s;
+}
+
+/* アップグレードアイコン */
+.upgrade-icon {
+    position: absolute;
+    top: -15px;
+    right: -15px;
+    font-size: 2rem;
+    background: var(--neon-gradient);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-medium);
+    animation: iconPulse 2s ease-in-out infinite;
+}
+
+/* オリジナル猫キャラクター用アニメーション */
+@keyframes characterFloat {
+    0%, 100% { 
+        transform: translateY(0px) rotate(0deg) scale(1); 
+        filter: drop-shadow(0 0 10px rgba(255, 182, 193, 0.5));
+    }
+    25% { 
+        transform: translateY(-8px) rotate(1deg) scale(1.02); 
+        filter: drop-shadow(0 0 15px rgba(255, 182, 193, 0.6));
+    }
+    50% { 
+        transform: translateY(-12px) rotate(0deg) scale(1.05); 
+        filter: drop-shadow(0 0 20px rgba(255, 182, 193, 0.7));
+    }
+    75% { 
+        transform: translateY(-8px) rotate(-1deg) scale(1.02); 
+        filter: drop-shadow(0 0 15px rgba(255, 182, 193, 0.6));
+    }
+}
+
+@keyframes bodyWiggle {
+    0%, 100% { transform: rotate(0deg) scale(1); }
+    25% { transform: rotate(1deg) scale(1.02); }
+    75% { transform: rotate(-1deg) scale(1.02); }
+}
+
+@keyframes headBob {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-2px) rotate(1deg); }
+}
+
+@keyframes earWiggle {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(3deg); }
+    75% { transform: rotate(-3deg); }
+}
+
+@keyframes eyeBlink {
+    0%, 90%, 100% { 
+        transform: scaleY(1) scale(1); 
+        opacity: 1;
+    }
+    95% { 
+        transform: scaleY(0.1) scale(0.8); 
+        opacity: 0.3;
+    }
+}
+
+@keyframes eyeSparkle {
+    0%, 100% { 
+        opacity: 1; 
+        transform: scale(1); 
+    }
+    50% { 
+        opacity: 0.7; 
+        transform: scale(1.2); 
+    }
+}
+
+@keyframes mouthMove {
+    0%, 100% { 
+        transform: scale(1); 
+        opacity: 1;
+    }
+    50% { 
+        transform: scale(1.1); 
+        opacity: 0.8;
+    }
+}
+
+@keyframes cheekBlush {
+    0%, 100% { 
+        opacity: 0.6; 
+        transform: scale(1); 
+    }
+    50% { 
+        opacity: 1; 
+        transform: scale(1.1); 
+    }
+}
+
+@keyframes tailWag {
+    0%, 100% { 
+        transform: rotate(0deg); 
+    }
+    25% { 
+        transform: rotate(10deg); 
+    }
+    75% { 
+        transform: rotate(-10deg); 
+    }
+}
+
+@keyframes pawTap {
+    0%, 100% { 
+        transform: translateY(0px) scale(1); 
+    }
+    50% { 
+        transform: translateY(-3px) scale(1.05); 
+    }
+}
+
+@keyframes patternGlow {
+    0%, 100% { 
+        opacity: 0.3; 
+        transform: scale(1); 
+    }
+    50% { 
+        opacity: 0.5; 
+        transform: scale(1.1); 
+    }
+}
+
+@keyframes sparkleTwinkle {
+    0%, 100% { 
+        opacity: 0; 
+        transform: scale(0.5) rotate(0deg); 
+    }
+    25% { 
+        opacity: 1; 
+        transform: scale(1) rotate(90deg); 
+    }
+    50% { 
+        opacity: 0.8; 
+        transform: scale(0.8) rotate(180deg); 
+    }
+    75% { 
+        opacity: 1; 
+        transform: scale(1.1) rotate(270deg); 
+    }
+}
+
+/* 動物特有の浮遊アニメーション */
+@keyframes butterflyFloat {
+    0%, 100% { 
+        transform: translateY(0px) rotate(0deg) scale(1); 
+        opacity: 0.7;
+    }
+    25% { 
+        transform: translateY(-20px) rotate(10deg) scale(1.1); 
+        opacity: 1;
+    }
+    50% { 
+        transform: translateY(-10px) rotate(-5deg) scale(0.9); 
+        opacity: 0.8;
+    }
+    75% { 
+        transform: translateY(-15px) rotate(5deg) scale(1.05); 
+        opacity: 0.9;
+    }
+}
+
+@keyframes beeFloat {
+    0%, 100% { 
+        transform: translateY(0px) rotate(0deg); 
+        opacity: 0.7;
+    }
+    50% { 
+        transform: translateY(-15px) rotate(180deg); 
+        opacity: 1;
+    }
+}
+
+@keyframes birdFloat {
+    0%, 100% { 
+        transform: translateY(0px) scale(1); 
+        opacity: 0.7;
+    }
+    25% { 
+        transform: translateY(-25px) scale(1.2); 
+        opacity: 1;
+    }
+    50% { 
+        transform: translateY(-10px) scale(0.8); 
+        opacity: 0.8;
+    }
+    75% { 
+        transform: translateY(-20px) scale(1.1); 
+        opacity: 0.9;
+    }
+}
+
+@keyframes squirrelFloat {
+    0%, 100% { 
+        transform: translateY(0px) rotate(0deg); 
+        opacity: 0.7;
+    }
+    25% { 
+        transform: translateY(-18px) rotate(5deg); 
+        opacity: 1;
+    }
+    50% { 
+        transform: translateY(-8px) rotate(-3deg); 
+        opacity: 0.8;
+    }
+    75% { 
+        transform: translateY(-15px) rotate(2deg); 
+        opacity: 0.9;
+    }
+}
+
+@keyframes foxFloat {
+    0%, 100% { 
+        transform: translateY(0px) scale(1); 
+        opacity: 0.7;
+    }
+    50% { 
+        transform: translateY(-20px) scale(1.1); 
+        opacity: 1;
+    }
+}
+
+@keyframes rabbitFloat {
+    0%, 100% { 
+        transform: translateY(0px) rotate(0deg); 
+        opacity: 0.7;
+    }
+    25% { 
+        transform: translateY(-22px) rotate(8deg); 
+        opacity: 1;
+    }
+    50% { 
+        transform: translateY(-12px) rotate(-4deg); 
+        opacity: 0.8;
+    }
+    75% { 
+        transform: translateY(-18px) rotate(3deg); 
+        opacity: 0.9;
+    }
+}
+
+@keyframes raccoonFloat {
+    0%, 100% { 
+        transform: translateY(0px) scale(1); 
+        opacity: 0.7;
+    }
+    50% { 
+        transform: translateY(-16px) scale(1.05); 
+        opacity: 1;
+    }
+}
+
+@keyframes kangarooFloat {
+    0%, 100% { 
+        transform: translateY(0px) rotate(0deg); 
+        opacity: 0.7;
+    }
+    25% { 
+        transform: translateY(-30px) rotate(5deg); 
+        opacity: 1;
+    }
+    50% { 
+        transform: translateY(-15px) rotate(-2deg); 
+        opacity: 0.8;
+    }
+    75% { 
+        transform: translateY(-25px) rotate(3deg); 
+        opacity: 0.9;
+    }
+}
+
+/* 環境アニメーション */
+@keyframes grassSway {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(3deg); }
+    75% { transform: rotate(-3deg); }
+}
+
+@keyframes cloudFloat {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(calc(100vw + 100px)); }
+}
+
+@keyframes flowerBloom {
+    0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.8; }
+    50% { transform: scale(1.2) rotate(5deg); opacity: 1; }
+}
+
+@keyframes iconPulse {
+    0%, 100% { 
+        transform: scale(1); 
+        box-shadow: var(--shadow-medium);
+    }
+    50% { 
+        transform: scale(1.1); 
+        box-shadow: 0 0 30px var(--neon-color);
+    }
+}
+
+/* クリック時のキャラクターアニメーション */
+.character.clicked {
+    animation: characterClick 0.3s ease-out;
+}
+
+@keyframes characterClick {
+    0% { transform: scale(1) rotate(0deg); }
+    50% { transform: scale(1.2) rotate(10deg); }
+    100% { transform: scale(1) rotate(0deg); }
+}
+
+/* レベルアップ時のキャラクターエフェクト */
+.character.levelup {
+    animation: levelUpEffect 1s ease-out;
+}
+
+@keyframes levelUpEffect {
+    0% { 
+        transform: scale(1); 
+        filter: brightness(1);
+    }
+    50% { 
+        transform: scale(1.3); 
+        filter: brightness(1.5) drop-shadow(0 0 30px rgba(255, 182, 193, 0.8));
+    }
+    100% { 
+        transform: scale(1); 
+        filter: brightness(1);
+    }
+}
+
+/* パーティクルエフェクト */
+.particle {
+    position: absolute;
+    pointer-events: none;
+    font-size: 1rem;
+    animation: particleFloat 2s ease-out forwards;
+    z-index: 5;
+}
+
+@keyframes particleFloat {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-100px) scale(0.5);
+    }
+}
+
+/* モバイル対応 */
+@media (max-width: 768px) {
+    .cat-character {
+        width: 150px;
+        height: 150px;
+    }
+    
+    .floating-char {
+        font-size: 1.2rem;
+    }
+    
+    .upgrade-icon {
+        font-size: 1.5rem;
+        width: 40px;
+        height: 40px;
+    }
+    
+    .grass {
+        font-size: 1rem;
+    }
+    
+    .cloud {
+        font-size: 1.5rem;
+    }
+    
+    .flower {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .cat-character {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .floating-char {
+        font-size: 1rem;
+    }
+    
+    .upgrade-icon {
+        font-size: 1.2rem;
+        width: 35px;
+        height: 35px;
+    }
+    
+    .grass {
+        font-size: 0.8rem;
+    }
+    
+    .cloud {
+        font-size: 1.2rem;
+    }
+    
+    .flower {
+        font-size: 0.7rem;
+    }
+} 
