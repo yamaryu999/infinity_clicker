@@ -3627,3 +3627,538 @@ body::before {
         height: 120px;
     }
 }
+
+/* ===== ソーシャル機能スタイル ===== */
+
+/* ソーシャルボタン */
+.social-btn {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    margin: 0 5px;
+}
+
+.social-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    background: linear-gradient(45deg, #764ba2, #667eea);
+}
+
+/* ソーシャルパネル */
+.social-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.social-panel.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.social-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    border-radius: 20px 20px 0 0;
+}
+
+.social-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.social-content {
+    padding: 20px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+/* ソーシャルタブ */
+.social-tabs {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 20px;
+    background: rgba(102, 126, 234, 0.1);
+    border-radius: 15px;
+    padding: 5px;
+}
+
+.social-tab {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #667eea;
+}
+
+.social-tab.active {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.social-tab:hover:not(.active) {
+    background: rgba(102, 126, 234, 0.1);
+}
+
+/* タブコンテンツ */
+.social-tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.social-tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ランキングセクション */
+.ranking-section h4 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 1.1rem;
+}
+
+.ranking-list {
+    margin-bottom: 15px;
+}
+
+.ranking-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.ranking-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.ranking-item.self {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+}
+
+.ranking-rank {
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-right: 15px;
+    min-width: 30px;
+}
+
+.ranking-rank.gold { color: #FFD700; }
+.ranking-rank.silver { color: #C0C0C0; }
+.ranking-rank.bronze { color: #CD7F32; }
+
+.ranking-info {
+    flex: 1;
+}
+
+.ranking-name {
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.ranking-score {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.my-rank {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+/* フレンドセクション */
+.friend-search {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.friend-input {
+    flex: 1;
+    padding: 12px 15px;
+    border: 2px solid rgba(102, 126, 234, 0.2);
+    border-radius: 12px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.friend-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.friend-btn {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.friend-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.friends-help {
+    margin-bottom: 15px;
+    padding: 10px;
+    background: rgba(102, 126, 234, 0.1);
+    border-radius: 10px;
+}
+
+.friends-help h5 {
+    margin: 0 0 8px 0;
+    font-size: 0.9rem;
+    color: #667eea;
+}
+
+.friend-ids {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.friend-id {
+    padding: 5px 10px;
+    background: rgba(102, 126, 234, 0.2);
+    border-radius: 8px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #667eea;
+    font-weight: 500;
+}
+
+.friend-id:hover {
+    background: rgba(102, 126, 234, 0.3);
+    transform: scale(1.05);
+}
+
+.friends-list {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.friend-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.friend-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.friend-name {
+    font-weight: 600;
+    color: #333;
+}
+
+.friend-status {
+    font-size: 0.8rem;
+    color: #667eea;
+    font-weight: 500;
+}
+
+.remove-friend {
+    background: #ff4757;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.remove-friend:hover {
+    background: #ff3742;
+    transform: scale(1.05);
+}
+
+/* ギフトセクション */
+.gifts-section h4 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 1.1rem;
+}
+
+.gift-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.gift-select, .gift-input {
+    padding: 12px 15px;
+    border: 2px solid rgba(102, 126, 234, 0.2);
+    border-radius: 12px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.gift-select:focus, .gift-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.gift-select {
+    flex: 1;
+    min-width: 120px;
+}
+
+.gift-input {
+    flex: 1;
+    min-width: 100px;
+}
+
+.gift-btn {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.gift-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.received-gifts h4 {
+    margin: 20px 0 15px 0;
+    color: #333;
+    font-size: 1.1rem;
+}
+
+.gifts-list {
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.gift-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.gift-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.gift-info {
+    flex: 1;
+}
+
+.gift-from {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 2px;
+}
+
+.gift-amount {
+    font-size: 0.9rem;
+    color: #667eea;
+    font-weight: 500;
+}
+
+.accept-gift {
+    background: #2ed573;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.accept-gift:hover {
+    background: #26d0ce;
+    transform: scale(1.05);
+}
+
+/* シェアセクション */
+.share-section h4 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 1.1rem;
+}
+
+.share-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.share-stat {
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.share-stat:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.share-stat span {
+    font-weight: 600;
+    color: #333;
+}
+
+.share-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+}
+
+.share-btn {
+    padding: 12px 15px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.share-btn.twitter {
+    background: linear-gradient(45deg, #1DA1F2, #0d8bd9);
+    color: white;
+}
+
+.share-btn.line {
+    background: linear-gradient(45deg, #00B900, #00a000);
+    color: white;
+}
+
+.share-btn.copy {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+}
+
+.share-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* モバイル対応 */
+@media (max-width: 768px) {
+    .social-panel {
+        width: 95%;
+        max-height: 85vh;
+    }
+    
+    .social-tabs {
+        flex-wrap: wrap;
+    }
+    
+    .social-tab {
+        flex: 1 1 calc(50% - 5px);
+        font-size: 0.8rem;
+        padding: 8px 10px;
+    }
+    
+    .gift-form {
+        flex-direction: column;
+    }
+    
+    .gift-select, .gift-input, .gift-btn {
+        width: 100%;
+    }
+    
+    .share-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .share-buttons {
+        grid-template-columns: 1fr;
+    }
+    
+    .my-rank {
+        flex-direction: column;
+        gap: 5px;
+        text-align: center;
+    }
+}

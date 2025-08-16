@@ -10,7 +10,19 @@ let gameState = {
     totalClicks: 0,
     totalPoints: 0,
     achievements: [],
-    clickEffect: 'default' // 追加
+    clickEffect: 'default', // 追加
+    // ソーシャル機能データ
+    playerId: generatePlayerId(),
+    playerName: generatePlayerName(),
+    friends: [],
+    receivedGifts: [],
+    sentGifts: [],
+    socialStats: {
+        giftsReceived: 0,
+        giftsSent: 0,
+        friendsCount: 0,
+        lastActive: Date.now()
+    }
 };
 
 // アップグレードコスト計算
@@ -67,6 +79,32 @@ const effectsGrid = document.getElementById('effectGrid');
 // モバイル検出
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+// ソーシャル機能ヘルパー関数
+function generatePlayerId() {
+    return 'player_' + Math.random().toString(36).substr(2, 9);
+}
+
+function generatePlayerName() {
+    const names = ['ねこマスター', 'クリッカー王', 'ポイントハンター', '無限プレイヤー', 'ゲームマスター', 'クリック伝説', 'ポイント富豪', '自動化マスター', 'クリティカル王', '実績コレクター'];
+    return names[Math.floor(Math.random() * names.length)];
+}
+
+// ソーシャル機能のモックデータ（実際のアプリではサーバーから取得）
+const mockSocialData = {
+    globalRanking: [
+        { id: 'player_1', name: 'ねこマスター', score: 15000, rank: 1 },
+        { id: 'player_2', name: 'クリッカー王', score: 12000, rank: 2 },
+        { id: 'player_3', name: 'ポイントハンター', score: 10000, rank: 3 },
+        { id: 'player_4', name: '無限プレイヤー', score: 8000, rank: 4 },
+        { id: 'player_5', name: 'ゲームマスター', score: 6000, rank: 5 }
+    ],
+    mockFriends: [
+        { id: 'friend_1', name: 'フレンド1', status: 'online', lastActive: Date.now() - 300000 },
+        { id: 'friend_2', name: 'フレンド2', status: 'offline', lastActive: Date.now() - 3600000 },
+        { id: 'friend_3', name: 'フレンド3', status: 'online', lastActive: Date.now() - 60000 }
+    ]
+};
 
 // アップグレードコスト計算関数
 function calculateUpgradeCost(level, baseCost) {
@@ -1380,6 +1418,31 @@ function loadGame() {
                 loadedState.clickEffect = 'default';
             }
             
+            // ソーシャル機能のデータを初期化
+            if (typeof loadedState.playerId === 'undefined') {
+                loadedState.playerId = generatePlayerId();
+            }
+            if (typeof loadedState.playerName === 'undefined') {
+                loadedState.playerName = generatePlayerName();
+            }
+            if (typeof loadedState.friends === 'undefined') {
+                loadedState.friends = [];
+            }
+            if (typeof loadedState.receivedGifts === 'undefined') {
+                loadedState.receivedGifts = [];
+            }
+            if (typeof loadedState.sentGifts === 'undefined') {
+                loadedState.sentGifts = [];
+            }
+            if (typeof loadedState.socialStats === 'undefined') {
+                loadedState.socialStats = {
+                    giftsReceived: 0,
+                    giftsSent: 0,
+                    friendsCount: 0,
+                    lastActive: Date.now()
+                };
+            }
+            
             gameState = loadedState;
             showNotification('ゲームを読み込みました！');
         } catch (e) {
@@ -1396,7 +1459,19 @@ function loadGame() {
                 totalClicks: 0,
                 totalPoints: 0,
                 achievements: [],
-                clickEffect: 'default'
+                clickEffect: 'default',
+                // ソーシャル機能データ
+                playerId: generatePlayerId(),
+                playerName: generatePlayerName(),
+                friends: [],
+                receivedGifts: [],
+                sentGifts: [],
+                socialStats: {
+                    giftsReceived: 0,
+                    giftsSent: 0,
+                    friendsCount: 0,
+                    lastActive: Date.now()
+                }
             };
         }
     }
@@ -1416,7 +1491,19 @@ function resetGame() {
             totalClicks: 0,
             totalPoints: 0,
             achievements: [],
-            clickEffect: 'default'
+            clickEffect: 'default',
+            // ソーシャル機能データ
+            playerId: generatePlayerId(),
+            playerName: generatePlayerName(),
+            friends: [],
+            receivedGifts: [],
+            sentGifts: [],
+            socialStats: {
+                giftsReceived: 0,
+                giftsSent: 0,
+                friendsCount: 0,
+                lastActive: Date.now()
+            }
         };
         localStorage.removeItem('idleClickerSave');
         updateDisplay();
@@ -1500,6 +1587,11 @@ document.addEventListener('DOMContentLoaded', function() {
         VisualEnhancementSystem.init();
     }
 
+    // ソーシャルシステムの初期化
+    if (typeof SocialSystem !== 'undefined') {
+        SocialSystem.init();
+    }
+
     // ゲームループ開始
     setInterval(gameLoop, 1000);
     updateDisplay();
@@ -1514,3 +1606,424 @@ window.addEventListener('beforeunload', function() {
         console.error('自動保存に失敗しました:', e);
     }
 });
+
+// ===== ソーシャル機能 =====
+
+// ソーシャルパネルの管理
+const SocialSystem = {
+    init: function() {
+        this.setupSocialEventListeners();
+        this.updateSocialData();
+    },
+
+    setupSocialEventListeners: function() {
+        const socialBtn = document.getElementById('socialBtn');
+        const socialPanel = document.getElementById('socialPanel');
+        const closeSocialBtn = document.getElementById('closeSocialBtn');
+        const socialTabs = document.querySelectorAll('.social-tab');
+
+        if (socialBtn) {
+            socialBtn.addEventListener('click', () => this.openSocialPanel());
+        }
+
+        if (closeSocialBtn) {
+            closeSocialBtn.addEventListener('click', () => this.closeSocialPanel());
+        }
+
+        if (socialTabs) {
+            socialTabs.forEach(tab => {
+                tab.addEventListener('click', () => this.switchTab(tab.dataset.tab));
+            });
+        }
+
+        // パネル外クリックで閉じる
+        if (socialPanel) {
+            socialPanel.addEventListener('click', (e) => {
+                if (e.target === socialPanel) {
+                    this.closeSocialPanel();
+                }
+            });
+        }
+    },
+
+    openSocialPanel: function() {
+        const socialPanel = document.getElementById('socialPanel');
+        if (socialPanel) {
+            socialPanel.classList.add('active');
+            this.updateSocialData();
+        }
+    },
+
+    closeSocialPanel: function() {
+        const socialPanel = document.getElementById('socialPanel');
+        if (socialPanel) {
+            socialPanel.classList.remove('active');
+        }
+    },
+
+    switchTab: function(tabName) {
+        // タブボタンのアクティブ状態を更新
+        const tabs = document.querySelectorAll('.social-tab');
+        const contents = document.querySelectorAll('.social-tab-content');
+
+        tabs.forEach(tab => {
+            tab.classList.remove('active');
+            if (tab.dataset.tab === tabName) {
+                tab.classList.add('active');
+            }
+        });
+
+        contents.forEach(content => {
+            content.classList.remove('active');
+            if (content.id === tabName + 'Tab') {
+                content.classList.add('active');
+            }
+        });
+
+        // タブに応じてデータを更新
+        switch(tabName) {
+            case 'ranking':
+                this.updateRanking();
+                break;
+            case 'friends':
+                this.updateFriends();
+                break;
+            case 'gifts':
+                this.updateGifts();
+                break;
+            case 'share':
+                this.updateShare();
+                break;
+        }
+    },
+
+    updateSocialData: function() {
+        this.updateRanking();
+        this.updateFriends();
+        this.updateGifts();
+        this.updateShare();
+    },
+
+    updateRanking: function() {
+        const rankingList = document.getElementById('globalRanking');
+        const myRank = document.getElementById('myRank');
+        const myScore = document.getElementById('myScore');
+
+        if (rankingList) {
+            rankingList.innerHTML = '';
+            
+            // 現在のプレイヤーをランキングに追加
+            const currentPlayer = {
+                id: gameState.playerId,
+                name: gameState.playerName,
+                score: gameState.totalPoints,
+                rank: 0
+            };
+
+            // ランキングを更新
+            let allPlayers = [...mockSocialData.globalRanking, currentPlayer];
+            allPlayers.sort((a, b) => b.score - a.score);
+            
+            // ランクを再計算
+            allPlayers.forEach((player, index) => {
+                player.rank = index + 1;
+            });
+
+            // 上位10位を表示
+            allPlayers.slice(0, 10).forEach(player => {
+                const rankingItem = document.createElement('div');
+                rankingItem.className = 'ranking-item';
+                if (player.id === gameState.playerId) {
+                    rankingItem.classList.add('self');
+                }
+
+                let rankClass = '';
+                if (player.rank === 1) rankClass = 'gold';
+                else if (player.rank === 2) rankClass = 'silver';
+                else if (player.rank === 3) rankClass = 'bronze';
+
+                rankingItem.innerHTML = `
+                    <div class="ranking-rank ${rankClass}">${player.rank}</div>
+                    <div class="ranking-info">
+                        <div class="ranking-name">${player.name}</div>
+                        <div class="ranking-score">${formatNumber(player.score)} ポイント</div>
+                    </div>
+                `;
+
+                rankingList.appendChild(rankingItem);
+            });
+        }
+
+        if (myScore) {
+            myScore.textContent = formatNumber(gameState.totalPoints);
+        }
+
+        if (myRank) {
+            const playerRank = allPlayers.find(p => p.id === gameState.playerId)?.rank || '-';
+            myRank.textContent = playerRank;
+        }
+    },
+
+    updateFriends: function() {
+        const friendsList = document.getElementById('friendsList');
+        const giftFriend = document.getElementById('giftFriend');
+
+        if (friendsList) {
+            friendsList.innerHTML = '';
+            
+            gameState.friends.forEach(friend => {
+                const friendItem = document.createElement('div');
+                friendItem.className = 'friend-item';
+                
+                const status = this.getFriendStatus(friend.lastActive);
+                
+                friendItem.innerHTML = `
+                    <div>
+                        <div class="friend-name">${friend.name}</div>
+                        <div class="friend-status">${status}</div>
+                    </div>
+                    <button class="remove-friend" onclick="removeFriend('${friend.id}')">削除</button>
+                `;
+
+                friendsList.appendChild(friendItem);
+            });
+        }
+
+        if (giftFriend) {
+            giftFriend.innerHTML = '<option value="">フレンドを選択</option>';
+            gameState.friends.forEach(friend => {
+                const option = document.createElement('option');
+                option.value = friend.id;
+                option.textContent = friend.name;
+                giftFriend.appendChild(option);
+            });
+        }
+    },
+
+    updateGifts: function() {
+        const receivedGifts = document.getElementById('receivedGifts');
+
+        if (receivedGifts) {
+            receivedGifts.innerHTML = '';
+            
+            gameState.receivedGifts.forEach(gift => {
+                const giftItem = document.createElement('div');
+                giftItem.className = 'gift-item';
+                
+                giftItem.innerHTML = `
+                    <div class="gift-info">
+                        <div class="gift-from">${gift.fromName}</div>
+                        <div class="gift-amount">${formatNumber(gift.amount)} ポイント</div>
+                    </div>
+                    <button class="accept-gift" onclick="acceptGift('${gift.id}')">受け取る</button>
+                `;
+
+                receivedGifts.appendChild(giftItem);
+            });
+        }
+    },
+
+    updateShare: function() {
+        const sharePoints = document.getElementById('sharePoints');
+        const shareClicks = document.getElementById('shareClicks');
+        const shareAchievements = document.getElementById('shareAchievements');
+
+        if (sharePoints) sharePoints.textContent = formatNumber(gameState.totalPoints);
+        if (shareClicks) shareClicks.textContent = formatNumber(gameState.totalClicks);
+        if (shareAchievements) shareAchievements.textContent = gameState.achievements.length;
+    },
+
+    getFriendStatus: function(lastActive) {
+        const now = Date.now();
+        const diff = now - lastActive;
+        
+        if (diff < 300000) { // 5分以内
+            return '🟢 オンライン';
+        } else if (diff < 3600000) { // 1時間以内
+            return '🟡 最近アクティブ';
+        } else {
+            return '🔴 オフライン';
+        }
+    }
+};
+
+// フレンド機能
+function addFriend() {
+    const friendInput = document.getElementById('friendSearch');
+    const friendId = friendInput.value.trim();
+
+    if (!friendId) {
+        showNotification('フレンドIDを入力してください');
+        return;
+    }
+
+    // 既にフレンドかチェック
+    if (gameState.friends.some(f => f.id === friendId)) {
+        showNotification('既にフレンドです');
+        return;
+    }
+
+    // 自分自身かチェック
+    if (friendId === gameState.playerId) {
+        showNotification('自分自身をフレンドに追加できません');
+        return;
+    }
+
+    // モックフレンドを追加
+    const mockFriend = mockSocialData.mockFriends.find(f => f.id === friendId);
+    if (mockFriend) {
+        gameState.friends.push({
+            id: mockFriend.id,
+            name: mockFriend.name,
+            lastActive: mockFriend.lastActive
+        });
+        gameState.socialStats.friendsCount = gameState.friends.length;
+        SocialSystem.updateFriends();
+        showNotification(`${mockFriend.name}をフレンドに追加しました`);
+        friendInput.value = '';
+    } else {
+        showNotification('フレンドが見つかりません');
+    }
+}
+
+function removeFriend(friendId) {
+    const friend = gameState.friends.find(f => f.id === friendId);
+    if (friend) {
+        gameState.friends = gameState.friends.filter(f => f.id !== friendId);
+        gameState.socialStats.friendsCount = gameState.friends.length;
+        SocialSystem.updateFriends();
+        showNotification(`${friend.name}をフレンドから削除しました`);
+    }
+}
+
+// ギフト機能
+function sendGift() {
+    const giftFriend = document.getElementById('giftFriend');
+    const giftAmount = document.getElementById('giftAmount');
+    
+    const friendId = giftFriend.value;
+    const amount = parseInt(giftAmount.value);
+
+    if (!friendId) {
+        showNotification('フレンドを選択してください');
+        return;
+    }
+
+    if (!amount || amount <= 0) {
+        showNotification('有効なポイント数を入力してください');
+        return;
+    }
+
+    if (amount > gameState.points) {
+        showNotification('ポイントが不足しています');
+        return;
+    }
+
+    const friend = gameState.friends.find(f => f.id === friendId);
+    if (!friend) {
+        showNotification('フレンドが見つかりません');
+        return;
+    }
+
+    // ポイントを減らす
+    gameState.points -= amount;
+    gameState.socialStats.giftsSent++;
+
+    // ギフトを記録
+    const gift = {
+        id: 'gift_' + Date.now(),
+        toId: friendId,
+        toName: friend.name,
+        amount: amount,
+        timestamp: Date.now()
+    };
+    gameState.sentGifts.push(gift);
+
+    // モックで受け取ったギフトを追加
+    const receivedGift = {
+        id: gift.id,
+        fromId: gameState.playerId,
+        fromName: gameState.playerName,
+        amount: amount,
+        timestamp: Date.now()
+    };
+    gameState.receivedGifts.push(receivedGift);
+
+    SocialSystem.updateGifts();
+    updateDisplay();
+    showNotification(`${friend.name}に${formatNumber(amount)}ポイントを送りました`);
+    
+    giftAmount.value = '';
+}
+
+function acceptGift(giftId) {
+    const gift = gameState.receivedGifts.find(g => g.id === giftId);
+    if (gift) {
+        gameState.points += gift.amount;
+        gameState.socialStats.giftsReceived++;
+        gameState.receivedGifts = gameState.receivedGifts.filter(g => g.id !== giftId);
+        
+        SocialSystem.updateGifts();
+        updateDisplay();
+        showNotification(`${gift.fromName}からの${formatNumber(gift.amount)}ポイントを受け取りました`);
+    }
+}
+
+// シェア機能
+function shareToTwitter() {
+    const text = `🚀 無限クリッカー 2024で${formatNumber(gameState.totalPoints)}ポイントを獲得しました！総クリック数: ${formatNumber(gameState.totalClicks)}回、実績: ${gameState.achievements.length}個 #無限クリッカー #IdleGame`;
+    const url = window.location.href;
+    const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+    window.open(shareUrl, '_blank');
+}
+
+function shareToLine() {
+    const text = `🚀 無限クリッカー 2024で${formatNumber(gameState.totalPoints)}ポイントを獲得しました！総クリック数: ${formatNumber(gameState.totalClicks)}回、実績: ${gameState.achievements.length}個`;
+    const url = window.location.href;
+    const shareUrl = `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
+    window.open(shareUrl, '_blank');
+}
+
+function copyShareLink() {
+    const text = `🚀 無限クリッカー 2024で${formatNumber(gameState.totalPoints)}ポイントを獲得しました！総クリック数: ${formatNumber(gameState.totalClicks)}回、実績: ${gameState.achievements.length}個\n${window.location.href}`;
+    
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(() => {
+            showNotification('シェアリンクをコピーしました');
+        });
+    } else {
+        // フォールバック
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        showNotification('シェアリンクをコピーしました');
+    }
+}
+
+// グローバル関数として公開
+window.openSocialPanel = function() {
+    SocialSystem.openSocialPanel();
+};
+
+window.addFriend = addFriend;
+window.removeFriend = removeFriend;
+window.sendGift = sendGift;
+window.acceptGift = acceptGift;
+window.shareToTwitter = shareToTwitter;
+window.shareToLine = shareToLine;
+window.copyShareLink = copyShareLink;
+
+// フレンドIDコピー機能
+function copyFriendId(friendId) {
+    const friendInput = document.getElementById('friendSearch');
+    if (friendInput) {
+        friendInput.value = friendId;
+        friendInput.focus();
+        showNotification(`フレンドID "${friendId}" を入力欄にコピーしました`);
+    }
+}
+
+window.copyFriendId = copyFriendId;

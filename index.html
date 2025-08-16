@@ -206,7 +206,8 @@
         <footer class="game-footer">
             <button id="saveBtn" class="save-btn" onclick="saveGame()" aria-label="ゲームを保存" data-touch-action="manipulation">💾 セーブ</button>
             <button id="resetBtn" class="reset-btn" onclick="resetGame()" aria-label="ゲームをリセット" data-touch-action="manipulation">🔄 リセット</button>
-            <div class="version">v2.1.0 - スマホ対応版</div>
+            <button id="socialBtn" class="social-btn" onclick="openSocialPanel()" aria-label="ソーシャル機能" data-touch-action="manipulation">👥 ソーシャル</button>
+            <div class="version">v2.2.0 - ソーシャル機能追加</div>
         </footer>
 
         <!-- 装飾システム -->
@@ -268,6 +269,100 @@
         <button class="decoration-btn" id="decorationBtn" aria-label="装飾を変更">
             <span class="decoration-btn-icon">🎨</span>
         </button>
+
+        <!-- ソーシャルパネル -->
+        <div class="social-panel" id="socialPanel">
+            <div class="social-header">
+                <h3>👥 ソーシャル機能</h3>
+                <button class="close-btn" id="closeSocialBtn">×</button>
+            </div>
+            <div class="social-content">
+                <div class="social-tabs">
+                    <button class="social-tab active" data-tab="ranking">🏆 ランキング</button>
+                    <button class="social-tab" data-tab="friends">👥 フレンド</button>
+                    <button class="social-tab" data-tab="gifts">🎁 ギフト</button>
+                    <button class="social-tab" data-tab="share">📤 シェア</button>
+                </div>
+                
+                <!-- ランキングタブ -->
+                <div class="social-tab-content active" id="rankingTab">
+                    <div class="ranking-section">
+                        <h4>🏆 グローバルランキング</h4>
+                        <div class="ranking-list" id="globalRanking">
+                            <!-- ランキングはJavaScriptで動的に追加 -->
+                        </div>
+                        <div class="my-rank">
+                            <span>あなたの順位: <span id="myRank">-</span></span>
+                            <span>あなたのスコア: <span id="myScore">0</span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- フレンドタブ -->
+                <div class="social-tab-content" id="friendsTab">
+                    <div class="friends-section">
+                        <div class="friend-search">
+                            <input type="text" id="friendSearch" placeholder="フレンドIDを入力" class="friend-input">
+                            <button onclick="addFriend()" class="friend-btn">追加</button>
+                        </div>
+                        <div class="friends-help">
+                            <h5>📝 テスト用フレンドID:</h5>
+                            <div class="friend-ids">
+                                <span class="friend-id" onclick="copyFriendId('friend_1')">friend_1</span>
+                                <span class="friend-id" onclick="copyFriendId('friend_2')">friend_2</span>
+                                <span class="friend-id" onclick="copyFriendId('friend_3')">friend_3</span>
+                            </div>
+                        </div>
+                        <div class="friends-list" id="friendsList">
+                            <!-- フレンドリストはJavaScriptで動的に追加 -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ギフトタブ -->
+                <div class="social-tab-content" id="giftsTab">
+                    <div class="gifts-section">
+                        <h4>🎁 ギフトを送る</h4>
+                        <div class="gift-form">
+                            <select id="giftFriend" class="gift-select">
+                                <option value="">フレンドを選択</option>
+                            </select>
+                            <input type="number" id="giftAmount" placeholder="ポイント数" class="gift-input" min="1" max="1000">
+                            <button onclick="sendGift()" class="gift-btn">送る</button>
+                        </div>
+                        <div class="received-gifts">
+                            <h4>📥 受け取ったギフト</h4>
+                            <div class="gifts-list" id="receivedGifts">
+                                <!-- 受け取ったギフトはJavaScriptで動的に追加 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- シェアタブ -->
+                <div class="social-tab-content" id="shareTab">
+                    <div class="share-section">
+                        <h4>📤 スコアをシェア</h4>
+                        <div class="share-stats">
+                            <div class="share-stat">
+                                <span>総ポイント: <span id="sharePoints">0</span></span>
+                            </div>
+                            <div class="share-stat">
+                                <span>総クリック数: <span id="shareClicks">0</span></span>
+                            </div>
+                            <div class="share-stat">
+                                <span>獲得実績: <span id="shareAchievements">0</span>個</span>
+                            </div>
+                        </div>
+                        <div class="share-buttons">
+                            <button onclick="shareToTwitter()" class="share-btn twitter">🐦 Twitter</button>
+                            <button onclick="shareToLine()" class="share-btn line">💬 LINE</button>
+                            <button onclick="copyShareLink()" class="share-btn copy">📋 コピー</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div id="notification" class="notification" role="alert" aria-live="polite"></div>
