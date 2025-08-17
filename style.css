@@ -1375,3 +1375,343 @@ body {
     color: var(--text-primary);
 }
 
+/* モバイル最適化のための追加スタイル */
+
+/* タッチターゲットの最小サイズ確保 */
+.click-button {
+    min-width: 120px;
+    min-height: 120px;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.upgrade-btn, .nav-btn, .menu-btn {
+    min-height: 44px;
+    min-width: 44px;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* モバイル専用レイアウト */
+@media (max-width: 768px) {
+    .game-container {
+        padding: var(--space-2);
+        gap: var(--space-3);
+    }
+    
+    .game-header {
+        padding: var(--space-3);
+        margin-bottom: var(--space-2);
+    }
+    
+    .game-title {
+        font-size: var(--font-size-xl);
+        margin-bottom: var(--space-3);
+    }
+    
+    .stats-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-2);
+    }
+    
+    .stat-card {
+        padding: var(--space-2);
+        min-height: 60px;
+    }
+    
+    .stat-icon {
+        width: 32px;
+        height: 32px;
+        font-size: var(--font-size-base);
+    }
+    
+    .stat-value {
+        font-size: var(--font-size-sm);
+    }
+    
+    .click-area {
+        padding: var(--space-4);
+        min-height: 160px;
+        margin-bottom: var(--space-3);
+    }
+    
+    .click-button {
+        width: 100px;
+        height: 100px;
+        font-size: var(--font-size-sm);
+    }
+    
+    .upgrades-section {
+        padding: var(--space-3);
+    }
+    
+    .section-title {
+        font-size: var(--font-size-lg);
+        margin-bottom: var(--space-2);
+    }
+    
+    .upgrades-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-2);
+    }
+    
+    .upgrade-card {
+        padding: var(--space-3);
+        min-height: 120px;
+    }
+    
+    .upgrade-header {
+        margin-bottom: var(--space-2);
+    }
+    
+    .upgrade-icon {
+        width: 40px;
+        height: 40px;
+        font-size: var(--font-size-lg);
+    }
+    
+    .upgrade-card h3 {
+        font-size: var(--font-size-base);
+    }
+    
+    .upgrade-stats {
+        margin-bottom: var(--space-2);
+    }
+    
+    .stat-row {
+        margin-bottom: var(--space-1);
+        font-size: var(--font-size-xs);
+    }
+    
+    .upgrade-btn {
+        padding: var(--space-2) var(--space-3);
+        font-size: var(--font-size-sm);
+        min-height: 48px;
+    }
+    
+    .nav-menu {
+        width: 100%;
+        right: -100%;
+    }
+    
+    .nav-header {
+        padding: var(--space-4);
+    }
+    
+    .nav-content {
+        padding: var(--space-4);
+    }
+    
+    .nav-btn {
+        padding: var(--space-3);
+        min-height: 56px;
+        font-size: var(--font-size-base);
+    }
+    
+    .nav-icon {
+        font-size: var(--font-size-lg);
+        width: 28px;
+    }
+    
+    .notification {
+        top: var(--space-2);
+        right: var(--space-2);
+        left: var(--space-2);
+        max-width: none;
+        font-size: var(--font-size-sm);
+        padding: var(--space-3);
+    }
+    
+    .floating-number {
+        font-size: var(--font-size-base);
+    }
+    
+    .floating-number.combo {
+        font-size: var(--font-size-lg);
+    }
+}
+
+/* 超小型画面対応 */
+@media (max-width: 480px) {
+    .game-container {
+        padding: var(--space-1);
+    }
+    
+    .game-title {
+        font-size: var(--font-size-lg);
+    }
+    
+    .stats-container {
+        grid-template-columns: 1fr;
+        gap: var(--space-1);
+    }
+    
+    .stat-card {
+        padding: var(--space-2);
+        min-height: 50px;
+    }
+    
+    .click-button {
+        width: 80px;
+        height: 80px;
+        font-size: var(--font-size-xs);
+    }
+    
+    .upgrade-card {
+        padding: var(--space-2);
+        min-height: 100px;
+    }
+    
+    .upgrade-icon {
+        width: 36px;
+        height: 36px;
+        font-size: var(--font-size-base);
+    }
+    
+    .upgrade-btn {
+        padding: var(--space-2);
+        min-height: 44px;
+        font-size: var(--font-size-xs);
+    }
+}
+
+/* タッチ操作の最適化 */
+@media (hover: none) and (pointer: coarse) {
+    .stat-card:hover,
+    .upgrade-card:hover,
+    .nav-btn:hover {
+        transform: none;
+        box-shadow: none;
+    }
+    
+    .click-button:hover {
+        transform: none;
+    }
+    
+    .upgrade-btn:hover {
+        transform: none;
+    }
+    
+    /* タッチ時のアクティブ状態 */
+    .stat-card:active,
+    .upgrade-card:active {
+        background: rgba(255, 255, 255, 0.15);
+        transform: scale(0.98);
+    }
+    
+    .click-button:active {
+        transform: scale(0.95);
+        background: var(--gradient-secondary);
+    }
+    
+    .upgrade-btn:active {
+        transform: scale(0.98);
+        background: var(--gradient-accent);
+    }
+    
+    .nav-btn:active {
+        background: rgba(255, 255, 255, 0.2);
+        transform: scale(0.98);
+    }
+}
+
+/* スワイプジェスチャー対応 */
+.nav-menu {
+    transition: transform var(--transition-normal);
+}
+
+.nav-menu.swipe-open {
+    transform: translateX(0);
+}
+
+.nav-menu.swipe-closed {
+    transform: translateX(100%);
+}
+
+/* モバイル専用のタッチフィードバック */
+.touch-feedback {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+    border-radius: inherit;
+    transform: scale(0);
+    opacity: 0;
+    transition: all var(--transition-fast);
+    pointer-events: none;
+}
+
+.touch-feedback.active {
+    transform: scale(1);
+    opacity: 1;
+}
+
+/* モバイルでのスクロール最適化 */
+.upgrades-section {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+}
+
+/* モバイルでのフォントサイズ調整 */
+@media (max-width: 768px) {
+    body {
+        font-size: 14px;
+    }
+    
+    .stat-label {
+        font-size: 10px;
+    }
+    
+    .stat-value {
+        font-size: 12px;
+    }
+    
+    .upgrade-card h3 {
+        font-size: 14px;
+    }
+    
+    .section-title {
+        font-size: 18px;
+    }
+}
+
+/* モバイルでのスペーシング調整 */
+@media (max-width: 768px) {
+    :root {
+        --space-1: 2px;
+        --space-2: 4px;
+        --space-3: 8px;
+        --space-4: 12px;
+        --space-5: 16px;
+        --space-6: 20px;
+    }
+}
+
+/* モバイルでのアニメーション最適化 */
+@media (max-width: 768px) {
+    .floating-number {
+        animation-duration: 1.5s;
+    }
+    
+    .click-effect span {
+        animation-duration: 0.8s;
+    }
+    
+    .notification {
+        transition-duration: 200ms;
+    }
+}
+
+/* モバイルでのツールチップ無効化 */
+@media (max-width: 768px) {
+    .tooltip {
+        display: none !important;
+    }
+    
+    [data-tooltip] {
+        cursor: default;
+    }
+}
+

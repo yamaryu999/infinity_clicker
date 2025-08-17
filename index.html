@@ -2,15 +2,21 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="現代的でプロフェッショナルなクリッカーゲーム">
-    <meta name="keywords" content="クリッカー, 放置ゲーム, モダンゲーム, プロフェッショナル">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="description" content="現代的でプロフェッショナルなクリッカーゲーム - モバイル最適化">
+    <meta name="keywords" content="クリッカー, 放置ゲーム, モダンゲーム, プロフェッショナル, モバイル対応">
     <meta name="author" content="Modern Clicker Game">
     <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Modern Clicker">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
     <title>✨ Modern Clicker - プロフェッショナルなクリッカーゲーム</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>">
 </head>
 <body>
     <!-- ローディング画面 -->
@@ -86,7 +92,7 @@
             <!-- クリックエリア -->
             <div class="click-area">
                 <div class="click-button-container">
-                    <button id="clickButton" class="click-button" aria-label="クリックしてポイントを獲得">
+                    <button id="clickButton" class="click-button" aria-label="クリックしてポイントを獲得" role="button" tabindex="0">
                         <div class="button-ripple"></div>
                         <div class="button-glow"></div>
                         <div class="button-content">
@@ -123,7 +129,7 @@
                                 <span id="autoClickerCost" class="stat-value">10</span>
                             </div>
                         </div>
-                        <button class="upgrade-btn" onclick="buyAutoClicker()">
+                        <button class="upgrade-btn" onclick="buyAutoClicker()" aria-label="自動クリッカーを購入">
                             <span class="btn-text">購入</span>
                             <div class="btn-ripple"></div>
                         </button>
@@ -144,7 +150,7 @@
                                 <span id="clickMultiplierCost" class="stat-value">50</span>
                             </div>
                         </div>
-                        <button class="upgrade-btn" onclick="buyClickMultiplier()">
+                        <button class="upgrade-btn" onclick="buyClickMultiplier()" aria-label="クリック倍率を購入">
                             <span class="btn-text">購入</span>
                             <div class="btn-ripple"></div>
                         </button>
@@ -165,7 +171,7 @@
                                 <span id="autoClickerSpeedCost" class="stat-value">100</span>
                             </div>
                         </div>
-                        <button class="upgrade-btn" onclick="buyAutoClickerSpeed()">
+                        <button class="upgrade-btn" onclick="buyAutoClickerSpeed()" aria-label="自動速度を購入">
                             <span class="btn-text">購入</span>
                             <div class="btn-ripple"></div>
                         </button>
@@ -186,7 +192,7 @@
                                 <span id="criticalClickCost" class="stat-value">200</span>
                             </div>
                         </div>
-                        <button class="upgrade-btn" onclick="buyCriticalClick()">
+                        <button class="upgrade-btn" onclick="buyCriticalClick()" aria-label="クリティカルを購入">
                             <span class="btn-text">購入</span>
                             <div class="btn-ripple"></div>
                         </button>
@@ -198,18 +204,18 @@
         <!-- フッター -->
         <footer class="game-footer">
             <div class="footer-content">
-                <button class="menu-btn" id="menuBtn" aria-label="メニューを開く">
+                <button class="menu-btn" id="menuBtn" aria-label="メニューを開く" role="button" tabindex="0">
                     <span class="menu-icon">☰</span>
                     <div class="btn-ripple"></div>
                 </button>
                 <div class="footer-info">
-                    <span class="version">v1.2.0 - モダンUI実装</span>
+                    <span class="version">v1.3.0 - モバイル最適化</span>
                 </div>
             </div>
         </footer>
 
         <!-- ナビゲーションメニュー -->
-        <nav class="nav-menu" id="navMenu">
+        <nav class="nav-menu" id="navMenu" role="navigation" aria-label="ゲームメニュー">
             <div class="nav-header">
                 <h3>メニュー</h3>
                 <button class="close-menu" id="closeMenuBtn" aria-label="メニューを閉じる">
@@ -221,17 +227,17 @@
                 <div class="nav-section">
                     <h4>ゲーム</h4>
                     <div class="nav-buttons">
-                        <button class="nav-btn" onclick="saveGame()">
+                        <button class="nav-btn" onclick="saveGame()" aria-label="ゲームを保存">
                             <span class="nav-icon">💾</span>
                             <span class="nav-text">セーブ</span>
                             <div class="btn-ripple"></div>
                         </button>
-                        <button class="nav-btn" onclick="loadGame()">
+                        <button class="nav-btn" onclick="loadGame()" aria-label="ゲームを読み込み">
                             <span class="nav-icon">📂</span>
                             <span class="nav-text">ロード</span>
                             <div class="btn-ripple"></div>
                         </button>
-                        <button class="nav-btn danger" onclick="resetGame()">
+                        <button class="nav-btn danger" onclick="resetGame()" aria-label="ゲームをリセット">
                             <span class="nav-icon">🔄</span>
                             <span class="nav-text">リセット</span>
                             <div class="btn-ripple"></div>
@@ -242,12 +248,12 @@
                 <div class="nav-section">
                     <h4>シェア</h4>
                     <div class="nav-buttons">
-                        <button class="nav-btn" onclick="shareToX()">
+                        <button class="nav-btn" onclick="shareToX()" aria-label="Xでシェア">
                             <span class="nav-icon">𝕏</span>
                             <span class="nav-text">Xでシェア</span>
                             <div class="btn-ripple"></div>
                         </button>
-                        <button class="nav-btn" onclick="copyShareLink()">
+                        <button class="nav-btn" onclick="copyShareLink()" aria-label="リンクをコピー">
                             <span class="nav-icon">📋</span>
                             <span class="nav-text">リンクをコピー</span>
                             <div class="btn-ripple"></div>

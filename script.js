@@ -44,6 +44,7 @@ const loadingTips = [
 // 初期化
 function initializeGame() {
     initializeDOMElements();
+    setupMobileViewport();
     setupLoadingScreen();
     setupEventListeners();
     setupTooltips();
@@ -156,6 +157,9 @@ function completeLoading() {
 
 // ツールチップの設定
 function setupTooltips() {
+    // モバイルではツールチップを無効化
+    if (window.innerWidth <= 768) return;
+    
     const tooltipElements = document.querySelectorAll('[data-tooltip]');
     
     tooltipElements.forEach(element => {
@@ -208,18 +212,9 @@ function setupEventListeners() {
     if (clickButton) {
         clickButton.addEventListener('click', handleClick);
         
-        // タッチイベント（モバイル最適化）
+        // モバイル最適化されたタッチイベント
         if ('ontouchstart' in window) {
-            clickButton.addEventListener('touchstart', function(event) {
-                event.preventDefault();
-                clickButton.classList.add('touch-active');
-            }, { passive: true });
-            
-            clickButton.addEventListener('touchend', function(event) {
-                event.preventDefault();
-                clickButton.classList.remove('touch-active');
-                handleClick();
-            }, { passive: true });
+            setupMobileTouchEvents();
         }
     }
     
@@ -236,9 +231,134 @@ function setupEventListeners() {
     
     // リップルエフェクト
     setupRippleEffects();
+    
+    // スワイプジェスチャー
+    setupSwipeGestures();
 }
 
-// リップルエフェクトの設定
+// モバイルタッチイベントの設定
+function setupMobileTouchEvents() {
+    let touchStartTime = 0;
+    let touchStartY = 0;
+    let isScrolling = false;
+    
+    // タッチ開始
+    clickButton.addEventListener('touchstart', function(event) {
+        event.preventDefault();
+        touchStartTime = Date.now();
+        touchStartY = event.touches[0].clientY;
+        isScrolling = false;
+        
+        // タッチフィードバック
+        this.classList.add('touch-active');
+        createTouchFeedback(this, event.touches[0]);
+    }, { passive: false });
+    
+    // タッチ移動
+    clickButton.addEventListener('touchmove', function(event) {
+        const touchY = event.touches[0].clientY;
+        const deltaY = Math.abs(touchY - touchStartY);
+        
+        // スクロール判定
+        if (deltaY > 10) {
+            isScrolling = true;
+            this.classList.remove('touch-active');
+        }
+    }, { passive: true });
+    
+    // タッチ終了
+    clickButton.addEventListener('touchend', function(event) {
+        event.preventDefault();
+        const touchDuration = Date.now() - touchStartTime;
+        
+        this.classList.remove('touch-active');
+        
+        // スクロールでない場合のみクリック処理
+        if (!isScrolling && touchDuration < 500) {
+            handleClick();
+        }
+    }, { passive: false });
+    
+    // タッチキャンセル
+    clickButton.addEventListener('touchcancel', function() {
+        this.classList.remove('touch-active');
+    }, { passive: true });
+}
+
+// タッチフィードバック作成
+function createTouchFeedback(element, touch) {
+    const feedback = document.createElement('div');
+    feedback.className = 'touch-feedback';
+    
+    const rect = element.getBoundingClientRect();
+    const x = touch.clientX - rect.left;
+    const y = touch.clientY - rect.top;
+    
+    feedback.style.left = x + 'px';
+    feedback.style.top = y + 'px';
+    
+    element.appendChild(feedback);
+    
+    // アニメーション開始
+    requestAnimationFrame(() => {
+        feedback.classList.add('active');
+    });
+    
+    // アニメーション終了
+    setTimeout(() => {
+        if (feedback.parentNode) {
+            feedback.remove();
+        }
+    }, 300);
+}
+
+// スワイプジェスチャーの設定
+function setupSwipeGestures() {
+    const navMenu = document.getElementById('navMenu');
+    if (!navMenu) return;
+    
+    let startX = 0;
+    let startY = 0;
+    let isSwiping = false;
+    
+    // スワイプ開始
+    document.addEventListener('touchstart', function(event) {
+        startX = event.touches[0].clientX;
+        startY = event.touches[0].clientY;
+        isSwiping = false;
+    }, { passive: true });
+    
+    // スワイプ移動
+    document.addEventListener('touchmove', function(event) {
+        if (!startX || !startY) return;
+        
+        const deltaX = event.touches[0].clientX - startX;
+        const deltaY = event.touches[0].clientY - startY;
+        
+        // 水平スワイプ判定
+        if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
+            isSwiping = true;
+            
+            // 右から左へのスワイプでメニューを開く
+            if (deltaX < -50 && !navMenu.classList.contains('active')) {
+                navMenu.classList.add('active');
+            }
+            // 左から右へのスワイプでメニューを閉じる
+            else if (deltaX > 50 && navMenu.classList.contains('active')) {
+                navMenu.classList.remove('active');
+            }
+        }
+    }, { passive: true });
+    
+    // スワイプ終了
+    document.addEventListener('touchend', function() {
+        startX = 0;
+        startY = 0;
+        isSwiping = false;
+    }, { passive: true });
+}
+
+// リップルエフェクトの設定（モバイル対応）
 function setupRippleEffects() {
     const buttons = document.querySelectorAll('.upgrade-btn, .nav-btn, .menu-btn, .close-menu');
     
@@ -248,8 +368,16 @@ function setupRippleEffects() {
             if (ripple) {
                 const rect = this.getBoundingClientRect();
                 const size = Math.max(rect.width, rect.height);
-                const x = e.clientX - rect.left - size / 2;
-                const y = e.clientY - rect.top - size / 2;
+                
+                // タッチイベントとマウスイベントの座標取得
+                let x, y;
+                if (e.touches && e.touches[0]) {
+                    x = e.touches[0].clientX - rect.left - size / 2;
+                    y = e.touches[0].clientY - rect.top - size / 2;
+                } else {
+                    x = e.clientX - rect.left - size / 2;
+                    y = e.clientY - rect.top - size / 2;
+                }
                 
                 ripple.style.width = ripple.style.height = size + 'px';
                 ripple.style.left = x + 'px';
@@ -387,11 +515,14 @@ function createClickEffect() {
     
     clickEffect.appendChild(effect);
     
+    // モバイルでは短い時間で表示
+    const duration = window.innerWidth <= 768 ? 800 : 1000;
+    
     setTimeout(() => {
         if (effect.parentNode) {
             effect.remove();
         }
-    }, 1000);
+    }, duration);
 }
 
 // アップグレード購入関数
@@ -538,11 +669,14 @@ function showNotification(message, type = 'success') {
     notification.textContent = message;
     notification.className = `notification show ${type}`;
     
+    // モバイルでは短い時間で表示
+    const duration = window.innerWidth <= 768 ? 2000 : 3000;
+    
     setTimeout(() => {
         if (notification) {
             notification.classList.remove('show');
         }
-    }, 3000);
+    }, duration);
 }
 
 // フローティング数値作成
@@ -555,7 +689,7 @@ function createFloatingNumber(text, element, type = 'normal') {
     floating.textContent = text;
     
     const rect = element.getBoundingClientRect();
-    const x = rect.left + rect.width / 2 + (Math.random() - 0.5) * 50;
+    const x = rect.left + rect.width / 2 + (Math.random() - 0.5) * 30;
     const y = rect.top + rect.height / 2;
     
     floating.style.left = x + 'px';
@@ -563,11 +697,14 @@ function createFloatingNumber(text, element, type = 'normal') {
     
     floatingContainer.appendChild(floating);
     
+    // モバイルでは短い時間で表示
+    const duration = window.innerWidth <= 768 ? 1500 : 2000;
+    
     setTimeout(() => {
         if (floating.parentNode) {
             floating.parentNode.removeChild(floating);
         }
-    }, 2000);
+    }, duration);
 }
 
 // 数値フォーマット
@@ -692,3 +829,17 @@ window.addEventListener('beforeunload', function() {
 
 // ページ読み込み時に初期化
 document.addEventListener('DOMContentLoaded', initializeGame);
+
+// モバイルでのビューポート設定
+function setupMobileViewport() {
+    // モバイルでのズーム防止
+    const viewport = document.querySelector('meta[name="viewport"]');
+    if (viewport) {
+        viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
+    }
+    
+    // iOS Safariでのアドレスバー対応
+    if ('standalone' in window.navigator && window.navigator.standalone) {
+        document.body.classList.add('standalone');
+    }
+}
