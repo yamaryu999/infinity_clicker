@@ -30,13 +30,23 @@ let pointsElement, pointsPerSecondElement, clickMultiplierElement, clickButton, 
 let notification, autoClickerLevelElement, autoClickerCostElement, clickMultiplierLevelElement, clickMultiplierCostElement;
 let autoClickerSpeedLevelElement, autoClickerSpeedCostElement, criticalClickLevelElement, criticalClickCostElement;
 let comboElement, comboMultiplierElement;
+let loadingScreen, gameContainer, progressFill, loadingText, loadingTip, tooltip;
+
+// ローディング画面のヒント
+const loadingTips = [
+    "ヒント: 連続クリックでコンボを積み重ねよう！",
+    "ヒント: 自動クリッカーで効率的にポイントを稼ごう！",
+    "ヒント: クリティカルヒットで3倍のポイントを獲得！",
+    "ヒント: アップグレードの順序を考えて効率化しよう！",
+    "ヒント: コンボを維持すると倍率が上がります！"
+];
 
 // 初期化
 function initializeGame() {
     initializeDOMElements();
-    loadGame();
+    setupLoadingScreen();
     setupEventListeners();
-    updateDisplay();
+    setupTooltips();
     startGameLoop();
     startComboCheck();
 }
@@ -63,6 +73,134 @@ function initializeDOMElements() {
     // コンボ要素
     comboElement = document.getElementById('combo');
     comboMultiplierElement = document.getElementById('comboMultiplier');
+    
+    // ローディング要素
+    loadingScreen = document.getElementById('loadingScreen');
+    gameContainer = document.getElementById('gameContainer');
+    progressFill = document.getElementById('progressFill');
+    loadingText = document.getElementById('loadingText');
+    loadingTip = document.getElementById('loadingTip');
+    
+    // ツールチップ
+    tooltip = document.getElementById('tooltip');
+}
+
+// ローディング画面の設定
+function setupLoadingScreen() {
+    let progress = 0;
+    const loadingSteps = [
+        { progress: 20, text: "ゲームデータを読み込み中..." },
+        { progress: 40, text: "アセットを初期化中..." },
+        { progress: 60, text: "UIを構築中..." },
+        { progress: 80, text: "ゲームシステムを起動中..." },
+        { progress: 100, text: "完了！" }
+    ];
+    
+    let currentStep = 0;
+    
+    const updateProgress = () => {
+        if (currentStep < loadingSteps.length) {
+            const step = loadingSteps[currentStep];
+            progress = step.progress;
+            
+            if (progressFill) {
+                progressFill.style.width = progress + '%';
+            }
+            
+            if (loadingText) {
+                loadingText.textContent = step.text;
+            }
+            
+            currentStep++;
+            
+            if (progress < 100) {
+                setTimeout(updateProgress, 800);
+            } else {
+                setTimeout(completeLoading, 500);
+            }
+        }
+    };
+    
+    // ヒントの切り替え
+    let tipIndex = 0;
+    const updateTip = () => {
+        if (loadingTip) {
+            loadingTip.textContent = loadingTips[tipIndex];
+            tipIndex = (tipIndex + 1) % loadingTips.length;
+        }
+    };
+    
+    setInterval(updateTip, 3000);
+    
+    // ローディング開始
+    setTimeout(updateProgress, 500);
+}
+
+// ローディング完了
+function completeLoading() {
+    loadGame();
+    
+    setTimeout(() => {
+        if (loadingScreen) {
+            loadingScreen.classList.add('hidden');
+        }
+        
+        if (gameContainer) {
+            gameContainer.style.opacity = '1';
+        }
+        
+        updateDisplay();
+        showNotification('🎉 ゲームの準備が完了しました！', 'success');
+    }, 300);
+}
+
+// ツールチップの設定
+function setupTooltips() {
+    const tooltipElements = document.querySelectorAll('[data-tooltip]');
+    
+    tooltipElements.forEach(element => {
+        element.addEventListener('mouseenter', (e) => {
+            const tooltipText = e.target.getAttribute('data-tooltip');
+            showTooltip(tooltipText, e);
+        });
+        
+        element.addEventListener('mouseleave', () => {
+            hideTooltip();
+        });
+    });
+}
+
+// ツールチップ表示
+function showTooltip(text, event) {
+    if (!tooltip) return;
+    
+    tooltip.textContent = text;
+    tooltip.classList.add('show');
+    
+    const rect = event.target.getBoundingClientRect();
+    const tooltipRect = tooltip.getBoundingClientRect();
+    
+    let left = rect.left + (rect.width / 2) - (tooltipRect.width / 2);
+    let top = rect.top - tooltipRect.height - 8;
+    
+    // 画面外に出ないように調整
+    if (left < 8) left = 8;
+    if (left + tooltipRect.width > window.innerWidth - 8) {
+        left = window.innerWidth - tooltipRect.width - 8;
+    }
+    if (top < 8) {
+        top = rect.bottom + 8;
+    }
+    
+    tooltip.style.left = left + 'px';
+    tooltip.style.top = top + 'px';
+}
+
+// ツールチップ非表示
+function hideTooltip() {
+    if (tooltip) {
+        tooltip.classList.remove('show');
+    }
 }
 
 // イベントリスナーの設定
@@ -95,6 +233,37 @@ function setupEventListeners() {
     
     // ナビゲーションメニュー
     setupNavigationMenu();
+    
+    // リップルエフェクト
+    setupRippleEffects();
+}
+
+// リップルエフェクトの設定
+function setupRippleEffects() {
+    const buttons = document.querySelectorAll('.upgrade-btn, .nav-btn, .menu-btn, .close-menu');
+    
+    buttons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            const ripple = this.querySelector('.btn-ripple');
+            if (ripple) {
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                ripple.style.transform = 'scale(0)';
+                ripple.style.opacity = '1';
+                
+                setTimeout(() => {
+                    ripple.style.transform = 'scale(4)';
+                    ripple.style.opacity = '0';
+                }, 10);
+            }
+        });
+    });
 }
 
 // ナビゲーションメニューの設定
@@ -297,21 +466,20 @@ function updateDisplay() {
 
 // コンボ表示更新
 function updateComboDisplay() {
+    const comboCard = document.getElementById('comboCard');
+    
     if (comboElement) {
         if (gameState.comboCount > 1) {
             comboElement.textContent = `${gameState.comboCount}コンボ`;
-            comboElement.style.display = 'block';
+            if (comboCard) comboCard.style.display = 'flex';
         } else {
-            comboElement.style.display = 'none';
+            if (comboCard) comboCard.style.display = 'none';
         }
     }
     
     if (comboMultiplierElement) {
         if (gameState.comboCount > 1) {
             comboMultiplierElement.textContent = `x${gameState.comboMultiplier.toFixed(1)}`;
-            comboMultiplierElement.style.display = 'block';
-        } else {
-            comboMultiplierElement.style.display = 'none';
         }
     }
 }
@@ -418,7 +586,7 @@ function formatNumber(num) {
 // ゲーム保存
 function saveGame() {
     try {
-        localStorage.setItem('stylishClickerSave', JSON.stringify(gameState));
+        localStorage.setItem('modernClickerSave', JSON.stringify(gameState));
         showNotification('💾 ゲームを保存しました！', 'success');
     } catch (e) {
         console.error('ゲームの保存に失敗しました:', e);
@@ -428,7 +596,7 @@ function saveGame() {
 
 // ゲーム読み込み
 function loadGame() {
-    const saved = localStorage.getItem('stylishClickerSave');
+    const saved = localStorage.getItem('modernClickerSave');
     if (saved) {
         try {
             const loadedState = JSON.parse(saved);
@@ -465,10 +633,8 @@ function loadGame() {
             }
             
             gameState = loadedState;
-            showNotification('📂 ゲームを読み込みました！', 'success');
         } catch (e) {
             console.error('セーブデータの読み込みに失敗しました:', e);
-            showNotification('❌ セーブデータの読み込みに失敗しました', 'error');
         }
     }
 }
@@ -492,7 +658,7 @@ function resetGame() {
             lastClickTime: 0,
             comboTimeout: 2000
         };
-        localStorage.removeItem('stylishClickerSave');
+        localStorage.removeItem('modernClickerSave');
         updateDisplay();
         showNotification('🔄 ゲームをリセットしました', 'success');
     }
@@ -500,7 +666,7 @@ function resetGame() {
 
 // シェア機能
 function shareToX() {
-    const text = `✨ スタイリッシュクリッカーで${formatNumber(gameState.totalPoints)}ポイント獲得！最大${gameState.maxCombo}コンボ達成！`;
+    const text = `✨ Modern Clickerで${formatNumber(gameState.totalPoints)}ポイント獲得！最大${gameState.maxCombo}コンボ達成！`;
     const url = window.location.href;
     const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
     window.open(shareUrl, '_blank');

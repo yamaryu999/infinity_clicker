@@ -3,43 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="シンプルでスタイリッシュなクリッカーゲーム">
-    <meta name="keywords" content="クリッカー, 放置ゲーム, シンプルゲーム">
-    <meta name="author" content="Stylish Clicker Game">
+    <meta name="description" content="現代的でプロフェッショナルなクリッカーゲーム">
+    <meta name="keywords" content="クリッカー, 放置ゲーム, モダンゲーム, プロフェッショナル">
+    <meta name="author" content="Modern Clicker Game">
     <meta name="theme-color" content="#6366f1">
-    <title>✨ スタイリッシュクリッカー</title>
+    <title>✨ Modern Clicker - プロフェッショナルなクリッカーゲーム</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>">
 </head>
 <body>
+    <!-- ローディング画面 -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-container">
+            <div class="loading-logo">
+                <div class="logo-icon">✨</div>
+                <h1 class="logo-text">Modern Clicker</h1>
+            </div>
+            <div class="loading-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="loading-text" id="loadingText">ゲームを読み込み中...</div>
+            </div>
+            <div class="loading-tips">
+                <div class="tip" id="loadingTip">ヒント: 連続クリックでコンボを積み重ねよう！</div>
+            </div>
+        </div>
+    </div>
+
     <!-- 背景エフェクト -->
     <div class="background-effects">
         <div class="floating-shapes"></div>
         <div class="gradient-overlay"></div>
+        <div class="particle-system" id="particleSystem"></div>
     </div>
     
-    <div class="game-container">
+    <div class="game-container" id="gameContainer" style="opacity: 0;">
         <!-- ヘッダー -->
         <header class="game-header">
-            <h1 class="game-title">✨ スタイリッシュクリッカー</h1>
-            <div class="stats-container">
-                <div class="stat-card">
-                    <span class="stat-label">ポイント</span>
-                    <span id="points" class="stat-value">0</span>
-                </div>
-                <div class="stat-card">
-                    <span class="stat-label">/秒</span>
-                    <span id="pointsPerSecond" class="stat-value">0</span>
-                </div>
-                <div class="stat-card">
-                    <span class="stat-label">倍率</span>
-                    <span id="clickMultiplier" class="stat-value">1</span>
-                </div>
-                <div class="stat-card combo-card" id="comboCard" style="display: none;">
-                    <span class="stat-label">コンボ</span>
-                    <span id="combo" class="stat-value combo-value">0</span>
-                    <span id="comboMultiplier" class="combo-multiplier">x1.0</span>
+            <div class="header-content">
+                <h1 class="game-title">
+                    <span class="title-icon">✨</span>
+                    <span class="title-text">Modern Clicker</span>
+                </h1>
+                <div class="stats-container">
+                    <div class="stat-card" data-tooltip="現在のポイント">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-content">
+                            <span class="stat-label">ポイント</span>
+                            <span id="points" class="stat-value">0</span>
+                        </div>
+                    </div>
+                    <div class="stat-card" data-tooltip="1秒あたりのポイント">
+                        <div class="stat-icon">⚡</div>
+                        <div class="stat-content">
+                            <span class="stat-label">/秒</span>
+                            <span id="pointsPerSecond" class="stat-value">0</span>
+                        </div>
+                    </div>
+                    <div class="stat-card" data-tooltip="クリック倍率">
+                        <div class="stat-icon">🎯</div>
+                        <div class="stat-content">
+                            <span class="stat-label">倍率</span>
+                            <span id="clickMultiplier" class="stat-value">1</span>
+                        </div>
+                    </div>
+                    <div class="stat-card combo-card" id="comboCard" data-tooltip="コンボ倍率" style="display: none;">
+                        <div class="stat-icon">🔥</div>
+                        <div class="stat-content">
+                            <span class="stat-label">コンボ</span>
+                            <span id="combo" class="stat-value combo-value">0</span>
+                            <span id="comboMultiplier" class="combo-multiplier">x1.0</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </header>
@@ -50,8 +87,12 @@
             <div class="click-area">
                 <div class="click-button-container">
                     <button id="clickButton" class="click-button" aria-label="クリックしてポイントを獲得">
+                        <div class="button-ripple"></div>
                         <div class="button-glow"></div>
-                        <span class="click-text">クリック</span>
+                        <div class="button-content">
+                            <span class="click-text">クリック</span>
+                            <div class="click-indicator"></div>
+                        </div>
                     </button>
                 </div>
                 <div id="clickEffect" class="click-effect"></div>
@@ -59,54 +100,96 @@
 
             <!-- アップグレードセクション -->
             <div class="upgrades-section">
-                <h2 class="section-title">アップグレード</h2>
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <span class="section-icon">🛠️</span>
+                        アップグレード
+                    </h2>
+                    <div class="section-subtitle">効率を上げてポイントを最大化しよう</div>
+                </div>
                 <div class="upgrades-grid">
-                    <div class="upgrade-card" id="autoClickerUpgrade">
+                    <div class="upgrade-card" id="autoClickerUpgrade" data-tooltip="自動的にポイントを生成">
                         <div class="upgrade-header">
-                            <span class="upgrade-icon">🤖</span>
+                            <div class="upgrade-icon">🤖</div>
                             <h3>自動クリッカー</h3>
                         </div>
                         <div class="upgrade-stats">
-                            <span>レベル: <span id="autoClickerLevel">0</span></span>
-                            <span>コスト: <span id="autoClickerCost">10</span></span>
+                            <div class="stat-row">
+                                <span class="stat-label">レベル</span>
+                                <span id="autoClickerLevel" class="stat-value">0</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">コスト</span>
+                                <span id="autoClickerCost" class="stat-value">10</span>
+                            </div>
                         </div>
-                        <button class="upgrade-btn" onclick="buyAutoClicker()">購入</button>
+                        <button class="upgrade-btn" onclick="buyAutoClicker()">
+                            <span class="btn-text">購入</span>
+                            <div class="btn-ripple"></div>
+                        </button>
                     </div>
 
-                    <div class="upgrade-card" id="clickMultiplierUpgrade">
+                    <div class="upgrade-card" id="clickMultiplierUpgrade" data-tooltip="クリックごとのポイントを増加">
                         <div class="upgrade-header">
-                            <span class="upgrade-icon">⚡</span>
+                            <div class="upgrade-icon">⚡</div>
                             <h3>クリック倍率</h3>
                         </div>
                         <div class="upgrade-stats">
-                            <span>レベル: <span id="clickMultiplierLevel">1</span></span>
-                            <span>コスト: <span id="clickMultiplierCost">50</span></span>
+                            <div class="stat-row">
+                                <span class="stat-label">レベル</span>
+                                <span id="clickMultiplierLevel" class="stat-value">1</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">コスト</span>
+                                <span id="clickMultiplierCost" class="stat-value">50</span>
+                            </div>
                         </div>
-                        <button class="upgrade-btn" onclick="buyClickMultiplier()">購入</button>
+                        <button class="upgrade-btn" onclick="buyClickMultiplier()">
+                            <span class="btn-text">購入</span>
+                            <div class="btn-ripple"></div>
+                        </button>
                     </div>
 
-                    <div class="upgrade-card" id="autoClickerSpeedUpgrade">
+                    <div class="upgrade-card" id="autoClickerSpeedUpgrade" data-tooltip="自動クリッカーの速度を向上">
                         <div class="upgrade-header">
-                            <span class="upgrade-icon">🚀</span>
+                            <div class="upgrade-icon">🚀</div>
                             <h3>自動速度</h3>
                         </div>
                         <div class="upgrade-stats">
-                            <span>レベル: <span id="autoClickerSpeedLevel">1</span></span>
-                            <span>コスト: <span id="autoClickerSpeedCost">100</span></span>
+                            <div class="stat-row">
+                                <span class="stat-label">レベル</span>
+                                <span id="autoClickerSpeedLevel" class="stat-value">1</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">コスト</span>
+                                <span id="autoClickerSpeedCost" class="stat-value">100</span>
+                            </div>
                         </div>
-                        <button class="upgrade-btn" onclick="buyAutoClickerSpeed()">購入</button>
+                        <button class="upgrade-btn" onclick="buyAutoClickerSpeed()">
+                            <span class="btn-text">購入</span>
+                            <div class="btn-ripple"></div>
+                        </button>
                     </div>
 
-                    <div class="upgrade-card" id="criticalClickUpgrade">
+                    <div class="upgrade-card" id="criticalClickUpgrade" data-tooltip="クリティカルヒットの確率を上昇">
                         <div class="upgrade-header">
-                            <span class="upgrade-icon">💥</span>
+                            <div class="upgrade-icon">💥</div>
                             <h3>クリティカル</h3>
                         </div>
                         <div class="upgrade-stats">
-                            <span>確率: <span id="criticalClickLevel">0</span>%</span>
-                            <span>コスト: <span id="criticalClickCost">200</span></span>
+                            <div class="stat-row">
+                                <span class="stat-label">確率</span>
+                                <span id="criticalClickLevel" class="stat-value">0%</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">コスト</span>
+                                <span id="criticalClickCost" class="stat-value">200</span>
+                            </div>
                         </div>
-                        <button class="upgrade-btn" onclick="buyCriticalClick()">購入</button>
+                        <button class="upgrade-btn" onclick="buyCriticalClick()">
+                            <span class="btn-text">購入</span>
+                            <div class="btn-ripple"></div>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -115,11 +198,12 @@
         <!-- フッター -->
         <footer class="game-footer">
             <div class="footer-content">
-                <button class="menu-btn" id="menuBtn" aria-label="メニュー">
+                <button class="menu-btn" id="menuBtn" aria-label="メニューを開く">
                     <span class="menu-icon">☰</span>
+                    <div class="btn-ripple"></div>
                 </button>
                 <div class="footer-info">
-                    <span class="version">v1.1.0 - コンボシステム追加</span>
+                    <span class="version">v1.2.0 - モダンUI実装</span>
                 </div>
             </div>
         </footer>
@@ -128,7 +212,10 @@
         <nav class="nav-menu" id="navMenu">
             <div class="nav-header">
                 <h3>メニュー</h3>
-                <button class="close-menu" id="closeMenuBtn">×</button>
+                <button class="close-menu" id="closeMenuBtn" aria-label="メニューを閉じる">
+                    <span class="close-icon">×</span>
+                    <div class="btn-ripple"></div>
+                </button>
             </div>
             <div class="nav-content">
                 <div class="nav-section">
@@ -137,14 +224,17 @@
                         <button class="nav-btn" onclick="saveGame()">
                             <span class="nav-icon">💾</span>
                             <span class="nav-text">セーブ</span>
+                            <div class="btn-ripple"></div>
                         </button>
                         <button class="nav-btn" onclick="loadGame()">
                             <span class="nav-icon">📂</span>
                             <span class="nav-text">ロード</span>
+                            <div class="btn-ripple"></div>
                         </button>
                         <button class="nav-btn danger" onclick="resetGame()">
                             <span class="nav-icon">🔄</span>
                             <span class="nav-text">リセット</span>
+                            <div class="btn-ripple"></div>
                         </button>
                     </div>
                 </div>
@@ -155,10 +245,12 @@
                         <button class="nav-btn" onclick="shareToX()">
                             <span class="nav-icon">𝕏</span>
                             <span class="nav-text">Xでシェア</span>
+                            <div class="btn-ripple"></div>
                         </button>
                         <button class="nav-btn" onclick="copyShareLink()">
                             <span class="nav-icon">📋</span>
                             <span class="nav-text">リンクをコピー</span>
+                            <div class="btn-ripple"></div>
                         </button>
                     </div>
                 </div>
@@ -166,11 +258,14 @@
         </nav>
     </div>
 
-    <!-- 通知 -->
+    <!-- 通知システム -->
     <div id="notification" class="notification" role="alert" aria-live="polite"></div>
     
     <!-- フローティング数値エフェクト -->
     <div class="floating-numbers" id="floatingNumbers"></div>
+    
+    <!-- ツールチップ -->
+    <div class="tooltip" id="tooltip"></div>
     
     <script src="script.js"></script>
 </body>
