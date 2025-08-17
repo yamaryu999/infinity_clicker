@@ -11,6 +11,21 @@ let gameState = {
     totalPoints: 0,
     achievements: [],
     clickEffect: 'default', // 追加
+    // プレイヤーレベルシステム
+    playerLevel: 1,
+    playerExp: 0,
+    playerExpRequired: 100,
+    prestige: 0,
+    prestigeBonus: 1,
+    // 一日一回ボーナス
+    dailyRewardClaimed: false,
+    lastDailyReward: 0,
+    dailyRewardStreak: 0,
+    // コンボシステム
+    clickCombo: 0,
+    maxClickCombo: 0,
+    comboMultiplier: 1,
+    lastClickTime: 0,
     // ソーシャル機能データ
     playerId: generatePlayerId(),
     playerName: generatePlayerName(),
@@ -50,28 +65,94 @@ let gameState = {
             totalSpent: 0,
             bestTime: 0
         }
+    },
+    // ストーリーモードデータ
+    storyMode: {
+        currentWorld: 'forest',
+        currentLevel: 1,
+        totalProgress: 0,
+        unlockedWorlds: ['forest'],
+        completedQuests: [],
+        activeQuests: [],
+        characterEvolution: {
+            stage: 1,
+            experience: 0,
+            nextStageExp: 100,
+            unlockedForms: ['kitten']
+        },
+        worldProgress: {
+            forest: {
+                level: 1,
+                completed: false,
+                resources: {
+                    acorns: 0,
+                    mushrooms: 0,
+                    herbs: 0
+                }
+            },
+            ocean: {
+                level: 0,
+                completed: false,
+                resources: {
+                    fish: 0,
+                    pearls: 0,
+                    seaweed: 0
+                }
+            },
+            space: {
+                level: 0,
+                completed: false,
+                resources: {
+                    stardust: 0,
+                    meteorites: 0,
+                    crystals: 0
+                }
+            }
+        }
     }
 };
 
-// アップグレードコスト計算
+// アップグレードコスト計算（バランス調整済み）
 const upgradeCosts = {
-    autoClicker: (level) => Math.floor(10 * Math.pow(1.15, level)),
-    clickMultiplier: (level) => Math.floor(50 * Math.pow(1.2, level)),
-    autoClickerSpeed: (level) => Math.floor(100 * Math.pow(1.25, level)),
-    criticalClick: (level) => Math.floor(200 * Math.pow(1.3, level))
+    autoClicker: (level) => Math.floor(10 * Math.pow(1.12, level)), // 成長率を緩和
+    clickMultiplier: (level) => Math.floor(25 * Math.pow(1.15, level)), // 初期コストを下げ、成長率緩和
+    autoClickerSpeed: (level) => Math.floor(75 * Math.pow(1.18, level)), // バランス調整
+    criticalClick: (level) => Math.floor(150 * Math.pow(1.25, level)) // 成長率を緩和
 };
 
-// 実績定義
+// 実績定義（拡張版）
 const achievements = [
-    { id: 'first_click', name: '初回クリック', description: '初めてクリックしました', requirement: 1, type: 'clicks' },
-    { id: 'hundred_clicks', name: 'クリックマスター', description: '100回クリックしました', requirement: 100, type: 'clicks' },
-    { id: 'thousand_clicks', name: 'クリック伝説', description: '1000回クリックしました', requirement: 1000, type: 'clicks' },
-    { id: 'first_point', name: '最初の一歩', description: '最初のポイントを獲得しました', requirement: 1, type: 'points' },
-    { id: 'hundred_points', name: 'ポイント収集家', description: '100ポイントを獲得しました', requirement: 100, type: 'points' },
-    { id: 'thousand_points', name: 'ポイント富豪', description: '1000ポイントを獲得しました', requirement: 1000, type: 'points' },
-    { id: 'first_upgrade', name: 'アップグレード開始', description: '最初のアップグレードを購入しました', requirement: 1, type: 'upgrades' },
-    { id: 'auto_clicker', name: '自動化の始まり', description: '自動クリッカーを購入しました', requirement: 1, type: 'autoClicker' },
-    { id: 'critical_hit', name: 'クリティカルヒット', description: '初めてクリティカルヒットを出しました', requirement: 1, type: 'criticalHits' }
+    { id: 'first_click', name: '初回クリック', description: '初めてクリックしました', requirement: 1, type: 'clicks', reward: 5 },
+    { id: 'hundred_clicks', name: 'クリックマスター', description: '100回クリックしました', requirement: 100, type: 'clicks', reward: 50 },
+    { id: 'thousand_clicks', name: 'クリック伝説', description: '1000回クリックしました', requirement: 1000, type: 'clicks', reward: 200 },
+    { id: 'ten_thousand_clicks', name: 'クリック神話', description: '10000回クリックしました', requirement: 10000, type: 'clicks', reward: 1000 },
+    
+    { id: 'first_point', name: '最初の一歩', description: '最初のポイントを獲得しました', requirement: 1, type: 'points', reward: 10 },
+    { id: 'hundred_points', name: 'ポイント収集家', description: '100ポイントを獲得しました', requirement: 100, type: 'points', reward: 100 },
+    { id: 'thousand_points', name: 'ポイント富豪', description: '1000ポイントを獲得しました', requirement: 1000, type: 'points', reward: 500 },
+    { id: 'ten_thousand_points', name: 'ポイント王', description: '10000ポイントを獲得しました', requirement: 10000, type: 'points', reward: 2000 },
+    { id: 'million_points', name: 'ポイント皇帝', description: '100万ポイントを獲得しました', requirement: 1000000, type: 'points', reward: 50000 },
+    
+    { id: 'first_upgrade', name: 'アップグレード開始', description: '最初のアップグレードを購入しました', requirement: 1, type: 'upgrades', reward: 25 },
+    { id: 'auto_clicker', name: '自動化の始まり', description: '自動クリッカーを購入しました', requirement: 1, type: 'autoClicker', reward: 100 },
+    { id: 'critical_hit', name: 'クリティカルヒット', description: '初めてクリティカルヒットを出しました', requirement: 1, type: 'criticalHits', reward: 50 },
+    
+    // レベル関連実績
+    { id: 'level_5', name: 'レベル5達成', description: 'プレイヤーレベル5に到達しました', requirement: 5, type: 'level', reward: 100 },
+    { id: 'level_10', name: 'レベル10達成', description: 'プレイヤーレベル10に到達しました', requirement: 10, type: 'level', reward: 300 },
+    { id: 'level_25', name: 'レベル25達成', description: 'プレイヤーレベル25に到達しました', requirement: 25, type: 'level', reward: 1000 },
+    
+    // コンボ関連実績
+    { id: 'combo_10', name: 'コンボマスター', description: '10コンボを達成しました', requirement: 10, type: 'combo', reward: 150 },
+    { id: 'combo_50', name: 'コンボ伝説', description: '50コンボを達成しました', requirement: 50, type: 'combo', reward: 500 },
+    { id: 'combo_100', name: 'コンボ神', description: '100コンボを達成しました', requirement: 100, type: 'combo', reward: 2000 },
+    
+    // デイリー関連実績
+    { id: 'daily_week', name: '継続は力なり', description: '7日連続でデイリーボーナスを受け取りました', requirement: 7, type: 'daily', reward: 1000 },
+    { id: 'daily_month', name: '毎日の習慣', description: '30日連続でデイリーボーナスを受け取りました', requirement: 30, type: 'daily', reward: 10000 },
+    
+    // プレステージ関連実績
+    { id: 'first_prestige', name: '転生の始まり', description: '初回転生を達成しました', requirement: 1, type: 'prestige', reward: 5000 }
 ];
 
 // DOM要素
@@ -83,6 +164,14 @@ const clickEffect = document.getElementById('clickEffect');
 const notification = document.getElementById('notification');
 const mainCharacter = document.getElementById('mainCharacter');
 const achievementsElement = document.getElementById('achievements');
+const playerLevelElement = document.getElementById('playerLevel');
+const expFillElement = document.getElementById('expFill');
+const expTextElement = document.getElementById('expText');
+const dailyRewardBtn = document.getElementById('dailyRewardBtn');
+const dailyBadge = document.getElementById('dailyBadge');
+const prestigeBtn = document.getElementById('prestigeBtn');
+const prestigeLevelElement = document.getElementById('prestigeLevel');
+const prestigeBonusElement = document.getElementById('prestigeBonus');
 
 // アップグレード要素
 const autoClickerLevelElement = document.getElementById('autoClickerLevel');
@@ -1073,11 +1162,36 @@ function setupNavigationMenu() {
 
 // クリック処理を更新
 function handleClick() {
+    const currentTime = Date.now();
+    
     // クリック数を増加
     gameState.totalClicks++;
     
-    // 基本ポイント
-    let pointsGained = gameState.clickMultiplier;
+    // コンボシステム
+    if (currentTime - gameState.lastClickTime < 1000) { // 1秒以内
+        gameState.clickCombo++;
+        if (gameState.clickCombo > gameState.maxClickCombo) {
+            gameState.maxClickCombo = gameState.clickCombo;
+        }
+    } else {
+        gameState.clickCombo = 1;
+    }
+    gameState.lastClickTime = currentTime;
+    
+    // コンボ倍率（最大5倍）
+    gameState.comboMultiplier = Math.min(1 + (gameState.clickCombo - 1) * 0.1, 5);
+    
+    // 基本ポイント（安全性チェック付き）
+    const safePrestigeBonus = isNaN(gameState.prestigeBonus) || gameState.prestigeBonus <= 0 ? 1 : gameState.prestigeBonus;
+    const safeComboMultiplier = isNaN(gameState.comboMultiplier) || gameState.comboMultiplier <= 0 ? 1 : gameState.comboMultiplier;
+    const safeClickMultiplier = isNaN(gameState.clickMultiplier) || gameState.clickMultiplier <= 0 ? 1 : gameState.clickMultiplier;
+    
+    let pointsGained = safeClickMultiplier * safeComboMultiplier * safePrestigeBonus;
+    
+    // ワールドボーナスを適用
+    if (gameState.worldBonus && gameState.worldBonus.clickMultiplier) {
+        pointsGained *= gameState.worldBonus.clickMultiplier;
+    }
     
     // クリティカルヒットの判定
     if (Math.random() < gameState.criticalClickChance) {
@@ -1091,9 +1205,36 @@ function handleClick() {
         }
     }
     
+    // コンボボーナス表示とフローティング数値
+    if (gameState.clickCombo > 1) {
+        showEnhancedNotification(`🔥 ${gameState.clickCombo}コンボ！ x${gameState.comboMultiplier.toFixed(1)}`, 'combo');
+        createFloatingNumber(`${gameState.clickCombo}x COMBO`, clickButton, 'combo');
+    }
+    
+    // クリック時のフローティング数値
+    const numberType = Math.random() < gameState.criticalClickChance ? 'critical' : 'normal';
+    createFloatingNumber(`+${formatNumber(pointsGained)}`, clickButton, numberType);
+    
     // ポイントを加算
     gameState.points += pointsGained;
     gameState.totalPoints += pointsGained;
+    
+    // 経験値を加算
+    addPlayerExp(Math.floor(pointsGained / 10));
+    
+    // 実績チェック
+    checkAchievements();
+    
+    // ストーリーモードの処理
+    if (typeof StoryModeSystem !== 'undefined') {
+        // ランダムリソース収集（10%の確率）
+        if (Math.random() < 0.1) {
+            StoryModeSystem.randomResourceCollection();
+        }
+        
+        // クエストチェック
+        StoryModeSystem.checkQuests();
+    }
     
     // キャラクターアニメーション
     if (CharacterManager && typeof CharacterManager.clickAnimation === 'function') {
@@ -1367,13 +1508,20 @@ function checkAchievements() {
     });
 }
 
-// 実績解除関数を更新
+// 実績解除関数を更新（報酬システム付き）
 function unlockAchievement(achievementId) {
     if (!gameState.achievements.includes(achievementId)) {
         gameState.achievements.push(achievementId);
         const achievement = achievements.find(a => a.id === achievementId);
         if (achievement) {
-            showNotification(`🏆 実績解除: ${achievement.name}`, 'achievement');
+            // 報酬を付与
+            if (achievement.reward) {
+                gameState.points += achievement.reward;
+                showEnhancedNotification(`🏆 実績解除: ${achievement.name} (+${achievement.reward}ポイント)`, 'achievement');
+                createFloatingNumber(`+${achievement.reward}`, document.querySelector('.click-button'), 'reward');
+            } else {
+                showEnhancedNotification(`🏆 実績解除: ${achievement.name}`, 'achievement');
+            }
             
             // 強化されたレベルアップエフェクト
             if (typeof VisualEnhancementSystem !== 'undefined') {
@@ -1437,6 +1585,322 @@ function formatNumber(num) {
     return Math.floor(num).toString();
 }
 
+// プレイヤーレベルシステム
+function addPlayerExp(exp) {
+    gameState.playerExp += exp;
+    
+    // レベルアップチェック
+    while (gameState.playerExp >= gameState.playerExpRequired) {
+        gameState.playerExp -= gameState.playerExpRequired;
+        gameState.playerLevel++;
+        gameState.playerExpRequired = Math.floor(100 * Math.pow(1.5, gameState.playerLevel - 1));
+        
+        // レベルアップボーナス
+        const bonus = gameState.playerLevel * 10;
+        gameState.points += bonus;
+        
+        showEnhancedNotification(`🎉 レベル${gameState.playerLevel}達成！ボーナス${bonus}ポイント獲得！`, 'level-up');
+        createFloatingNumber(`LEVEL ${gameState.playerLevel}!`, document.querySelector('.click-button'), 'exp');
+        
+        // キャラクターアニメーション
+        if (CharacterManager && typeof CharacterManager.levelUpAnimation === 'function') {
+            CharacterManager.levelUpAnimation();
+        }
+    }
+    
+    updatePlayerUI();
+}
+
+function updatePlayerUI() {
+    // 数値の安全性チェック
+    const safePlayerLevel = isNaN(gameState.playerLevel) ? 1 : gameState.playerLevel;
+    const safePlayerExp = isNaN(gameState.playerExp) ? 0 : gameState.playerExp;
+    const safePlayerExpRequired = isNaN(gameState.playerExpRequired) ? 100 : gameState.playerExpRequired;
+    const safePrestige = isNaN(gameState.prestige) ? 0 : gameState.prestige;
+    const safePrestigeBonus = isNaN(gameState.prestigeBonus) ? 1 : gameState.prestigeBonus;
+    const safeTotalPoints = isNaN(gameState.totalPoints) ? 0 : gameState.totalPoints;
+    
+    if (playerLevelElement) playerLevelElement.textContent = safePlayerLevel;
+    if (expTextElement) expTextElement.textContent = `${safePlayerExp} / ${safePlayerExpRequired} EXP`;
+    if (expFillElement) {
+        const expPercent = safePlayerExpRequired > 0 ? (safePlayerExp / safePlayerExpRequired) * 100 : 0;
+        expFillElement.style.width = `${Math.max(0, Math.min(100, expPercent))}%`;
+    }
+    if (prestigeLevelElement) prestigeLevelElement.textContent = safePrestige;
+    if (prestigeBonusElement) prestigeBonusElement.textContent = Math.round((safePrestigeBonus - 1) * 100);
+    
+    // プレステージボタンの有効/無効
+    if (prestigeBtn) {
+        prestigeBtn.disabled = safeTotalPoints < 100000;
+        const remainingPoints = 100000 - safeTotalPoints;
+        prestigeBtn.textContent = safeTotalPoints >= 100000 ? '転生する' : `転生まで${remainingPoints.toLocaleString()}ポイント`;
+    }
+}
+
+// 毎日ボーナス
+function claimDailyReward() {
+    const now = Date.now();
+    const oneDay = 24 * 60 * 60 * 1000;
+    
+    if (now - gameState.lastDailyReward >= oneDay) {
+        if (gameState.dailyRewardClaimed) {
+            gameState.dailyRewardStreak = 1;
+        } else {
+            gameState.dailyRewardStreak++;
+        }
+        
+        const baseReward = 100;
+        const streakMultiplier = Math.min(gameState.dailyRewardStreak, 7);
+        const safePrestigeBonus = isNaN(gameState.prestigeBonus) || gameState.prestigeBonus <= 0 ? 1 : gameState.prestigeBonus;
+        const reward = baseReward * streakMultiplier * safePrestigeBonus;
+        
+        gameState.points += reward;
+        gameState.lastDailyReward = now;
+        gameState.dailyRewardClaimed = true;
+        
+        showEnhancedNotification(`🎁 デイリーボーナス！${reward.toLocaleString()}ポイント獲得！(${gameState.dailyRewardStreak}日連続)`, 'reward');
+        createFloatingNumber(`+${reward.toLocaleString()}`, dailyRewardBtn, 'reward');
+        
+        updateDailyRewardUI();
+        saveGame();
+    } else {
+        const timeLeft = oneDay - (now - gameState.lastDailyReward);
+        const hoursLeft = Math.floor(timeLeft / (60 * 60 * 1000));
+        const minutesLeft = Math.floor((timeLeft % (60 * 60 * 1000)) / (60 * 1000));
+        showNotification(`⏰ 次のボーナスまで${hoursLeft}時間${minutesLeft}分`);
+    }
+}
+
+function updateDailyRewardUI() {
+    const now = Date.now();
+    const oneDay = 24 * 60 * 60 * 1000;
+    const canClaim = now - gameState.lastDailyReward >= oneDay;
+    
+    if (dailyRewardBtn) {
+        dailyRewardBtn.disabled = !canClaim;
+        dailyRewardBtn.classList.toggle('available', canClaim);
+    }
+    
+    if (dailyBadge) {
+        dailyBadge.style.display = canClaim ? 'block' : 'none';
+    }
+}
+
+// プレステージシステム
+function performPrestige() {
+    console.log('転生実行前のgameState:', {
+        totalPoints: gameState.totalPoints,
+        prestige: gameState.prestige,
+        prestigeBonus: gameState.prestigeBonus
+    });
+    
+    if (gameState.totalPoints < 100000) {
+        showNotification('❌ 転生には100,000ポイントが必要です');
+        return;
+    }
+    
+    if (confirm('本当に転生しますか？すべての進行がリセットされますが、永続ボーナスを獲得します。')) {
+        gameState.prestige++;
+        gameState.prestigeBonus += 0.1; // 10%ボーナス
+        
+        // ゲーム状態をリセット（プレステージ関連以外）
+        const prestigeData = {
+            prestige: gameState.prestige,
+            prestigeBonus: gameState.prestigeBonus,
+            playerId: gameState.playerId,
+            playerName: gameState.playerName,
+            dailyRewardStreak: gameState.dailyRewardStreak,
+            lastDailyReward: gameState.lastDailyReward,
+            maxClickCombo: gameState.maxClickCombo
+        };
+        
+        // 初期状態に戻す
+        gameState.points = 0;
+        gameState.autoClickerLevel = 0;
+        gameState.clickMultiplierLevel = 1;
+        gameState.clickMultiplier = 1;
+        gameState.autoClickerSpeedLevel = 1;
+        gameState.criticalClickLevel = 0;
+        gameState.criticalClickChance = 0;
+        gameState.totalClicks = 0;
+        gameState.totalPoints = 0;
+        gameState.achievements = [];
+        gameState.playerLevel = 1;
+        gameState.playerExp = 0;
+        gameState.playerExpRequired = 100;
+        gameState.clickCombo = 0;
+        gameState.comboMultiplier = 1;
+        gameState.lastClickTime = 0;
+        
+        // プレステージデータを復元
+        Object.assign(gameState, prestigeData);
+        
+        const bonusPercent = Math.round((gameState.prestigeBonus - 1) * 100);
+        console.log('転生実行後のgameState:', {
+            prestige: gameState.prestige,
+            prestigeBonus: gameState.prestigeBonus,
+            bonusPercent: bonusPercent
+        });
+        
+        showNotification(`⭐ 転生完了！永続ボーナス${bonusPercent}%獲得！`);
+        
+        updateAllUI();
+        saveGame();
+    }
+}
+
+// ゲーム状態の安全な初期化
+function validateGameState() {
+    // 数値プロパティの検証と修正
+    if (isNaN(gameState.points) || gameState.points < 0) gameState.points = 0;
+    if (isNaN(gameState.totalPoints) || gameState.totalPoints < 0) gameState.totalPoints = 0;
+    if (isNaN(gameState.playerLevel) || gameState.playerLevel < 1) gameState.playerLevel = 1;
+    if (isNaN(gameState.playerExp) || gameState.playerExp < 0) gameState.playerExp = 0;
+    if (isNaN(gameState.playerExpRequired) || gameState.playerExpRequired < 1) gameState.playerExpRequired = 100;
+    if (isNaN(gameState.prestige) || gameState.prestige < 0) gameState.prestige = 0;
+    if (isNaN(gameState.prestigeBonus) || gameState.prestigeBonus < 1) gameState.prestigeBonus = 1;
+    if (isNaN(gameState.clickMultiplier) || gameState.clickMultiplier < 1) gameState.clickMultiplier = 1;
+    if (isNaN(gameState.comboMultiplier) || gameState.comboMultiplier < 1) gameState.comboMultiplier = 1;
+    if (isNaN(gameState.clickCombo) || gameState.clickCombo < 0) gameState.clickCombo = 0;
+    if (isNaN(gameState.maxClickCombo) || gameState.maxClickCombo < 0) gameState.maxClickCombo = 0;
+    if (isNaN(gameState.dailyRewardStreak) || gameState.dailyRewardStreak < 0) gameState.dailyRewardStreak = 0;
+    
+    // レベル関連値の整合性チェック
+    if (gameState.autoClickerLevel < 0) gameState.autoClickerLevel = 0;
+    if (gameState.clickMultiplierLevel < 1) gameState.clickMultiplierLevel = 1;
+    if (gameState.autoClickerSpeedLevel < 1) gameState.autoClickerSpeedLevel = 1;
+    if (gameState.criticalClickLevel < 0) gameState.criticalClickLevel = 0;
+    
+    console.log('ゲーム状態の検証完了:', {
+        prestige: gameState.prestige,
+        prestigeBonus: gameState.prestigeBonus,
+        playerLevel: gameState.playerLevel
+    });
+}
+
+// 全UI更新関数
+function updateAllUI() {
+    // 基本統計の更新
+    if (pointsElement) pointsElement.textContent = formatNumber(gameState.points);
+    if (pointsPerSecondElement) pointsPerSecondElement.textContent = formatNumber(calculatePointsPerSecond());
+    if (clickMultiplierElement) clickMultiplierElement.textContent = gameState.clickMultiplier;
+    
+    // プレイヤーUI更新
+    updatePlayerUI();
+    
+    // デイリー報酬UI更新
+    updateDailyRewardUI();
+    
+    // アップグレードUI更新
+    updateUpgradeUI();
+    
+    // 実績UI更新
+    updateAchievements();
+}
+
+function updateUpgradeUI() {
+    // アップグレードレベルとコストの更新
+    if (autoClickerLevelElement) autoClickerLevelElement.textContent = gameState.autoClickerLevel;
+    if (autoClickerCostElement) autoClickerCostElement.textContent = formatNumber(upgradeCosts.autoClicker(gameState.autoClickerLevel));
+    
+    if (clickMultiplierLevelElement) clickMultiplierLevelElement.textContent = gameState.clickMultiplierLevel;
+    if (clickMultiplierCostElement) clickMultiplierCostElement.textContent = formatNumber(upgradeCosts.clickMultiplier(gameState.clickMultiplierLevel));
+    
+    if (autoClickerSpeedLevelElement) autoClickerSpeedLevelElement.textContent = gameState.autoClickerSpeedLevel;
+    if (autoClickerSpeedCostElement) autoClickerSpeedCostElement.textContent = formatNumber(upgradeCosts.autoClickerSpeed(gameState.autoClickerSpeedLevel));
+    
+    if (criticalClickLevelElement) criticalClickLevelElement.textContent = (gameState.criticalClickChance * 100).toFixed(1);
+    if (criticalClickCostElement) criticalClickCostElement.textContent = formatNumber(upgradeCosts.criticalClick(gameState.criticalClickLevel));
+}
+
+// 強化された通知システム
+function showEnhancedNotification(message, type = 'default') {
+    const container = document.getElementById('notificationContainer');
+    if (!container) return;
+    
+    const notification = document.createElement('div');
+    notification.className = `enhanced-notification ${type}`;
+    notification.textContent = message;
+    
+    container.appendChild(notification);
+    
+    // 3.5秒後に削除
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+        }
+    }, 3500);
+}
+
+// フローティング数値エフェクト
+function createFloatingNumber(text, element, type = 'normal') {
+    const floatingContainer = document.getElementById('floatingNumbers');
+    if (!floatingContainer || !element) return;
+    
+    const floating = document.createElement('div');
+    floating.className = `floating-number ${type}`;
+    floating.textContent = text;
+    
+    // 要素の位置を取得
+    const rect = element.getBoundingClientRect();
+    const x = rect.left + rect.width / 2 + (Math.random() - 0.5) * 100;
+    const y = rect.top + rect.height / 2;
+    
+    floating.style.left = x + 'px';
+    floating.style.top = y + 'px';
+    
+    floatingContainer.appendChild(floating);
+    
+    // アニメーション完了後に削除
+    setTimeout(() => {
+        if (floating.parentNode) {
+            floating.parentNode.removeChild(floating);
+        }
+    }, 2000);
+}
+
+// 包括的な実績チェック関数
+function checkAchievements() {
+    achievements.forEach(achievement => {
+        if (!gameState.achievements.includes(achievement.id)) {
+            let shouldUnlock = false;
+            
+            switch (achievement.type) {
+                case 'clicks':
+                    shouldUnlock = gameState.totalClicks >= achievement.requirement;
+                    break;
+                case 'points':
+                    shouldUnlock = gameState.totalPoints >= achievement.requirement;
+                    break;
+                case 'level':
+                    shouldUnlock = gameState.playerLevel >= achievement.requirement;
+                    break;
+                case 'combo':
+                    shouldUnlock = gameState.maxClickCombo >= achievement.requirement;
+                    break;
+                case 'daily':
+                    shouldUnlock = gameState.dailyRewardStreak >= achievement.requirement;
+                    break;
+                case 'prestige':
+                    shouldUnlock = gameState.prestige >= achievement.requirement;
+                    break;
+                case 'upgrades':
+                    const totalUpgrades = gameState.autoClickerLevel + gameState.clickMultiplierLevel + 
+                                        gameState.autoClickerSpeedLevel + gameState.criticalClickLevel;
+                    shouldUnlock = totalUpgrades >= achievement.requirement;
+                    break;
+                case 'autoClicker':
+                    shouldUnlock = gameState.autoClickerLevel >= achievement.requirement;
+                    break;
+            }
+            
+            if (shouldUnlock) {
+                unlockAchievement(achievement.id);
+            }
+        }
+    });
+}
+
 // ゲーム保存
 function saveGame() {
     try {
@@ -1475,6 +1939,44 @@ function loadGame() {
                 loadedState.clickEffect = 'default';
             }
             
+            // 新しい属性の初期化
+            if (typeof loadedState.playerLevel === 'undefined') {
+                loadedState.playerLevel = 1;
+            }
+            if (typeof loadedState.playerExp === 'undefined') {
+                loadedState.playerExp = 0;
+            }
+            if (typeof loadedState.playerExpRequired === 'undefined') {
+                loadedState.playerExpRequired = 100;
+            }
+            if (typeof loadedState.prestige === 'undefined') {
+                loadedState.prestige = 0;
+            }
+            if (typeof loadedState.prestigeBonus === 'undefined') {
+                loadedState.prestigeBonus = 1;
+            }
+            if (typeof loadedState.dailyRewardClaimed === 'undefined') {
+                loadedState.dailyRewardClaimed = false;
+            }
+            if (typeof loadedState.lastDailyReward === 'undefined') {
+                loadedState.lastDailyReward = 0;
+            }
+            if (typeof loadedState.dailyRewardStreak === 'undefined') {
+                loadedState.dailyRewardStreak = 0;
+            }
+            if (typeof loadedState.clickCombo === 'undefined') {
+                loadedState.clickCombo = 0;
+            }
+            if (typeof loadedState.maxClickCombo === 'undefined') {
+                loadedState.maxClickCombo = 0;
+            }
+            if (typeof loadedState.comboMultiplier === 'undefined') {
+                loadedState.comboMultiplier = 1;
+            }
+            if (typeof loadedState.lastClickTime === 'undefined') {
+                loadedState.lastClickTime = 0;
+            }
+            
             // ミニゲームデータの初期化
             if (typeof loadedState.minigames === 'undefined') {
                 loadedState.minigames = {
@@ -1506,6 +2008,41 @@ function loadGame() {
                 };
             }
             
+            // ストーリーモードデータの初期化
+            if (typeof loadedState.storyMode === 'undefined') {
+                loadedState.storyMode = {
+                    currentWorld: 'forest',
+                    currentLevel: 1,
+                    totalProgress: 0,
+                    unlockedWorlds: ['forest'],
+                    completedQuests: [],
+                    activeQuests: [],
+                    characterEvolution: {
+                        stage: 1,
+                        experience: 0,
+                        nextStageExp: 100,
+                        unlockedForms: ['kitten']
+                    },
+                    worldProgress: {
+                        forest: {
+                            level: 1,
+                            completed: false,
+                            resources: { acorns: 0, mushrooms: 0, herbs: 0 }
+                        },
+                        ocean: {
+                            level: 0,
+                            completed: false,
+                            resources: { fish: 0, pearls: 0, seaweed: 0 }
+                        },
+                        space: {
+                            level: 0,
+                            completed: false,
+                            resources: { stardust: 0, meteorites: 0, crystals: 0 }
+                        }
+                    }
+                };
+            }
+            
             // ソーシャル機能のデータを初期化
             if (typeof loadedState.playerId === 'undefined') {
                 loadedState.playerId = generatePlayerId();
@@ -1532,6 +2069,7 @@ function loadGame() {
             }
             
             gameState = loadedState;
+            validateGameState(); // 読み込み後の検証
             showNotification('ゲームを読み込みました！');
         } catch (e) {
             console.error('セーブデータの読み込みに失敗しました:', e);
@@ -1619,6 +2157,66 @@ function resetGame() {
                 giftsSent: 0,
                 friendsCount: 0,
                 lastActive: Date.now()
+            },
+            // ミニゲームデータ
+            minigames: {
+                slotMachine: {
+                    lastPlayed: 0,
+                    totalWins: 0,
+                    totalSpent: 0,
+                    jackpotWins: 0
+                },
+                lottery: {
+                    lastPlayed: 0,
+                    totalWins: 0,
+                    totalSpent: 0,
+                    biggestWin: 0
+                },
+                quiz: {
+                    lastPlayed: 0,
+                    totalCorrect: 0,
+                    totalQuestions: 0,
+                    streak: 0,
+                    bestStreak: 0
+                },
+                puzzle: {
+                    lastPlayed: 0,
+                    totalCompleted: 0,
+                    totalSpent: 0,
+                    bestTime: 0
+                }
+            },
+            // ストーリーモードデータ
+            storyMode: {
+                currentWorld: 'forest',
+                currentLevel: 1,
+                totalProgress: 0,
+                unlockedWorlds: ['forest'],
+                completedQuests: [],
+                activeQuests: [],
+                characterEvolution: {
+                    stage: 1,
+                    experience: 0,
+                    nextStageExp: 100,
+                    unlockedForms: ['kitten']
+                },
+                worldProgress: {
+                    forest: {
+                        level: 1,
+                        completed: false,
+                        resources: { acorns: 0, mushrooms: 0, herbs: 0 }
+                    },
+                    ocean: {
+                        level: 0,
+                        completed: false,
+                        resources: { fish: 0, pearls: 0, seaweed: 0 }
+                    },
+                    space: {
+                        level: 0,
+                        completed: false,
+                        resources: { stardust: 0, meteorites: 0, crystals: 0 }
+                    }
+                }
             }
         };
         localStorage.removeItem('idleClickerSave');
@@ -1635,9 +2233,22 @@ function gameLoop() {
     gameState.points += autoClickerPoints;
     gameState.totalPoints += autoClickerPoints;
     
+    // ワールドボーナスを適用
+    if (gameState.worldBonus && gameState.worldBonus.autoClicker) {
+        const worldBonus = autoClickerPoints * (gameState.worldBonus.autoClicker - 1);
+        gameState.points += worldBonus;
+        gameState.totalPoints += worldBonus;
+    }
+    
     // 装飾の進捗をチェック
     if (typeof DecorationSystem !== 'undefined' && typeof DecorationSystem.checkDecorationProgress === 'function') {
         DecorationSystem.checkDecorationProgress();
+    }
+    
+    // ストーリーモードの処理
+    if (typeof StoryModeSystem !== 'undefined') {
+        // クエストチェック
+        StoryModeSystem.checkQuests();
     }
     
     // 表示を更新
@@ -1649,6 +2260,19 @@ function gameLoop() {
 document.addEventListener('DOMContentLoaded', function() {
     loadGame();
     setupEventListeners();
+    
+    // 新機能の初期化
+    try {
+        validateGameState(); // ゲーム状態の検証
+        updateAllUI();
+        updateDailyRewardUI();
+        checkAchievements();
+    } catch (error) {
+        console.warn('New features initialization error:', error);
+        // エラーが発生した場合は基本的な初期化を行う
+        validateGameState();
+        updatePlayerUI();
+    }
     
     // キャラクターの初期設定
     if (CharacterManager && typeof CharacterManager.changeExpression === 'function') {
@@ -1721,6 +2345,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // ミニゲームシステムの初期化
     if (typeof MinigameSystem !== 'undefined') {
         MinigameSystem.init();
+    }
+
+    // ストーリーモードシステムの初期化
+    if (typeof StoryModeSystem !== 'undefined') {
+        StoryModeSystem.init();
     }
 
     // ゲームループ開始
@@ -3593,5 +4222,676 @@ unlockAchievement = function(achievementId) {
         setTimeout(() => {
             RakutenAffiliate.showContextualProducts();
         }, 2000);
+    }
+};
+
+// ===== ストーリーモードシステム =====
+
+// ワールドデータ
+const WorldData = {
+    forest: {
+        name: '森の世界',
+        description: '緑豊かな森で自然の力を感じよう',
+        icon: '🌲',
+        color: '#4CAF50',
+        background: 'forest-bg',
+        resources: ['acorns', 'mushrooms', 'herbs'],
+        bonus: {
+            autoClicker: 1.2,
+            clickMultiplier: 1.1,
+            criticalChance: 1.1
+        },
+        quests: [
+            {
+                id: 'forest_1',
+                name: '森の冒険者',
+                description: '森の世界で100回クリックしよう',
+                requirement: { type: 'clicks', amount: 100 },
+                reward: { points: 50, experience: 20, resource: { type: 'acorns', amount: 5 } }
+            },
+            {
+                id: 'forest_2',
+                name: '木の実収集',
+                description: 'どんぐりを10個収集しよう',
+                requirement: { type: 'resource', resource: 'acorns', amount: 10 },
+                reward: { points: 100, experience: 30, unlock: 'mushroom_quest' }
+            },
+            {
+                id: 'forest_3',
+                name: '森の守護者',
+                description: '森の世界を完成させよう',
+                requirement: { type: 'world_complete', world: 'forest' },
+                reward: { points: 500, experience: 100, unlock: 'ocean_world' }
+            }
+        ]
+    },
+    ocean: {
+        name: '海の世界',
+        description: '深い海の神秘を探求しよう',
+        icon: '🌊',
+        color: '#2196F3',
+        background: 'ocean-bg',
+        resources: ['fish', 'pearls', 'seaweed'],
+        bonus: {
+            autoClicker: 1.3,
+            clickMultiplier: 1.2,
+            criticalChance: 1.15
+        },
+        quests: [
+            {
+                id: 'ocean_1',
+                name: '海の探検家',
+                description: '海の世界で200回クリックしよう',
+                requirement: { type: 'clicks', amount: 200 },
+                reward: { points: 100, experience: 30, resource: { type: 'fish', amount: 5 } }
+            },
+            {
+                id: 'ocean_2',
+                name: '真珠の収集',
+                description: '真珠を15個収集しよう',
+                requirement: { type: 'resource', resource: 'pearls', amount: 15 },
+                reward: { points: 200, experience: 50, unlock: 'seaweed_quest' }
+            },
+            {
+                id: 'ocean_3',
+                name: '海の支配者',
+                description: '海の世界を完成させよう',
+                requirement: { type: 'world_complete', world: 'ocean' },
+                reward: { points: 1000, experience: 200, unlock: 'space_world' }
+            }
+        ]
+    },
+    space: {
+        name: '宇宙の世界',
+        description: '無限の宇宙で伝説を目指そう',
+        icon: '🚀',
+        color: '#9C27B0',
+        background: 'space-bg',
+        resources: ['stardust', 'meteorites', 'crystals'],
+        bonus: {
+            autoClicker: 1.5,
+            clickMultiplier: 1.4,
+            criticalChance: 1.2
+        },
+        quests: [
+            {
+                id: 'space_1',
+                name: '宇宙の冒険者',
+                description: '宇宙の世界で500回クリックしよう',
+                requirement: { type: 'clicks', amount: 500 },
+                reward: { points: 300, experience: 80, resource: { type: 'stardust', amount: 10 } }
+            },
+            {
+                id: 'space_2',
+                name: 'クリスタル収集',
+                description: 'クリスタルを20個収集しよう',
+                requirement: { type: 'resource', resource: 'crystals', amount: 20 },
+                reward: { points: 500, experience: 120, unlock: 'meteorite_quest' }
+            },
+            {
+                id: 'space_3',
+                name: '宇宙の伝説',
+                description: '宇宙の世界を完成させよう',
+                requirement: { type: 'world_complete', world: 'space' },
+                reward: { points: 2000, experience: 500, unlock: 'legendary_form' }
+            }
+        ]
+    }
+};
+
+// キャラクター進化データ
+const CharacterEvolution = {
+    stages: [
+        {
+            stage: 1,
+            name: '子猫',
+            icon: '🐱',
+            requirement: { experience: 0 },
+            bonus: { clickMultiplier: 1.0, autoClicker: 1.0 }
+        },
+        {
+            stage: 2,
+            name: '成猫',
+            icon: '🐈',
+            requirement: { experience: 100 },
+            bonus: { clickMultiplier: 1.2, autoClicker: 1.1 }
+        },
+        {
+            stage: 3,
+            name: '魔法猫',
+            icon: '🐈‍⬛',
+            requirement: { experience: 300 },
+            bonus: { clickMultiplier: 1.5, autoClicker: 1.3, criticalChance: 1.1 }
+        },
+        {
+            stage: 4,
+            name: '伝説の猫',
+            icon: '🐈‍⬛✨',
+            requirement: { experience: 1000 },
+            bonus: { clickMultiplier: 2.0, autoClicker: 1.5, criticalChance: 1.2 }
+        },
+        {
+            stage: 5,
+            name: '神猫',
+            icon: '🐈‍⬛🌟',
+            requirement: { experience: 3000 },
+            bonus: { clickMultiplier: 3.0, autoClicker: 2.0, criticalChance: 1.5 }
+        }
+    ]
+};
+
+// ストーリーモード管理システム
+const StoryModeSystem = {
+    isActive: false,
+    currentPanel: null,
+    
+    // 初期化
+    init: function() {
+        this.setupEventListeners();
+        this.checkQuests();
+        this.updateCharacterEvolution();
+    },
+    
+    // イベントリスナー設定
+    setupEventListeners: function() {
+        const storyBtn = document.getElementById('storyBtn');
+        const storyPanel = document.getElementById('storyPanel');
+        const closeStoryBtn = document.getElementById('closeStoryBtn');
+        
+        if (storyBtn) {
+            storyBtn.addEventListener('click', () => this.openStoryPanel());
+        }
+        
+        if (closeStoryBtn) {
+            closeStoryBtn.addEventListener('click', () => this.closeStoryPanel());
+        }
+        
+        // パネル外クリックで閉じる
+        if (storyPanel) {
+            storyPanel.addEventListener('click', (e) => {
+                if (e.target === storyPanel) {
+                    this.closeStoryPanel();
+                }
+            });
+        }
+        
+        // タブ切り替え
+        const storyTabs = document.querySelectorAll('.story-tab');
+        storyTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabName = tab.getAttribute('data-tab');
+                this.switchTab(tabName);
+            });
+        });
+    },
+    
+    // ストーリーパネルを開く
+    openStoryPanel: function() {
+        const storyPanel = document.getElementById('storyPanel');
+        if (storyPanel) {
+            storyPanel.classList.add('active');
+            this.updateStoryDisplay();
+        }
+    },
+    
+    // ストーリーパネルを閉じる
+    closeStoryPanel: function() {
+        const storyPanel = document.getElementById('storyPanel');
+        if (storyPanel) {
+            storyPanel.classList.remove('active');
+        }
+    },
+    
+    // ストーリー表示を更新
+    updateStoryDisplay: function() {
+        this.updateWorldMap();
+        this.updateQuestList();
+        this.updateCharacterStatus();
+        this.updateResources();
+    },
+    
+    // ワールドマップを更新
+    updateWorldMap: function() {
+        const worldMap = document.getElementById('worldMap');
+        if (!worldMap) return;
+        
+        worldMap.innerHTML = '';
+        
+        Object.keys(WorldData).forEach(worldKey => {
+            const world = WorldData[worldKey];
+            const worldProgress = gameState.storyMode.worldProgress[worldKey];
+            const isUnlocked = gameState.storyMode.unlockedWorlds.includes(worldKey);
+            const isCurrent = gameState.storyMode.currentWorld === worldKey;
+            
+            const worldElement = document.createElement('div');
+            worldElement.className = `world-item ${isCurrent ? 'current' : ''} ${isUnlocked ? 'unlocked' : 'locked'}`;
+            
+            worldElement.innerHTML = `
+                <div class="world-icon">${world.icon}</div>
+                <div class="world-info">
+                    <div class="world-name">${world.name}</div>
+                    <div class="world-level">レベル ${worldProgress.level}</div>
+                    <div class="world-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${this.calculateWorldProgress(worldKey)}%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="world-actions">
+                    ${isUnlocked ? 
+                        `<button class="world-btn ${isCurrent ? 'active' : ''}" onclick="StoryModeSystem.switchWorld('${worldKey}')">
+                            ${isCurrent ? '現在地' : '移動'}
+                        </button>` : 
+                        `<div class="world-locked">🔒 未解放</div>`
+                    }
+                </div>
+            `;
+            
+            worldMap.appendChild(worldElement);
+        });
+    },
+    
+    // ワールド進捗を計算
+    calculateWorldProgress: function(worldKey) {
+        const worldProgress = gameState.storyMode.worldProgress[worldKey];
+        const world = WorldData[worldKey];
+        const totalQuests = world.quests.length;
+        const completedQuests = gameState.storyMode.completedQuests.filter(q => 
+            world.quests.some(wq => wq.id === q)
+        ).length;
+        
+        return Math.round((completedQuests / totalQuests) * 100);
+    },
+    
+    // ワールドを切り替え
+    switchWorld: function(worldKey) {
+        if (!gameState.storyMode.unlockedWorlds.includes(worldKey)) {
+            showNotification('❌ このワールドはまだ解放されていません', 'error');
+            return;
+        }
+        
+        gameState.storyMode.currentWorld = worldKey;
+        this.applyWorldBonus(worldKey);
+        this.updateStoryDisplay();
+        this.updateBackground();
+        
+        showNotification(`🌍 ${WorldData[worldKey].name}に移動しました！`, 'success');
+    },
+    
+    // ワールドボーナスを適用
+    applyWorldBonus: function(worldKey) {
+        const world = WorldData[worldKey];
+        const bonus = world.bonus;
+        
+        // ボーナスを一時的に適用（実際の実装では永続的な効果として管理）
+        gameState.worldBonus = bonus;
+    },
+    
+    // 背景を更新
+    updateBackground: function() {
+        const world = WorldData[gameState.storyMode.currentWorld];
+        document.body.className = `background-${world.background}`;
+    },
+    
+    // クエストリストを更新
+    updateQuestList: function() {
+        const questList = document.getElementById('questList');
+        if (!questList) return;
+        
+        questList.innerHTML = '';
+        
+        const currentWorld = WorldData[gameState.storyMode.currentWorld];
+        currentWorld.quests.forEach(quest => {
+            const isCompleted = gameState.storyMode.completedQuests.includes(quest.id);
+            const isActive = gameState.storyMode.activeQuests.includes(quest.id);
+            const progress = this.calculateQuestProgress(quest);
+            
+            const questElement = document.createElement('div');
+            questElement.className = `quest-item ${isCompleted ? 'completed' : ''} ${isActive ? 'active' : ''}`;
+            
+            questElement.innerHTML = `
+                <div class="quest-header">
+                    <div class="quest-icon">${isCompleted ? '✅' : isActive ? '🎯' : '📋'}</div>
+                    <div class="quest-info">
+                        <div class="quest-name">${quest.name}</div>
+                        <div class="quest-description">${quest.description}</div>
+                    </div>
+                </div>
+                ${!isCompleted ? `
+                    <div class="quest-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${progress}%"></div>
+                        </div>
+                        <div class="progress-text">${this.getQuestProgressText(quest)}</div>
+                    </div>
+                ` : ''}
+                <div class="quest-reward">
+                    <div class="reward-text">報酬: ${this.formatReward(quest.reward)}</div>
+                    ${!isCompleted && this.canStartQuest(quest) ? 
+                        `<button class="quest-btn" onclick="StoryModeSystem.startQuest('${quest.id}')">開始</button>` : ''
+                    }
+                </div>
+            `;
+            
+            questList.appendChild(questElement);
+        });
+    },
+    
+    // クエスト進捗を計算
+    calculateQuestProgress: function(quest) {
+        const requirement = quest.requirement;
+        
+        switch (requirement.type) {
+            case 'clicks':
+                return Math.min((gameState.totalClicks / requirement.amount) * 100, 100);
+            case 'resource':
+                const currentResource = gameState.storyMode.worldProgress[gameState.storyMode.currentWorld].resources[requirement.resource];
+                return Math.min((currentResource / requirement.amount) * 100, 100);
+            case 'world_complete':
+                return this.calculateWorldProgress(requirement.world);
+            default:
+                return 0;
+        }
+    },
+    
+    // クエスト進捗テキストを取得
+    getQuestProgressText: function(quest) {
+        const requirement = quest.requirement;
+        
+        switch (requirement.type) {
+            case 'clicks':
+                return `${gameState.totalClicks}/${requirement.amount} クリック`;
+            case 'resource':
+                const currentResource = gameState.storyMode.worldProgress[gameState.storyMode.currentWorld].resources[requirement.resource];
+                return `${currentResource}/${requirement.amount} ${this.getResourceName(requirement.resource)}`;
+            case 'world_complete':
+                return `${this.calculateWorldProgress(requirement.world)}% 完了`;
+            default:
+                return '0%';
+        }
+    },
+    
+    // リソース名を取得
+    getResourceName: function(resourceKey) {
+        const resourceNames = {
+            acorns: 'どんぐり',
+            mushrooms: 'キノコ',
+            herbs: 'ハーブ',
+            fish: '魚',
+            pearls: '真珠',
+            seaweed: '海藻',
+            stardust: '星の粉',
+            meteorites: '隕石',
+            crystals: 'クリスタル'
+        };
+        return resourceNames[resourceKey] || resourceKey;
+    },
+    
+    // 報酬をフォーマット
+    formatReward: function(reward) {
+        let text = '';
+        if (reward.points) text += `💰 ${reward.points}ポイント `;
+        if (reward.experience) text += `⭐ ${reward.experience}経験値 `;
+        if (reward.resource) text += `📦 ${this.getResourceName(reward.resource.type)}×${reward.resource.amount} `;
+        if (reward.unlock) text += `🔓 新機能解放 `;
+        return text.trim();
+    },
+    
+    // クエストを開始できるかチェック
+    canStartQuest: function(quest) {
+        return !gameState.storyMode.completedQuests.includes(quest.id) && 
+               !gameState.storyMode.activeQuests.includes(quest.id);
+    },
+    
+    // クエストを開始
+    startQuest: function(questId) {
+        if (gameState.storyMode.activeQuests.includes(questId)) {
+            showNotification('❌ このクエストは既に進行中です', 'error');
+            return;
+        }
+        
+        gameState.storyMode.activeQuests.push(questId);
+        this.updateStoryDisplay();
+        showNotification('🎯 クエストを開始しました！', 'success');
+    },
+    
+    // クエストをチェック
+    checkQuests: function() {
+        gameState.storyMode.activeQuests.forEach(questId => {
+            const quest = this.findQuest(questId);
+            if (quest && this.isQuestCompleted(quest)) {
+                this.completeQuest(quest);
+            }
+        });
+    },
+    
+    // クエストを検索
+    findQuest: function(questId) {
+        for (const worldKey in WorldData) {
+            const quest = WorldData[worldKey].quests.find(q => q.id === questId);
+            if (quest) return quest;
+        }
+        return null;
+    },
+    
+    // クエストが完了したかチェック
+    isQuestCompleted: function(quest) {
+        const requirement = quest.requirement;
+        
+        switch (requirement.type) {
+            case 'clicks':
+                return gameState.totalClicks >= requirement.amount;
+            case 'resource':
+                const currentResource = gameState.storyMode.worldProgress[gameState.storyMode.currentWorld].resources[requirement.resource];
+                return currentResource >= requirement.amount;
+            case 'world_complete':
+                return this.calculateWorldProgress(requirement.world) >= 100;
+            default:
+                return false;
+        }
+    },
+    
+    // クエストを完了
+    completeQuest: function(quest) {
+        const questIndex = gameState.storyMode.activeQuests.indexOf(quest.id);
+        if (questIndex > -1) {
+            gameState.storyMode.activeQuests.splice(questIndex, 1);
+        }
+        
+        gameState.storyMode.completedQuests.push(quest.id);
+        
+        // 報酬を付与
+        this.giveQuestReward(quest.reward);
+        
+        // 新しいワールドを解放
+        if (quest.reward.unlock && quest.reward.unlock.includes('_world')) {
+            const worldKey = quest.reward.unlock.replace('_world', '');
+            if (!gameState.storyMode.unlockedWorlds.includes(worldKey)) {
+                gameState.storyMode.unlockedWorlds.push(worldKey);
+            }
+        }
+        
+        this.updateStoryDisplay();
+        showNotification(`🎉 クエスト「${quest.name}」を完了しました！`, 'success');
+    },
+    
+    // クエスト報酬を付与
+    giveQuestReward: function(reward) {
+        if (reward.points) {
+            gameState.points += reward.points;
+        }
+        
+        if (reward.experience) {
+            this.addExperience(reward.experience);
+        }
+        
+        if (reward.resource) {
+            const worldKey = gameState.storyMode.currentWorld;
+            gameState.storyMode.worldProgress[worldKey].resources[reward.resource.type] += reward.resource.amount;
+        }
+    },
+    
+    // 経験値を追加
+    addExperience: function(amount) {
+        gameState.storyMode.characterEvolution.experience += amount;
+        this.updateCharacterEvolution();
+    },
+    
+    // キャラクター進化を更新
+    updateCharacterEvolution: function() {
+        const evolution = gameState.storyMode.characterEvolution;
+        const currentStage = CharacterEvolution.stages.find(s => s.stage === evolution.stage);
+        const nextStage = CharacterEvolution.stages.find(s => s.stage === evolution.stage + 1);
+        
+        if (nextStage && evolution.experience >= nextStage.requirement.experience) {
+            evolution.stage = nextStage.stage;
+            evolution.nextStageExp = CharacterEvolution.stages.find(s => s.stage === evolution.stage + 1)?.requirement.experience || 0;
+            
+            showNotification(`🌟 キャラクターが進化しました！${nextStage.name}になりました！`, 'success');
+            this.createEvolutionEffect();
+        }
+    },
+    
+    // 進化エフェクトを作成
+    createEvolutionEffect: function() {
+        const effect = document.createElement('div');
+        effect.className = 'evolution-effect';
+        effect.innerHTML = `
+            <div class="evolution-text">🌟 進化！ 🌟</div>
+            <div class="evolution-particles"></div>
+        `;
+        
+        document.body.appendChild(effect);
+        
+        setTimeout(() => {
+            effect.remove();
+        }, 3000);
+    },
+    
+    // キャラクターステータスを更新
+    updateCharacterStatus: function() {
+        const characterStatus = document.getElementById('characterStatus');
+        if (!characterStatus) return;
+        
+        const evolution = gameState.storyMode.characterEvolution;
+        const currentStage = CharacterEvolution.stages.find(s => s.stage === evolution.stage);
+        const nextStage = CharacterEvolution.stages.find(s => s.stage === evolution.stage + 1);
+        
+        const progress = nextStage ? 
+            Math.round((evolution.experience / nextStage.requirement.experience) * 100) : 100;
+        
+        characterStatus.innerHTML = `
+            <div class="character-evolution">
+                <div class="evolution-stage">
+                    <div class="stage-icon">${currentStage.icon}</div>
+                    <div class="stage-info">
+                        <div class="stage-name">${currentStage.name}</div>
+                        <div class="stage-level">ステージ ${evolution.stage}</div>
+                    </div>
+                </div>
+                <div class="evolution-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${progress}%"></div>
+                    </div>
+                    <div class="progress-text">${evolution.experience}/${nextStage?.requirement.experience || evolution.experience} 経験値</div>
+                </div>
+                ${nextStage ? `
+                    <div class="next-stage">
+                        <div class="next-stage-icon">${nextStage.icon}</div>
+                        <div class="next-stage-name">次: ${nextStage.name}</div>
+                    </div>
+                ` : ''}
+            </div>
+        `;
+    },
+    
+    // リソース表示を更新
+    updateResources: function() {
+        const resourcesDisplay = document.getElementById('resourcesDisplay');
+        if (!resourcesDisplay) return;
+        
+        const worldKey = gameState.storyMode.currentWorld;
+        const resources = gameState.storyMode.worldProgress[worldKey].resources;
+        
+        resourcesDisplay.innerHTML = `
+            <h4>📦 リソース</h4>
+            <div class="resources-grid">
+                ${Object.keys(resources).map(resourceKey => `
+                    <div class="resource-item">
+                        <div class="resource-icon">${this.getResourceIcon(resourceKey)}</div>
+                        <div class="resource-info">
+                            <div class="resource-name">${this.getResourceName(resourceKey)}</div>
+                            <div class="resource-amount">${resources[resourceKey]}</div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    },
+    
+    // リソースアイコンを取得
+    getResourceIcon: function(resourceKey) {
+        const resourceIcons = {
+            acorns: '🌰',
+            mushrooms: '🍄',
+            herbs: '🌿',
+            fish: '🐟',
+            pearls: '💎',
+            seaweed: '🌱',
+            stardust: '✨',
+            meteorites: '☄️',
+            crystals: '💎'
+        };
+        return resourceIcons[resourceKey] || '📦';
+    },
+    
+    // タブを切り替え
+    switchTab: function(tabName) {
+        // すべてのタブとコンテンツを非アクティブにする
+        document.querySelectorAll('.story-tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        document.querySelectorAll('.story-tab-content').forEach(content => {
+            content.classList.remove('active');
+        });
+        
+        // 選択されたタブとコンテンツをアクティブにする
+        document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+        document.getElementById(`${tabName}Tab`).classList.add('active');
+    },
+    
+    // リソースを収集
+    collectResource: function(resourceType, amount = 1) {
+        const worldKey = gameState.storyMode.currentWorld;
+        const currentAmount = gameState.storyMode.worldProgress[worldKey].resources[resourceType];
+        gameState.storyMode.worldProgress[worldKey].resources[resourceType] = currentAmount + amount;
+        
+        // 経験値を追加
+        this.addExperience(amount * 2);
+        
+        // クエストをチェック
+        this.checkQuests();
+        
+        // 表示を更新
+        this.updateResources();
+        
+        return gameState.storyMode.worldProgress[worldKey].resources[resourceType];
+    },
+    
+    // ランダムリソース収集
+    randomResourceCollection: function() {
+        const worldKey = gameState.storyMode.currentWorld;
+        const world = WorldData[worldKey];
+        const resources = world.resources;
+        
+        if (resources.length > 0) {
+            const randomResource = resources[Math.floor(Math.random() * resources.length)];
+            const amount = Math.floor(Math.random() * 3) + 1; // 1-3個
+            
+            this.collectResource(randomResource, amount);
+            
+            const resourceName = this.getResourceName(randomResource);
+            showNotification(`📦 ${resourceName}を${amount}個収集しました！`, 'success');
+        }
     }
 };
