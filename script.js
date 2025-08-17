@@ -8,7 +8,13 @@ let gameState = {
     criticalClickLevel: 0,
     criticalClickChance: 0,
     totalClicks: 0,
-    totalPoints: 0
+    totalPoints: 0,
+    // コンボシステム
+    comboCount: 0,
+    maxCombo: 0,
+    comboMultiplier: 1,
+    lastClickTime: 0,
+    comboTimeout: 2000 // 2秒でコンボリセット
 };
 
 // アップグレードコスト計算
@@ -23,6 +29,7 @@ const upgradeCosts = {
 let pointsElement, pointsPerSecondElement, clickMultiplierElement, clickButton, clickEffect;
 let notification, autoClickerLevelElement, autoClickerCostElement, clickMultiplierLevelElement, clickMultiplierCostElement;
 let autoClickerSpeedLevelElement, autoClickerSpeedCostElement, criticalClickLevelElement, criticalClickCostElement;
+let comboElement, comboMultiplierElement;
 
 // 初期化
 function initializeGame() {
@@ -31,6 +38,7 @@ function initializeGame() {
     setupEventListeners();
     updateDisplay();
     startGameLoop();
+    startComboCheck();
 }
 
 // DOM要素の初期化
@@ -51,6 +59,10 @@ function initializeDOMElements() {
     autoClickerSpeedCostElement = document.getElementById('autoClickerSpeedCost');
     criticalClickLevelElement = document.getElementById('criticalClickLevel');
     criticalClickCostElement = document.getElementById('criticalClickCost');
+    
+    // コンボ要素
+    comboElement = document.getElementById('combo');
+    comboMultiplierElement = document.getElementById('comboMultiplier');
 }
 
 // イベントリスナーの設定
@@ -120,10 +132,25 @@ function setupNavigationMenu() {
 
 // クリック処理
 function handleClick() {
+    const currentTime = Date.now();
     gameState.totalClicks++;
     
+    // コンボシステム
+    if (currentTime - gameState.lastClickTime < gameState.comboTimeout) {
+        gameState.comboCount++;
+        if (gameState.comboCount > gameState.maxCombo) {
+            gameState.maxCombo = gameState.comboCount;
+        }
+    } else {
+        gameState.comboCount = 1;
+    }
+    gameState.lastClickTime = currentTime;
+    
+    // コンボ倍率計算（最大5倍）
+    gameState.comboMultiplier = Math.min(1 + (gameState.comboCount - 1) * 0.1, 5);
+    
     // 基本ポイント計算
-    let pointsGained = gameState.clickMultiplier;
+    let pointsGained = gameState.clickMultiplier * gameState.comboMultiplier;
     
     // クリティカルヒット判定
     if (Math.random() < gameState.criticalClickChance) {
@@ -132,6 +159,12 @@ function handleClick() {
         createFloatingNumber(`+${formatNumber(pointsGained)}`, clickButton, 'critical');
     } else {
         createFloatingNumber(`+${formatNumber(pointsGained)}`, clickButton, 'normal');
+    }
+    
+    // コンボ表示
+    if (gameState.comboCount > 1) {
+        showComboNotification();
+        createFloatingNumber(`${gameState.comboCount}x COMBO!`, clickButton, 'combo');
     }
     
     // ポイント加算
@@ -144,6 +177,30 @@ function handleClick() {
     // 表示更新
     updateDisplay();
     updateUpgradeButtons();
+}
+
+// コンボ通知表示
+function showComboNotification() {
+    if (gameState.comboCount >= 10) {
+        showNotification(`🔥 ${gameState.comboCount}コンボ！x${gameState.comboMultiplier.toFixed(1)}倍率！`, 'success');
+    } else if (gameState.comboCount >= 5) {
+        showNotification(`⚡ ${gameState.comboCount}コンボ！`, 'success');
+    }
+}
+
+// コンボチェック（タイムアウト処理）
+function startComboCheck() {
+    setInterval(() => {
+        const currentTime = Date.now();
+        if (currentTime - gameState.lastClickTime >= gameState.comboTimeout && gameState.comboCount > 0) {
+            if (gameState.comboCount >= 5) {
+                showNotification(`💔 コンボ終了！最大${gameState.comboCount}コンボでした`, 'error');
+            }
+            gameState.comboCount = 0;
+            gameState.comboMultiplier = 1;
+            updateDisplay();
+        }
+    }, 100);
 }
 
 // クリックエフェクト作成
@@ -232,7 +289,31 @@ function updateDisplay() {
     }
     if (clickMultiplierElement) clickMultiplierElement.textContent = gameState.clickMultiplier;
     
+    // コンボ表示更新
+    updateComboDisplay();
+    
     updateUpgradeUI();
+}
+
+// コンボ表示更新
+function updateComboDisplay() {
+    if (comboElement) {
+        if (gameState.comboCount > 1) {
+            comboElement.textContent = `${gameState.comboCount}コンボ`;
+            comboElement.style.display = 'block';
+        } else {
+            comboElement.style.display = 'none';
+        }
+    }
+    
+    if (comboMultiplierElement) {
+        if (gameState.comboCount > 1) {
+            comboMultiplierElement.textContent = `x${gameState.comboMultiplier.toFixed(1)}`;
+            comboMultiplierElement.style.display = 'block';
+        } else {
+            comboMultiplierElement.style.display = 'none';
+        }
+    }
 }
 
 // アップグレードUI更新
@@ -366,6 +447,23 @@ function loadGame() {
                 loadedState.totalPoints = loadedState.points || 0;
             }
             
+            // コンボシステムの初期化
+            if (typeof loadedState.comboCount === 'undefined') {
+                loadedState.comboCount = 0;
+            }
+            if (typeof loadedState.maxCombo === 'undefined') {
+                loadedState.maxCombo = 0;
+            }
+            if (typeof loadedState.comboMultiplier === 'undefined') {
+                loadedState.comboMultiplier = 1;
+            }
+            if (typeof loadedState.lastClickTime === 'undefined') {
+                loadedState.lastClickTime = 0;
+            }
+            if (typeof loadedState.comboTimeout === 'undefined') {
+                loadedState.comboTimeout = 2000;
+            }
+            
             gameState = loadedState;
             showNotification('📂 ゲームを読み込みました！', 'success');
         } catch (e) {
@@ -387,7 +485,12 @@ function resetGame() {
             criticalClickLevel: 0,
             criticalClickChance: 0,
             totalClicks: 0,
-            totalPoints: 0
+            totalPoints: 0,
+            comboCount: 0,
+            maxCombo: 0,
+            comboMultiplier: 1,
+            lastClickTime: 0,
+            comboTimeout: 2000
         };
         localStorage.removeItem('stylishClickerSave');
         updateDisplay();
@@ -397,7 +500,7 @@ function resetGame() {
 
 // シェア機能
 function shareToX() {
-    const text = `✨ スタイリッシュクリッカーで${formatNumber(gameState.totalPoints)}ポイント獲得！`;
+    const text = `✨ スタイリッシュクリッカーで${formatNumber(gameState.totalPoints)}ポイント獲得！最大${gameState.maxCombo}コンボ達成！`;
     const url = window.location.href;
     const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
     window.open(shareUrl, '_blank');
