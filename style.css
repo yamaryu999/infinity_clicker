@@ -4818,3 +4818,724 @@ body::before {
     }
 }
 
+/* ミニゲームパネル */
+.minigame-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.minigame-panel.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.minigame-header {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    z-index: 10;
+}
+
+.minigame-header h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    background: var(--neon-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: var(--shadow-neon);
+}
+
+.minigame-content {
+    width: 90%;
+    max-width: 1200px;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.minigame-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    padding: 20px 0;
+}
+
+.minigame-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    padding: 25px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.minigame-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.5s;
+}
+
+.minigame-card:hover::before {
+    left: 100%;
+}
+
+.minigame-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: var(--shadow-heavy), var(--shadow-neon);
+    border-color: rgba(255, 0, 110, 0.3);
+}
+
+.minigame-icon {
+    font-size: 4rem;
+    margin-bottom: 15px;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+}
+
+.minigame-card h4 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--text-primary);
+}
+
+.minigame-card p {
+    color: var(--text-secondary);
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.minigame-cost {
+    background: var(--accent-gradient);
+    padding: 8px 16px;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    margin-bottom: 15px;
+    display: inline-block;
+}
+
+.minigame-stats {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    text-align: left;
+}
+
+.minigame-stats div {
+    margin-bottom: 5px;
+}
+
+/* ミニゲームコンテナ */
+.minigame-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-xl);
+    padding: 30px;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    z-index: 3000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-heavy);
+}
+
+.minigame-container.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.minigame-container .minigame-header {
+    position: relative;
+    top: auto;
+    left: auto;
+    transform: none;
+    margin-bottom: 20px;
+    justify-content: space-between;
+}
+
+.minigame-container .minigame-header h3 {
+    font-size: 1.8rem;
+}
+
+.close-minigame {
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 2rem;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: var(--radius-sm);
+    transition: all 0.2s;
+}
+
+.close-minigame:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.1);
+}
+
+/* スロットマシン */
+.slot-machine-content {
+    text-align: center;
+}
+
+.slot-reels {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 30px 0;
+}
+
+.slot-reel {
+    width: 80px;
+    height: 80px;
+    background: var(--glass-bg);
+    border: 2px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    font-weight: bold;
+    transition: all 0.3s;
+    box-shadow: var(--shadow-medium);
+}
+
+.slot-reel:hover {
+    transform: scale(1.05);
+    box-shadow: var(--shadow-heavy);
+}
+
+.slot-controls {
+    margin: 20px 0;
+}
+
+.slot-cost {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: var(--text-secondary);
+}
+
+.spin-btn {
+    background: var(--neon-gradient);
+    border: none;
+    color: white;
+    padding: 15px 30px;
+    border-radius: var(--radius-md);
+    font-size: 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: var(--shadow-neon);
+}
+
+.spin-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 0 30px rgba(255, 0, 110, 0.5);
+}
+
+.spin-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.slot-payouts {
+    margin-top: 30px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-md);
+}
+
+.slot-payouts h4 {
+    margin-bottom: 15px;
+    color: var(--text-primary);
+}
+
+.payout-list div {
+    margin-bottom: 8px;
+    color: var(--text-secondary);
+}
+
+/* 宝くじ */
+.lottery-content {
+    text-align: center;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.lottery-info {
+    margin-bottom: 30px;
+}
+
+.lottery-info p {
+    margin-bottom: 15px;
+    color: var(--text-secondary);
+}
+
+.lottery-cost {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.lottery-controls {
+    margin: 30px 0;
+}
+
+.lottery-input {
+    width: 100%;
+    max-width: 200px;
+    padding: 15px;
+    border: 2px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    background: var(--glass-bg);
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.lottery-input:focus {
+    outline: none;
+    border-color: rgba(255, 0, 110, 0.5);
+    box-shadow: 0 0 15px rgba(255, 0, 110, 0.3);
+}
+
+.draw-btn {
+    background: var(--accent-gradient);
+    border: none;
+    color: white;
+    padding: 15px 30px;
+    border-radius: var(--radius-md);
+    font-size: 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.draw-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px rgba(79, 172, 254, 0.5);
+}
+
+.draw-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.lottery-results {
+    margin: 30px 0;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-md);
+    min-height: 100px;
+}
+
+.drawing-animation {
+    animation: pulse 0.5s ease-in-out;
+}
+
+.lottery-result {
+    text-align: center;
+}
+
+.your-number, .lucky-number {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.result-message {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 15px 0;
+}
+
+.win-amount {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #FFD700;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+/* クイズ */
+.quiz-content {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.quiz-progress {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-md);
+}
+
+.quiz-question {
+    margin-bottom: 30px;
+    padding: 20px;
+    background: var(--glass-bg);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--glass-border);
+}
+
+.quiz-question h4 {
+    font-size: 1.3rem;
+    line-height: 1.5;
+}
+
+.quiz-options {
+    display: grid;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.quiz-option {
+    background: var(--glass-bg);
+    border: 2px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: left;
+}
+
+.quiz-option:hover:not(:disabled) {
+    border-color: rgba(255, 0, 110, 0.3);
+    transform: translateX(5px);
+}
+
+.quiz-option.correct {
+    background: rgba(76, 175, 80, 0.2);
+    border-color: #4CAF50;
+    color: #4CAF50;
+}
+
+.quiz-option.incorrect {
+    background: rgba(244, 67, 54, 0.2);
+    border-color: #F44336;
+    color: #F44336;
+}
+
+.quiz-option:disabled {
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+.quiz-explanation {
+    margin: 20px 0;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-md);
+    border-left: 4px solid var(--accent-gradient);
+}
+
+.explanation-text {
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.next-btn {
+    background: var(--success-gradient);
+    border: none;
+    color: white;
+    padding: 15px 30px;
+    border-radius: var(--radius-md);
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.next-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px rgba(168, 237, 234, 0.5);
+}
+
+.quiz-results {
+    text-align: center;
+}
+
+.result-stats {
+    display: grid;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.result-stats div {
+    padding: 15px;
+    background: var(--glass-bg);
+    border-radius: var(--radius-md);
+    font-weight: 600;
+}
+
+/* パズル */
+.puzzle-content {
+    text-align: center;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.puzzle-info {
+    margin-bottom: 30px;
+}
+
+.puzzle-info p {
+    margin-bottom: 15px;
+    color: var(--text-secondary);
+}
+
+.puzzle-cost, .puzzle-timer {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--text-primary);
+}
+
+.puzzle-board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+    margin: 30px auto;
+    width: 300px;
+    height: 300px;
+}
+
+.puzzle-tile {
+    background: var(--glass-bg);
+    border: 2px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    color: var(--text-primary);
+}
+
+.puzzle-tile:hover:not(.empty) {
+    transform: scale(1.05);
+    border-color: rgba(255, 0, 110, 0.3);
+    box-shadow: 0 0 15px rgba(255, 0, 110, 0.3);
+}
+
+.puzzle-tile.empty {
+    background: transparent;
+    border: 2px dashed var(--glass-border);
+    cursor: default;
+}
+
+.puzzle-controls {
+    margin: 30px 0;
+}
+
+.start-puzzle-btn, .reset-puzzle-btn {
+    background: var(--warning-gradient);
+    border: none;
+    color: white;
+    padding: 15px 30px;
+    border-radius: var(--radius-md);
+    font-size: 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin: 0 10px;
+}
+
+.start-puzzle-btn:hover, .reset-puzzle-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px rgba(255, 236, 210, 0.5);
+}
+
+.puzzle-results {
+    text-align: center;
+}
+
+/* 勝利エフェクト */
+.win-effect {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 3rem;
+    font-weight: bold;
+    color: #FFD700;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+    z-index: 4000;
+    animation: winEffect 2s ease-out forwards;
+    pointer-events: none;
+}
+
+@keyframes winEffect {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5);
+    }
+    50% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.2);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(1) translateY(-50px);
+    }
+}
+
+.jackpot-effect {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.3) 0%, transparent 70%);
+    z-index: 5000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: jackpotEffect 3s ease-out forwards;
+    pointer-events: none;
+}
+
+.jackpot-text {
+    font-size: 4rem;
+    font-weight: bold;
+    color: #FFD700;
+    text-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+    animation: jackpotText 3s ease-out forwards;
+}
+
+@keyframes jackpotEffect {
+    0% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1.5);
+    }
+}
+
+@keyframes jackpotText {
+    0% {
+        opacity: 0;
+        transform: scale(0.5) rotate(-10deg);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.2) rotate(5deg);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+/* ミニゲームボタン */
+.minigame-btn {
+    background: var(--neon-gradient);
+    border: none;
+    color: white;
+    padding: 12px 20px;
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: var(--shadow-neon);
+    flex: 1;
+    min-width: 0;
+}
+
+.minigame-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px rgba(255, 0, 110, 0.5);
+}
+
+/* ミニゲームレスポンシブ対応 */
+@media (max-width: 768px) {
+    .minigame-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .minigame-card {
+        padding: 20px;
+    }
+    
+    .minigame-icon {
+        font-size: 3rem;
+    }
+    
+    .minigame-card h4 {
+        font-size: 1.3rem;
+    }
+    
+    .slot-reels {
+        gap: 5px;
+    }
+    
+    .slot-reel {
+        width: 60px;
+        height: 60px;
+        font-size: 2rem;
+    }
+    
+    .puzzle-board {
+        width: 250px;
+        height: 250px;
+    }
+    
+    .puzzle-tile {
+        font-size: 1.5rem;
+    }
+    
+    .minigame-container {
+        padding: 20px;
+        margin: 10px;
+    }
+    
+    .minigame-container .minigame-header h3 {
+        font-size: 1.5rem;
+    }
+}
+

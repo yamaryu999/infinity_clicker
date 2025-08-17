@@ -22,6 +22,34 @@ let gameState = {
         giftsSent: 0,
         friendsCount: 0,
         lastActive: Date.now()
+    },
+    // ミニゲームデータ
+    minigames: {
+        slotMachine: {
+            lastPlayed: 0,
+            totalWins: 0,
+            totalSpent: 0,
+            jackpotWins: 0
+        },
+        lottery: {
+            lastPlayed: 0,
+            totalWins: 0,
+            totalSpent: 0,
+            biggestWin: 0
+        },
+        quiz: {
+            lastPlayed: 0,
+            totalCorrect: 0,
+            totalQuestions: 0,
+            streak: 0,
+            bestStreak: 0
+        },
+        puzzle: {
+            lastPlayed: 0,
+            totalCompleted: 0,
+            totalSpent: 0,
+            bestTime: 0
+        }
     }
 };
 
@@ -1418,6 +1446,37 @@ function loadGame() {
                 loadedState.clickEffect = 'default';
             }
             
+            // ミニゲームデータの初期化
+            if (typeof loadedState.minigames === 'undefined') {
+                loadedState.minigames = {
+                    slotMachine: {
+                        lastPlayed: 0,
+                        totalWins: 0,
+                        totalSpent: 0,
+                        jackpotWins: 0
+                    },
+                    lottery: {
+                        lastPlayed: 0,
+                        totalWins: 0,
+                        totalSpent: 0,
+                        biggestWin: 0
+                    },
+                    quiz: {
+                        lastPlayed: 0,
+                        totalCorrect: 0,
+                        totalQuestions: 0,
+                        streak: 0,
+                        bestStreak: 0
+                    },
+                    puzzle: {
+                        lastPlayed: 0,
+                        totalCompleted: 0,
+                        totalSpent: 0,
+                        bestTime: 0
+                    }
+                };
+            }
+            
             // ソーシャル機能のデータを初期化
             if (typeof loadedState.playerId === 'undefined') {
                 loadedState.playerId = generatePlayerId();
@@ -1460,6 +1519,34 @@ function loadGame() {
                 totalPoints: 0,
                 achievements: [],
                 clickEffect: 'default',
+                // ミニゲームデータ
+                minigames: {
+                    slotMachine: {
+                        lastPlayed: 0,
+                        totalWins: 0,
+                        totalSpent: 0,
+                        jackpotWins: 0
+                    },
+                    lottery: {
+                        lastPlayed: 0,
+                        totalWins: 0,
+                        totalSpent: 0,
+                        biggestWin: 0
+                    },
+                    quiz: {
+                        lastPlayed: 0,
+                        totalCorrect: 0,
+                        totalQuestions: 0,
+                        streak: 0,
+                        bestStreak: 0
+                    },
+                    puzzle: {
+                        lastPlayed: 0,
+                        totalCompleted: 0,
+                        totalSpent: 0,
+                        bestTime: 0
+                    }
+                },
                 // ソーシャル機能データ
                 playerId: generatePlayerId(),
                 playerName: generatePlayerName(),
@@ -1595,6 +1682,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // 楽天アフィリエイトシステムの初期化
     if (typeof RakutenAffiliate !== 'undefined') {
         RakutenAffiliate.init();
+    }
+
+    // ミニゲームシステムの初期化
+    if (typeof MinigameSystem !== 'undefined') {
+        MinigameSystem.init();
     }
 
     // ゲームループ開始
@@ -2367,6 +2459,1054 @@ const RakutenAffiliate = {
 window.toggleRakutenSidebar = function() {
     RakutenAffiliate.toggleSidebar();
 };
+
+// ===== ミニゲームシステム =====
+
+// ミニゲーム管理システム
+const MinigameSystem = {
+    currentGame: null,
+    isActive: false,
+    
+    // 初期化
+    init: function() {
+        this.setupEventListeners();
+        this.updateMinigameStats();
+    },
+    
+    // イベントリスナー設定
+    setupEventListeners: function() {
+        const minigameBtn = document.getElementById('minigameBtn');
+        const minigamePanel = document.getElementById('minigamePanel');
+        const closeMinigameBtn = document.getElementById('closeMinigameBtn');
+        
+        if (minigameBtn) {
+            minigameBtn.addEventListener('click', () => this.openMinigamePanel());
+        }
+        
+        if (closeMinigameBtn) {
+            closeMinigameBtn.addEventListener('click', () => this.closeMinigamePanel());
+        }
+        
+        // パネル外クリックで閉じる
+        if (minigamePanel) {
+            minigamePanel.addEventListener('click', (e) => {
+                if (e.target === minigamePanel) {
+                    this.closeMinigamePanel();
+                }
+            });
+        }
+    },
+    
+    // ミニゲームパネルを開く
+    openMinigamePanel: function() {
+        const minigamePanel = document.getElementById('minigamePanel');
+        if (minigamePanel) {
+            minigamePanel.classList.add('active');
+            this.updateMinigameStats();
+        }
+    },
+    
+    // ミニゲームパネルを閉じる
+    closeMinigamePanel: function() {
+        const minigamePanel = document.getElementById('minigamePanel');
+        if (minigamePanel) {
+            minigamePanel.classList.remove('active');
+        }
+        this.closeCurrentGame();
+    },
+    
+    // 現在のゲームを閉じる
+    closeCurrentGame: function() {
+        if (this.currentGame) {
+            this.currentGame.close();
+            this.currentGame = null;
+            this.isActive = false;
+        }
+    },
+    
+    // ミニゲーム統計を更新
+    updateMinigameStats: function() {
+        const stats = gameState.minigames;
+        
+        // スロットマシン統計
+        const slotStats = document.getElementById('slotStats');
+        if (slotStats) {
+            slotStats.innerHTML = `
+                <div>総勝利: ${stats.slotMachine.totalWins}</div>
+                <div>ジャックポット: ${stats.slotMachine.jackpotWins}</div>
+                <div>総消費: ${formatNumber(stats.slotMachine.totalSpent)}</div>
+            `;
+        }
+        
+        // 宝くじ統計
+        const lotteryStats = document.getElementById('lotteryStats');
+        if (lotteryStats) {
+            lotteryStats.innerHTML = `
+                <div>総勝利: ${stats.lottery.totalWins}</div>
+                <div>最大勝利: ${formatNumber(stats.lottery.biggestWin)}</div>
+                <div>総消費: ${formatNumber(stats.lottery.totalSpent)}</div>
+            `;
+        }
+        
+        // クイズ統計
+        const quizStats = document.getElementById('quizStats');
+        if (quizStats) {
+            const accuracy = stats.quiz.totalQuestions > 0 ? 
+                Math.round((stats.quiz.totalCorrect / stats.quiz.totalQuestions) * 100) : 0;
+            quizStats.innerHTML = `
+                <div>正解率: ${accuracy}%</div>
+                <div>最高連続: ${stats.quiz.bestStreak}</div>
+                <div>総問題: ${stats.quiz.totalQuestions}</div>
+            `;
+        }
+        
+        // パズル統計
+        const puzzleStats = document.getElementById('puzzleStats');
+        if (puzzleStats) {
+            const bestTimeStr = stats.puzzle.bestTime > 0 ? 
+                `${Math.floor(stats.puzzle.bestTime / 60)}:${(stats.puzzle.bestTime % 60).toString().padStart(2, '0')}` : 'なし';
+            puzzleStats.innerHTML = `
+                <div>完成数: ${stats.puzzle.totalCompleted}</div>
+                <div>最短時間: ${bestTimeStr}</div>
+                <div>総消費: ${formatNumber(stats.puzzle.totalSpent)}</div>
+            `;
+        }
+    },
+    
+    // ミニゲームを開始
+    startGame: function(gameType) {
+        this.closeCurrentGame();
+        
+        switch(gameType) {
+            case 'slot':
+                this.currentGame = new SlotMachine();
+                break;
+            case 'lottery':
+                this.currentGame = new Lottery();
+                break;
+            case 'quiz':
+                this.currentGame = new Quiz();
+                break;
+            case 'puzzle':
+                this.currentGame = new Puzzle();
+                break;
+        }
+        
+        if (this.currentGame) {
+            this.currentGame.start();
+            this.isActive = true;
+        }
+    }
+};
+
+// スロットマシン
+class SlotMachine {
+    constructor() {
+        this.symbols = ['🍎', '🍊', '🍇', '🍓', '🍒', '🍋', '🍉', '🍍', '🥝', '🫐'];
+        this.reels = 3;
+        this.cost = 10;
+        this.isSpinning = false;
+        this.container = null;
+    }
+    
+    start() {
+        this.createUI();
+        this.show();
+    }
+    
+    createUI() {
+        this.container = document.createElement('div');
+        this.container.className = 'minigame-container slot-machine';
+        this.container.innerHTML = `
+            <div class="minigame-header">
+                <h3>🎰 スロットマシン</h3>
+                <button class="close-minigame" onclick="MinigameSystem.closeCurrentGame()">×</button>
+            </div>
+            <div class="slot-machine-content">
+                <div class="slot-reels">
+                    <div class="slot-reel" id="reel1">🎰</div>
+                    <div class="slot-reel" id="reel2">🎰</div>
+                    <div class="slot-reel" id="reel3">🎰</div>
+                </div>
+                <div class="slot-controls">
+                    <div class="slot-cost">コスト: ${this.cost} ポイント</div>
+                    <button class="spin-btn" onclick="slotMachine.spin()" ${this.isSpinning ? 'disabled' : ''}>
+                        ${this.isSpinning ? '回転中...' : '🎰 スピン！'}
+                    </button>
+                </div>
+                <div class="slot-payouts">
+                    <h4>🎁 配当表</h4>
+                    <div class="payout-list">
+                        <div>3つ揃い: 50ポイント</div>
+                        <div>2つ揃い: 5ポイント</div>
+                        <div>🍎🍎🍎: 100ポイント</div>
+                        <div>🎰🎰🎰: ジャックポット！</div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(this.container);
+        
+        // グローバル参照を設定
+        window.slotMachine = this;
+    }
+    
+    show() {
+        this.container.classList.add('active');
+    }
+    
+    close() {
+        if (this.container) {
+            this.container.remove();
+        }
+    }
+    
+    spin() {
+        if (this.isSpinning || gameState.points < this.cost) {
+            if (gameState.points < this.cost) {
+                showNotification('❌ ポイントが足りません！', 'error');
+            }
+            return;
+        }
+        
+        this.isSpinning = true;
+        gameState.points -= this.cost;
+        gameState.minigames.slotMachine.totalSpent += this.cost;
+        gameState.minigames.slotMachine.lastPlayed = Date.now();
+        
+        updateDisplay();
+        
+        const spinBtn = this.container.querySelector('.spin-btn');
+        spinBtn.disabled = true;
+        spinBtn.textContent = '回転中...';
+        
+        // リールを回転
+        const reels = [
+            this.container.querySelector('#reel1'),
+            this.container.querySelector('#reel2'),
+            this.container.querySelector('#reel3')
+        ];
+        
+        const results = [];
+        const spinPromises = [];
+        
+        reels.forEach((reel, index) => {
+            const spinPromise = this.spinReel(reel, index);
+            spinPromises.push(spinPromise);
+        });
+        
+        Promise.all(spinPromises).then((reelResults) => {
+            results.push(...reelResults);
+            this.checkWin(results);
+            
+            this.isSpinning = false;
+            spinBtn.disabled = false;
+            spinBtn.textContent = '🎰 スピン！';
+        });
+    }
+    
+    spinReel(reel, index) {
+        return new Promise((resolve) => {
+            const duration = 1000 + (index * 200);
+            const symbols = [...this.symbols];
+            
+            // アニメーション
+            let startTime = Date.now();
+            const animate = () => {
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // イージング関数
+                const easeOut = 1 - Math.pow(1 - progress, 3);
+                
+                const symbolIndex = Math.floor(easeOut * symbols.length * 10) % symbols.length;
+                reel.textContent = symbols[symbolIndex];
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    // 最終結果を決定
+                    const finalSymbol = symbols[Math.floor(Math.random() * symbols.length)];
+                    reel.textContent = finalSymbol;
+                    resolve(finalSymbol);
+                }
+            };
+            
+            animate();
+        });
+    }
+    
+    checkWin(results) {
+        const [symbol1, symbol2, symbol3] = results;
+        let winAmount = 0;
+        let message = '';
+        
+        // 3つ揃い
+        if (symbol1 === symbol2 && symbol2 === symbol3) {
+            if (symbol1 === '🎰') {
+                // ジャックポット
+                winAmount = 1000;
+                message = '🎉 ジャックポット！1000ポイント獲得！';
+                gameState.minigames.slotMachine.jackpotWins++;
+                
+                // 特別エフェクト
+                this.createJackpotEffect();
+            } else {
+                // 通常の3つ揃い
+                winAmount = 50;
+                message = `🎉 3つ揃い！${symbol1}で50ポイント獲得！`;
+            }
+        }
+        // 2つ揃い
+        else if (symbol1 === symbol2 || symbol2 === symbol3 || symbol1 === symbol3) {
+            winAmount = 5;
+            message = `🎉 2つ揃い！5ポイント獲得！`;
+        }
+        
+        if (winAmount > 0) {
+            gameState.points += winAmount;
+            gameState.minigames.slotMachine.totalWins++;
+            showNotification(message, 'success');
+            
+            // 勝利エフェクト
+            this.createWinEffect(winAmount);
+        } else {
+            showNotification('💔 ハズレ...', 'info');
+        }
+        
+        updateDisplay();
+        MinigameSystem.updateMinigameStats();
+    }
+    
+    createJackpotEffect() {
+        const effect = document.createElement('div');
+        effect.className = 'jackpot-effect';
+        effect.innerHTML = `
+            <div class="jackpot-text">🎉 JACKPOT! 🎉</div>
+            <div class="jackpot-particles"></div>
+        `;
+        
+        document.body.appendChild(effect);
+        
+        setTimeout(() => {
+            effect.remove();
+        }, 3000);
+    }
+    
+    createWinEffect(amount) {
+        const effect = document.createElement('div');
+        effect.className = 'win-effect';
+        effect.textContent = `+${amount}`;
+        
+        document.body.appendChild(effect);
+        
+        setTimeout(() => {
+            effect.remove();
+        }, 2000);
+    }
+}
+
+// 宝くじ
+class Lottery {
+    constructor() {
+        this.cost = 5;
+        this.maxNumber = 100;
+        this.container = null;
+        this.isDrawing = false;
+    }
+    
+    start() {
+        this.createUI();
+        this.show();
+    }
+    
+    createUI() {
+        this.container = document.createElement('div');
+        this.container.className = 'minigame-container lottery';
+        this.container.innerHTML = `
+            <div class="minigame-header">
+                <h3>🎫 宝くじ</h3>
+                <button class="close-minigame" onclick="MinigameSystem.closeCurrentGame()">×</button>
+            </div>
+            <div class="lottery-content">
+                <div class="lottery-info">
+                    <p>1-${this.maxNumber}の数字を選んで、ラッキーナンバーと一致すれば大勝利！</p>
+                    <div class="lottery-cost">コスト: ${this.cost} ポイント</div>
+                </div>
+                <div class="lottery-controls">
+                    <input type="number" id="lotteryNumber" min="1" max="${this.maxNumber}" placeholder="1-${this.maxNumber}" class="lottery-input">
+                    <button class="draw-btn" onclick="lottery.draw()" ${this.isDrawing ? 'disabled' : ''}>
+                        ${this.isDrawing ? '抽選中...' : '🎫 抽選！'}
+                    </button>
+                </div>
+                <div class="lottery-results" id="lotteryResults">
+                    <!-- 結果がここに表示される -->
+                </div>
+                <div class="lottery-payouts">
+                    <h4>🎁 配当表</h4>
+                    <div class="payout-list">
+                        <div>完全一致: 1000ポイント</div>
+                        <div>±1: 100ポイント</div>
+                        <div>±5: 20ポイント</div>
+                        <div>±10: 5ポイント</div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(this.container);
+        
+        // グローバル参照を設定
+        window.lottery = this;
+    }
+    
+    show() {
+        this.container.classList.add('active');
+    }
+    
+    close() {
+        if (this.container) {
+            this.container.remove();
+        }
+    }
+    
+    draw() {
+        if (this.isDrawing || gameState.points < this.cost) {
+            if (gameState.points < this.cost) {
+                showNotification('❌ ポイントが足りません！', 'error');
+            }
+            return;
+        }
+        
+        const input = this.container.querySelector('#lotteryNumber');
+        const number = parseInt(input.value);
+        
+        if (!number || number < 1 || number > this.maxNumber) {
+            showNotification('❌ 1-100の数字を入力してください！', 'error');
+            return;
+        }
+        
+        this.isDrawing = true;
+        gameState.points -= this.cost;
+        gameState.minigames.lottery.totalSpent += this.cost;
+        gameState.minigames.lottery.lastPlayed = Date.now();
+        
+        updateDisplay();
+        
+        const drawBtn = this.container.querySelector('.draw-btn');
+        drawBtn.disabled = true;
+        drawBtn.textContent = '抽選中...';
+        
+        // 抽選アニメーション
+        this.animateDraw(number);
+    }
+    
+    animateDraw(playerNumber) {
+        const resultsDiv = this.container.querySelector('#lotteryResults');
+        let count = 0;
+        const maxCount = 20;
+        
+        const animate = () => {
+            const randomNumber = Math.floor(Math.random() * this.maxNumber) + 1;
+            resultsDiv.innerHTML = `
+                <div class="drawing-animation">
+                    <div class="your-number">あなたの数字: ${playerNumber}</div>
+                    <div class="lucky-number">ラッキーナンバー: ${randomNumber}</div>
+                </div>
+            `;
+            
+            count++;
+            if (count < maxCount) {
+                setTimeout(animate, 100);
+            } else {
+                // 最終結果
+                const luckyNumber = Math.floor(Math.random() * this.maxNumber) + 1;
+                this.showResult(playerNumber, luckyNumber);
+            }
+        };
+        
+        animate();
+    }
+    
+    showResult(playerNumber, luckyNumber) {
+        const resultsDiv = this.container.querySelector('#lotteryResults');
+        const difference = Math.abs(playerNumber - luckyNumber);
+        let winAmount = 0;
+        let message = '';
+        
+        if (difference === 0) {
+            winAmount = 1000;
+            message = '🎉 完全一致！1000ポイント獲得！';
+        } else if (difference === 1) {
+            winAmount = 100;
+            message = '🎉 ニアミス！100ポイント獲得！';
+        } else if (difference <= 5) {
+            winAmount = 20;
+            message = '🎉 惜しい！20ポイント獲得！';
+        } else if (difference <= 10) {
+            winAmount = 5;
+            message = '🎉 まあまあ！5ポイント獲得！';
+        } else {
+            message = '💔 ハズレ...';
+        }
+        
+        resultsDiv.innerHTML = `
+            <div class="lottery-result">
+                <div class="your-number">あなたの数字: ${playerNumber}</div>
+                <div class="lucky-number">ラッキーナンバー: ${luckyNumber}</div>
+                <div class="result-message">${message}</div>
+                ${winAmount > 0 ? `<div class="win-amount">+${winAmount} ポイント</div>` : ''}
+            </div>
+        `;
+        
+        if (winAmount > 0) {
+            gameState.points += winAmount;
+            gameState.minigames.lottery.totalWins++;
+            if (winAmount > gameState.minigames.lottery.biggestWin) {
+                gameState.minigames.lottery.biggestWin = winAmount;
+            }
+            
+            this.createWinEffect(winAmount);
+        }
+        
+        this.isDrawing = false;
+        const drawBtn = this.container.querySelector('.draw-btn');
+        drawBtn.disabled = false;
+        drawBtn.textContent = '🎫 抽選！';
+        
+        updateDisplay();
+        MinigameSystem.updateMinigameStats();
+    }
+    
+    createWinEffect(amount) {
+        const effect = document.createElement('div');
+        effect.className = 'win-effect lottery-win';
+        effect.textContent = `+${amount}`;
+        
+        document.body.appendChild(effect);
+        
+        setTimeout(() => {
+            effect.remove();
+        }, 2000);
+    }
+}
+
+// クイズ
+class Quiz {
+    constructor() {
+        this.questions = [
+            {
+                question: '無限クリッカーで最も効率的なアップグレードは？',
+                options: ['自動クリッカー', 'クリック倍率', 'クリティカルクリック', '自動クリッカー速度'],
+                correct: 0,
+                explanation: '自動クリッカーは放置でもポイントを生成するため、最も効率的です！'
+            },
+            {
+                question: 'クリティカルヒットの確率は何%から始まりますか？',
+                options: ['0%', '1%', '5%', '10%'],
+                correct: 0,
+                explanation: 'クリティカルクリックの初期レベルは0%から始まります。'
+            },
+            {
+                question: 'ゲームで使用されているキャラクターは？',
+                options: ['犬', '猫', 'うさぎ', 'パンダ'],
+                correct: 1,
+                explanation: '可愛い猫キャラクターがゲームの主人公です！'
+            },
+            {
+                question: '実績システムで最初に解除できる実績は？',
+                options: ['初回クリック', '最初の一歩', 'アップグレード開始', 'クリックマスター'],
+                correct: 0,
+                explanation: '初回クリックが最初に解除できる実績です！'
+            },
+            {
+                question: '自動クリッカーの基本コストは？',
+                options: ['5ポイント', '10ポイント', '15ポイント', '20ポイント'],
+                correct: 1,
+                explanation: '自動クリッカーの基本コストは10ポイントです。'
+            }
+        ];
+        this.currentQuestion = 0;
+        this.container = null;
+        this.isAnswered = false;
+    }
+    
+    start() {
+        this.createUI();
+        this.show();
+        this.showQuestion();
+    }
+    
+    createUI() {
+        this.container = document.createElement('div');
+        this.container.className = 'minigame-container quiz';
+        this.container.innerHTML = `
+            <div class="minigame-header">
+                <h3>🧠 クイズ</h3>
+                <button class="close-minigame" onclick="MinigameSystem.closeCurrentGame()">×</button>
+            </div>
+            <div class="quiz-content">
+                <div class="quiz-progress">
+                    <span id="quizProgress">問題 1/5</span>
+                    <span id="quizStreak">連続正解: 0</span>
+                </div>
+                <div class="quiz-question" id="quizQuestion">
+                    <!-- 問題がここに表示される -->
+                </div>
+                <div class="quiz-options" id="quizOptions">
+                    <!-- 選択肢がここに表示される -->
+                </div>
+                <div class="quiz-explanation" id="quizExplanation" style="display: none;">
+                    <!-- 解説がここに表示される -->
+                </div>
+                <div class="quiz-controls">
+                    <button class="next-btn" id="nextBtn" onclick="quiz.nextQuestion()" style="display: none;">
+                        次の問題 →
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(this.container);
+        
+        // グローバル参照を設定
+        window.quiz = this;
+    }
+    
+    show() {
+        this.container.classList.add('active');
+    }
+    
+    close() {
+        if (this.container) {
+            this.container.remove();
+        }
+    }
+    
+    showQuestion() {
+        const question = this.questions[this.currentQuestion];
+        const questionDiv = this.container.querySelector('#quizQuestion');
+        const optionsDiv = this.container.querySelector('#quizOptions');
+        const progressDiv = this.container.querySelector('#quizProgress');
+        const streakDiv = this.container.querySelector('#quizStreak');
+        
+        progressDiv.textContent = `問題 ${this.currentQuestion + 1}/${this.questions.length}`;
+        streakDiv.textContent = `連続正解: ${gameState.minigames.quiz.streak}`;
+        
+        questionDiv.innerHTML = `<h4>${question.question}</h4>`;
+        
+        optionsDiv.innerHTML = '';
+        question.options.forEach((option, index) => {
+            const button = document.createElement('button');
+            button.className = 'quiz-option';
+            button.textContent = option;
+            button.onclick = () => this.selectAnswer(index);
+            optionsDiv.appendChild(button);
+        });
+        
+        this.isAnswered = false;
+        this.container.querySelector('#quizExplanation').style.display = 'none';
+        this.container.querySelector('#nextBtn').style.display = 'none';
+    }
+    
+    selectAnswer(selectedIndex) {
+        if (this.isAnswered) return;
+        
+        this.isAnswered = true;
+        const question = this.questions[this.currentQuestion];
+        const options = this.container.querySelectorAll('.quiz-option');
+        const explanationDiv = this.container.querySelector('#quizExplanation');
+        const nextBtn = this.container.querySelector('#nextBtn');
+        
+        gameState.minigames.quiz.totalQuestions++;
+        gameState.minigames.quiz.lastPlayed = Date.now();
+        
+        // 選択肢のスタイルを更新
+        options.forEach((option, index) => {
+            if (index === question.correct) {
+                option.classList.add('correct');
+            } else if (index === selectedIndex) {
+                option.classList.add('incorrect');
+            }
+            option.disabled = true;
+        });
+        
+        // 結果を表示
+        if (selectedIndex === question.correct) {
+            gameState.minigames.quiz.totalCorrect++;
+            gameState.minigames.quiz.streak++;
+            if (gameState.minigames.quiz.streak > gameState.minigames.quiz.bestStreak) {
+                gameState.minigames.quiz.bestStreak = gameState.minigames.quiz.streak;
+            }
+            
+            const winAmount = 10 + (gameState.minigames.quiz.streak * 5);
+            gameState.points += winAmount;
+            
+            showNotification(`🎉 正解！+${winAmount}ポイント獲得！`, 'success');
+            this.createWinEffect(winAmount);
+        } else {
+            gameState.minigames.quiz.streak = 0;
+            showNotification('💔 不正解...', 'info');
+        }
+        
+        // 解説を表示
+        explanationDiv.innerHTML = `
+            <div class="explanation-text">
+                <strong>解説:</strong> ${question.explanation}
+            </div>
+        `;
+        explanationDiv.style.display = 'block';
+        
+        // 次の問題ボタンを表示
+        nextBtn.style.display = 'block';
+        
+        updateDisplay();
+        MinigameSystem.updateMinigameStats();
+    }
+    
+    nextQuestion() {
+        this.currentQuestion++;
+        
+        if (this.currentQuestion >= this.questions.length) {
+            // クイズ終了
+            this.finishQuiz();
+        } else {
+            this.showQuestion();
+        }
+    }
+    
+    finishQuiz() {
+        const accuracy = Math.round((gameState.minigames.quiz.totalCorrect / gameState.minigames.quiz.totalQuestions) * 100);
+        const bonus = Math.floor(accuracy / 20) * 50; // 20%ごとに50ポイントボーナス
+        
+        if (bonus > 0) {
+            gameState.points += bonus;
+            showNotification(`🎉 クイズ完了！正確性ボーナス +${bonus}ポイント！`, 'success');
+        }
+        
+        this.container.innerHTML = `
+            <div class="minigame-header">
+                <h3>🧠 クイズ完了</h3>
+                <button class="close-minigame" onclick="MinigameSystem.closeCurrentGame()">×</button>
+            </div>
+            <div class="quiz-results">
+                <h4>🎉 クイズ結果</h4>
+                <div class="result-stats">
+                    <div>正解数: ${gameState.minigames.quiz.totalCorrect}/${gameState.minigames.quiz.totalQuestions}</div>
+                    <div>正確性: ${accuracy}%</div>
+                    <div>最高連続: ${gameState.minigames.quiz.bestStreak}</div>
+                    ${bonus > 0 ? `<div>ボーナス: +${bonus}ポイント</div>` : ''}
+                </div>
+            </div>
+        `;
+        
+        updateDisplay();
+    }
+    
+    createWinEffect(amount) {
+        const effect = document.createElement('div');
+        effect.className = 'win-effect quiz-win';
+        effect.textContent = `+${amount}`;
+        
+        document.body.appendChild(effect);
+        
+        setTimeout(() => {
+            effect.remove();
+        }, 2000);
+    }
+}
+
+// パズル（スライドパズル）
+class Puzzle {
+    constructor() {
+        this.size = 3;
+        this.cost = 15;
+        this.container = null;
+        this.tiles = [];
+        this.emptyTile = { x: this.size - 1, y: this.size - 1 };
+        this.startTime = 0;
+        this.isPlaying = false;
+    }
+    
+    start() {
+        this.createUI();
+        this.show();
+        this.initPuzzle();
+    }
+    
+    createUI() {
+        this.container = document.createElement('div');
+        this.container.className = 'minigame-container puzzle';
+        this.container.innerHTML = `
+            <div class="minigame-header">
+                <h3>🧩 スライドパズル</h3>
+                <button class="close-minigame" onclick="MinigameSystem.closeCurrentGame()">×</button>
+            </div>
+            <div class="puzzle-content">
+                <div class="puzzle-info">
+                    <p>数字を正しい順序に並べて完成させよう！</p>
+                    <div class="puzzle-cost">コスト: ${this.cost} ポイント</div>
+                    <div class="puzzle-timer" id="puzzleTimer">時間: 00:00</div>
+                </div>
+                <div class="puzzle-board" id="puzzleBoard">
+                    <!-- パズルボードがここに表示される -->
+                </div>
+                <div class="puzzle-controls">
+                    <button class="start-puzzle-btn" onclick="puzzle.startPuzzle()" id="startPuzzleBtn">
+                        パズル開始
+                    </button>
+                    <button class="reset-puzzle-btn" onclick="puzzle.resetPuzzle()" id="resetPuzzleBtn" style="display: none;">
+                        リセット
+                    </button>
+                </div>
+                <div class="puzzle-payouts">
+                    <h4>🎁 配当表</h4>
+                    <div class="payout-list">
+                        <div>30秒以内: 200ポイント</div>
+                        <div>1分以内: 100ポイント</div>
+                        <div>2分以内: 50ポイント</div>
+                        <div>完成: 20ポイント</div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(this.container);
+        
+        // グローバル参照を設定
+        window.puzzle = this;
+    }
+    
+    show() {
+        this.container.classList.add('active');
+    }
+    
+    close() {
+        if (this.container) {
+            this.container.remove();
+        }
+    }
+    
+    initPuzzle() {
+        this.tiles = [];
+        for (let y = 0; y < this.size; y++) {
+            this.tiles[y] = [];
+            for (let x = 0; x < this.size; x++) {
+                const value = y * this.size + x + 1;
+                if (value < this.size * this.size) {
+                    this.tiles[y][x] = value;
+                } else {
+                    this.tiles[y][x] = 0; // 空のタイル
+                }
+            }
+        }
+        this.emptyTile = { x: this.size - 1, y: this.size - 1 };
+        this.renderPuzzle();
+    }
+    
+    renderPuzzle() {
+        const board = this.container.querySelector('#puzzleBoard');
+        board.innerHTML = '';
+        
+        for (let y = 0; y < this.size; y++) {
+            for (let x = 0; x < this.size; x++) {
+                const tile = document.createElement('div');
+                tile.className = 'puzzle-tile';
+                
+                if (this.tiles[y][x] === 0) {
+                    tile.className += ' empty';
+                    tile.textContent = '';
+                } else {
+                    tile.textContent = this.tiles[y][x];
+                    tile.onclick = () => this.moveTile(x, y);
+                }
+                
+                board.appendChild(tile);
+            }
+        }
+    }
+    
+    moveTile(x, y) {
+        if (!this.isPlaying) return;
+        
+        // 隣接するタイルかチェック
+        const dx = Math.abs(x - this.emptyTile.x);
+        const dy = Math.abs(y - this.emptyTile.y);
+        
+        if ((dx === 1 && dy === 0) || (dx === 0 && dy === 1)) {
+            // タイルを交換
+            const temp = this.tiles[y][x];
+            this.tiles[y][x] = 0;
+            this.tiles[this.emptyTile.y][this.emptyTile.x] = temp;
+            this.emptyTile = { x, y };
+            
+            this.renderPuzzle();
+            
+            // 完成チェック
+            if (this.checkCompletion()) {
+                this.completePuzzle();
+            }
+        }
+    }
+    
+    checkCompletion() {
+        for (let y = 0; y < this.size; y++) {
+            for (let x = 0; x < this.size; x++) {
+                const expected = y * this.size + x + 1;
+                if (x === this.size - 1 && y === this.size - 1) {
+                    if (this.tiles[y][x] !== 0) return false;
+                } else {
+                    if (this.tiles[y][x] !== expected) return false;
+                }
+            }
+        }
+        return true;
+    }
+    
+    startPuzzle() {
+        if (gameState.points < this.cost) {
+            showNotification('❌ ポイントが足りません！', 'error');
+            return;
+        }
+        
+        gameState.points -= this.cost;
+        gameState.minigames.puzzle.totalSpent += this.cost;
+        gameState.minigames.puzzle.lastPlayed = Date.now();
+        
+        this.isPlaying = true;
+        this.startTime = Date.now();
+        
+        // パズルをシャッフル
+        this.shufflePuzzle();
+        
+        // ボタンを更新
+        this.container.querySelector('#startPuzzleBtn').style.display = 'none';
+        this.container.querySelector('#resetPuzzleBtn').style.display = 'block';
+        
+        // タイマー開始
+        this.startTimer();
+        
+        updateDisplay();
+    }
+    
+    shufflePuzzle() {
+        // ランダムに100回移動
+        for (let i = 0; i < 100; i++) {
+            const directions = [
+                { dx: 0, dy: -1 }, // 上
+                { dx: 0, dy: 1 },  // 下
+                { dx: -1, dy: 0 }, // 左
+                { dx: 1, dy: 0 }   // 右
+            ];
+            
+            const validMoves = directions.filter(dir => {
+                const newX = this.emptyTile.x + dir.dx;
+                const newY = this.emptyTile.y + dir.dy;
+                return newX >= 0 && newX < this.size && newY >= 0 && newY < this.size;
+            });
+            
+            if (validMoves.length > 0) {
+                const move = validMoves[Math.floor(Math.random() * validMoves.length)];
+                const newX = this.emptyTile.x + move.dx;
+                const newY = this.emptyTile.y + move.dy;
+                
+                // タイルを交換
+                const temp = this.tiles[newY][newX];
+                this.tiles[newY][newX] = 0;
+                this.tiles[this.emptyTile.y][this.emptyTile.x] = temp;
+                this.emptyTile = { x: newX, y: newY };
+            }
+        }
+        
+        this.renderPuzzle();
+    }
+    
+    startTimer() {
+        const timerDiv = this.container.querySelector('#puzzleTimer');
+        
+        const updateTimer = () => {
+            if (!this.isPlaying) return;
+            
+            const elapsed = Math.floor((Date.now() - this.startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            timerDiv.textContent = `時間: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            requestAnimationFrame(updateTimer);
+        };
+        
+        updateTimer();
+    }
+    
+    resetPuzzle() {
+        this.isPlaying = false;
+        this.initPuzzle();
+        this.container.querySelector('#startPuzzleBtn').style.display = 'block';
+        this.container.querySelector('#resetPuzzleBtn').style.display = 'none';
+        this.container.querySelector('#puzzleTimer').textContent = '時間: 00:00';
+    }
+    
+    completePuzzle() {
+        this.isPlaying = false;
+        const elapsed = Math.floor((Date.now() - this.startTime) / 1000);
+        
+        let winAmount = 20; // 基本報酬
+        let message = '🎉 パズル完成！20ポイント獲得！';
+        
+        if (elapsed <= 30) {
+            winAmount = 200;
+            message = '🎉 神速！30秒以内で完成！200ポイント獲得！';
+        } else if (elapsed <= 60) {
+            winAmount = 100;
+            message = '🎉 素晴らしい！1分以内で完成！100ポイント獲得！';
+        } else if (elapsed <= 120) {
+            winAmount = 50;
+            message = '🎉 よく頑張った！2分以内で完成！50ポイント獲得！';
+        }
+        
+        gameState.points += winAmount;
+        gameState.minigames.puzzle.totalCompleted++;
+        
+        if (gameState.minigames.puzzle.bestTime === 0 || elapsed < gameState.minigames.puzzle.bestTime) {
+            gameState.minigames.puzzle.bestTime = elapsed;
+        }
+        
+        showNotification(message, 'success');
+        this.createWinEffect(winAmount);
+        
+        // 結果表示
+        this.container.innerHTML = `
+            <div class="minigame-header">
+                <h3>🧩 パズル完成！</h3>
+                <button class="close-minigame" onclick="MinigameSystem.closeCurrentGame()">×</button>
+            </div>
+            <div class="puzzle-results">
+                <h4>🎉 おめでとう！</h4>
+                <div class="result-stats">
+                    <div>完成時間: ${Math.floor(elapsed / 60)}:${(elapsed % 60).toString().padStart(2, '0')}</div>
+                    <div>獲得ポイント: +${winAmount}</div>
+                    <div>総完成数: ${gameState.minigames.puzzle.totalCompleted}</div>
+                </div>
+            </div>
+        `;
+        
+        updateDisplay();
+        MinigameSystem.updateMinigameStats();
+    }
+    
+    createWinEffect(amount) {
+        const effect = document.createElement('div');
+        effect.className = 'win-effect puzzle-win';
+        effect.textContent = `+${amount}`;
+        
+        document.body.appendChild(effect);
+        
+        setTimeout(() => {
+            effect.remove();
+        }, 2000);
+    }
+}
 
 // ゲーム進行に応じた楽天商品推薦
 const originalUnlockAchievement = unlockAchievement;

@@ -233,8 +233,9 @@
             <button id="saveBtn" class="save-btn" onclick="saveGame()" aria-label="ゲームを保存" data-touch-action="manipulation">💾 セーブ</button>
             <button id="resetBtn" class="reset-btn" onclick="resetGame()" aria-label="ゲームをリセット" data-touch-action="manipulation">🔄 リセット</button>
             <button id="socialBtn" class="social-btn" onclick="openSocialPanel()" aria-label="ソーシャル機能" data-touch-action="manipulation">👥 ソーシャル</button>
+            <button id="minigameBtn" class="minigame-btn" onclick="MinigameSystem.openMinigamePanel()" aria-label="ミニゲーム" data-touch-action="manipulation">🎮 ミニゲーム</button>
             <button id="rakutenBtn" class="rakuten-btn" onclick="toggleRakutenSidebar()" aria-label="楽天商品" data-touch-action="manipulation">🔥 限定セール中！</button>
-            <div class="version">v2.3.0 - 楽天アフィリエイト追加</div>
+            <div class="version">v2.4.0 - ミニゲームシステム追加</div>
         </footer>
 
         <!-- 装飾システム -->
@@ -391,6 +392,65 @@
             </div>
         </div>
     </div>
+
+        <!-- ミニゲームパネル -->
+        <div class="minigame-panel" id="minigamePanel">
+            <div class="minigame-header">
+                <h3>🎮 ミニゲーム</h3>
+                <button class="close-btn" id="closeMinigameBtn">×</button>
+            </div>
+            <div class="minigame-content">
+                <div class="minigame-grid">
+                    <div class="minigame-card" onclick="MinigameSystem.startGame('slot')">
+                        <div class="minigame-icon">🎰</div>
+                        <h4>スロットマシン</h4>
+                        <p>リールを回して大勝利を狙おう！</p>
+                        <div class="minigame-cost">コスト: 10ポイント</div>
+                        <div class="minigame-stats" id="slotStats">
+                            <div>総勝利: 0</div>
+                            <div>ジャックポット: 0</div>
+                            <div>総消費: 0</div>
+                        </div>
+                    </div>
+                    
+                    <div class="minigame-card" onclick="MinigameSystem.startGame('lottery')">
+                        <div class="minigame-icon">🎫</div>
+                        <h4>宝くじ</h4>
+                        <p>ラッキーナンバーを当てて大金を狙おう！</p>
+                        <div class="minigame-cost">コスト: 5ポイント</div>
+                        <div class="minigame-stats" id="lotteryStats">
+                            <div>総勝利: 0</div>
+                            <div>最大勝利: 0</div>
+                            <div>総消費: 0</div>
+                        </div>
+                    </div>
+                    
+                    <div class="minigame-card" onclick="MinigameSystem.startGame('quiz')">
+                        <div class="minigame-icon">🧠</div>
+                        <h4>クイズ</h4>
+                        <p>ゲームに関する問題に答えてポイントを獲得！</p>
+                        <div class="minigame-cost">コスト: 無料</div>
+                        <div class="minigame-stats" id="quizStats">
+                            <div>正解率: 0%</div>
+                            <div>最高連続: 0</div>
+                            <div>総問題: 0</div>
+                        </div>
+                    </div>
+                    
+                    <div class="minigame-card" onclick="MinigameSystem.startGame('puzzle')">
+                        <div class="minigame-icon">🧩</div>
+                        <h4>スライドパズル</h4>
+                        <p>数字を正しい順序に並べて完成させよう！</p>
+                        <div class="minigame-cost">コスト: 15ポイント</div>
+                        <div class="minigame-stats" id="puzzleStats">
+                            <div>完成数: 0</div>
+                            <div>最短時間: なし</div>
+                            <div>総消費: 0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     <div id="notification" class="notification" role="alert" aria-live="polite"></div>
     
