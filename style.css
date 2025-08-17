@@ -6476,6 +6476,141 @@ body::before {
 /* プレイヤー経験値バー */
 .exp-bar-container {
     margin-top: 8px;
+}
+
+/* ペット情報セクション */
+.pet-info-container {
+    margin-top: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 15px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.pet-status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.pet-basic-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.pet-emoji {
+    font-size: 2rem;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+    animation: petPulse 2s ease-in-out infinite;
+}
+
+@keyframes petPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.pet-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.pet-name {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #fff;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+}
+
+.pet-level {
+    font-size: 0.8rem;
+    color: #bbb;
+    font-weight: 500;
+}
+
+.pet-exp-bar {
+    flex: 1;
+    margin-left: 15px;
+    height: 20px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+}
+
+.pet-exp-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #ff6b9d, #ffa8cc);
+    border-radius: 10px;
+    transition: width 0.5s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.pet-exp-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    animation: petExpShimmer 2s infinite;
+}
+
+@keyframes petExpShimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+.pet-exp-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #fff;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+    z-index: 2;
+}
+
+.pet-description {
+    font-size: 0.85rem;
+    color: #ccc;
+    text-align: center;
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    border-left: 3px solid #ff6b9d;
+}
+
+/* 進化エフェクト */
+.evolution-effect {
+    animation: evolutionGlow 3s ease-in-out;
+}
+
+@keyframes evolutionGlow {
+    0%, 100% { 
+        filter: drop-shadow(0 0 15px rgba(255, 107, 157, 0.5)); 
+        transform: scale(1);
+    }
+    25% { 
+        filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.8));
+        transform: scale(1.1);
+    }
+    50% { 
+        filter: drop-shadow(0 0 40px rgba(255, 255, 255, 1));
+        transform: scale(1.15);
+    }
+    75% { 
+        filter: drop-shadow(0 0 30px rgba(255, 107, 157, 0.8));
+        transform: scale(1.05);
+    }
+}
     padding: 0 10px;
 }
 
@@ -6527,6 +6662,73 @@ body::before {
     position: relative;
     box-shadow: var(--shadow-medium);
     min-height: var(--touch-target);
+}
+
+/* プライマリ楽天ボタン（目立つようにする） */
+.rakuten-quick-btn.primary {
+    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+    border: 2px solid #ff4500;
+    animation: primaryPulse 2s ease-in-out infinite;
+    position: relative;
+    overflow: hidden;
+}
+
+.rakuten-quick-btn.primary::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: primaryShine 3s ease-in-out infinite;
+}
+
+.rakuten-badge.hot {
+    background: linear-gradient(135deg, #ff4757, #ff3742);
+    color: white;
+    font-weight: 700;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+    animation: hotBadge 1.5s ease-in-out infinite;
+}
+
+@keyframes primaryPulse {
+    0%, 100% { 
+        box-shadow: var(--shadow-medium), 0 0 0 0 rgba(255, 107, 53, 0.7);
+    }
+    70% { 
+        box-shadow: var(--shadow-heavy), 0 0 0 10px rgba(255, 107, 53, 0);
+    }
+}
+
+@keyframes primaryShine {
+    0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+    50% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+    100% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+}
+
+@keyframes hotBadge {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* ナビゲーションバッジ */
+.nav-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #ff4757;
+    color: white;
+    border-radius: 10px;
+    padding: 2px 6px;
+    font-size: 10px;
+    font-weight: 700;
+    animation: navBadgePulse 2s ease-in-out infinite;
+}
+
+@keyframes navBadgePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
 }
 
 .daily-reward-btn:hover {

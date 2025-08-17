@@ -72,6 +72,24 @@
                     </div>
                 </div>
                 
+                <!-- ペット情報セクション -->
+                <div class="pet-info-container">
+                    <div class="pet-status">
+                        <div class="pet-basic-info">
+                            <span class="pet-emoji" id="petEmoji">🐱</span>
+                            <div class="pet-details">
+                                <span class="pet-name" id="petName">子猫</span>
+                                <span class="pet-level">Lv.<span id="petLevel">1</span></span>
+                            </div>
+                        </div>
+                        <div class="pet-exp-bar">
+                            <div class="pet-exp-fill" id="petExpFill"></div>
+                            <span class="pet-exp-text" id="petExpText">0 / 100 EXP</span>
+                        </div>
+                    </div>
+                    <div class="pet-description" id="petDescription">可愛い子猫です。これから大きく成長します！</div>
+                </div>
+                
                 <!-- クイックアクセスボタン -->
                 <div class="quick-access-buttons">
                     <button class="daily-reward-btn" onclick="claimDailyReward()" title="毎日ボーナス" id="dailyRewardBtn">
@@ -79,14 +97,14 @@
                         <span class="daily-text">デイリー</span>
                         <span class="daily-badge" id="dailyBadge">!</span>
                     </button>
-                    <button class="social-quick-btn" onclick="openSocialPanel()" title="ソーシャル機能">
-                        <span class="social-icon">👥</span>
-                        <span class="social-text">ソーシャル</span>
-                    </button>
-                    <button class="rakuten-quick-btn" onclick="toggleRakutenSidebar()" title="おすすめ商品">
+                    <button class="rakuten-quick-btn primary" onclick="toggleRakutenSidebar()" title="ゲーマー限定セール">
                         <span class="rakuten-icon">🔥</span>
-                        <span class="rakuten-text">限定セール</span>
-                        <span class="rakuten-badge">NEW</span>
+                        <span class="rakuten-text">ゲーマー限定セール</span>
+                        <span class="rakuten-badge hot">UP TO 30%OFF</span>
+                    </button>
+                    <button class="social-quick-btn" onclick="openSocialPanel()" title="ランキング">
+                        <span class="social-icon">🏆</span>
+                        <span class="social-text">ランキング</span>
                     </button>
                 </div>
             </div>
@@ -96,31 +114,15 @@
                                 <div class="nav-section">
                     <h3>🎮 ゲーム機能</h3>
                     <div class="nav-buttons">
-                        <button class="nav-btn" onclick="StoryModeSystem.openStoryPanel()">
-                            <span class="nav-icon">🌍</span>
-                            <span class="nav-text">ストーリーモード</span>
-                        </button>
-                        <button class="nav-btn" onclick="MinigameSystem.openMinigamePanel()">
-                            <span class="nav-icon">🎮</span>
-                            <span class="nav-text">ミニゲーム</span>
-                        </button>
- 
-                        <button class="nav-btn" onclick="toggleRakutenSidebar()">
+                                                <button class="nav-btn" onclick="toggleRakutenSidebar()">
                             <span class="nav-icon">🛒</span>
-                            <span class="nav-text">おすすめ商品</span>
+                            <span class="nav-text">限定セール商品</span>
+                            <span class="nav-badge">HOT</span>
                         </button>
                     </div>
                 </div>
                 
-                <div class="nav-section">
-                    <h3>🎨 カスタマイズ</h3>
-                    <div class="nav-buttons">
-                        <button class="nav-btn" onclick="openDecorationPanel()">
-                            <span class="nav-icon">🎨</span>
-                            <span class="nav-text">装飾</span>
-                        </button>
-                    </div>
-                </div>
+
                 
                 <div class="nav-section">
                     <h3>📤 シェア</h3>
@@ -357,65 +359,7 @@
             </div>
         </footer>
 
-        <!-- 装飾システム -->
-        <div class="decoration-panel" id="decorationPanel">
-            <div class="decoration-header">
-                <h3>🎨 装飾</h3>
-                <button class="close-btn" id="closeDecorationBtn">×</button>
-            </div>
-            <div class="decoration-content">
-                <div class="decoration-section">
-                    <h4>👑 帽子</h4>
-                    <div class="decoration-grid" id="hatGrid">
-                        <div class="decoration-item" data-type="hat" data-item="none">
-                            <span class="decoration-icon">❌</span>
-                            <span class="decoration-name">なし</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="decoration-section">
-                    <h4>🎀 リボン</h4>
-                    <div class="decoration-grid" id="ribbonGrid">
-                        <div class="decoration-item" data-type="ribbon" data-item="none">
-                            <span class="decoration-icon">❌</span>
-                            <span class="decoration-name">なし</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="decoration-section">
-                    <h4>👓 メガネ</h4>
-                    <div class="decoration-grid" id="glassesGrid">
-                        <div class="decoration-item" data-type="glasses" data-item="none">
-                            <span class="decoration-icon">❌</span>
-                            <span class="decoration-name">なし</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="decoration-section">
-                    <h4>🎨 背景</h4>
-                    <div class="decoration-grid" id="backgroundGrid">
-                        <div class="decoration-item" data-type="background" data-item="default">
-                            <span class="decoration-icon">🏠</span>
-                            <span class="decoration-name">デフォルト</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="decoration-section">
-                    <h4>✨ エフェクト</h4>
-                    <div class="decoration-grid" id="effectGrid">
-                        <div class="decoration-item" data-type="effect" data-item="default">
-                            <span class="decoration-icon">⭐</span>
-                            <span class="decoration-name">デフォルト</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- 装飾ボタン -->
-        <button class="decoration-btn" id="decorationBtn" aria-label="装飾を変更" onclick="openDecorationPanel()">
-            <span class="decoration-btn-icon">🎨</span>
-        </button>
 
         <!-- ソーシャルパネル -->
         <div class="social-panel" id="socialPanel">
@@ -426,8 +370,6 @@
             <div class="social-content">
                 <div class="social-tabs">
                     <button class="social-tab active" data-tab="ranking">🏆 ランキング</button>
-                    <button class="social-tab" data-tab="friends">👥 フレンド</button>
-                    <button class="social-tab" data-tab="gifts">🎁 ギフト</button>
                     <button class="social-tab" data-tab="share">📤 シェア</button>
                 </div>
                 
@@ -451,46 +393,7 @@
                     </div>
                 </div>
 
-                <!-- フレンドタブ -->
-                <div class="social-tab-content" id="friendsTab">
-                    <div class="friends-section">
-                        <div class="friend-search">
-                            <input type="text" id="friendSearch" placeholder="フレンドIDを入力" class="friend-input">
-                            <button onclick="addFriend()" class="friend-btn">追加</button>
-                        </div>
-                        <div class="friends-help">
-                            <h5>📝 テスト用フレンドID:</h5>
-                            <div class="friend-ids">
-                                <span class="friend-id" onclick="copyFriendId('friend_1')">friend_1</span>
-                                <span class="friend-id" onclick="copyFriendId('friend_2')">friend_2</span>
-                                <span class="friend-id" onclick="copyFriendId('friend_3')">friend_3</span>
-                            </div>
-                        </div>
-                        <div class="friends-list" id="friendsList">
-                            <!-- フレンドリストはJavaScriptで動的に追加 -->
-                        </div>
-                    </div>
-                </div>
 
-                <!-- ギフトタブ -->
-                <div class="social-tab-content" id="giftsTab">
-                    <div class="gifts-section">
-                        <h4>🎁 ギフトを送る</h4>
-                        <div class="gift-form">
-                            <select id="giftFriend" class="gift-select">
-                                <option value="">フレンドを選択</option>
-                            </select>
-                            <input type="number" id="giftAmount" placeholder="ポイント数" class="gift-input" min="1" max="1000">
-                            <button onclick="sendGift()" class="gift-btn">送る</button>
-                        </div>
-                        <div class="received-gifts">
-                            <h4>📥 受け取ったギフト</h4>
-                            <div class="gifts-list" id="receivedGifts">
-                                <!-- 受け取ったギフトはJavaScriptで動的に追加 -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 <!-- シェアタブ -->
                 <div class="social-tab-content" id="shareTab">
@@ -518,119 +421,7 @@
         </div>
     </div>
 
-        <!-- ミニゲームパネル -->
-        <div class="minigame-panel" id="minigamePanel">
-            <div class="minigame-header">
-                <h3>🎮 ミニゲーム</h3>
-                <button class="close-btn" id="closeMinigameBtn">×</button>
-            </div>
-            <div class="minigame-content">
-                <div class="minigame-grid">
-                    <div class="minigame-card" onclick="MinigameSystem.startGame('slot')">
-                        <div class="minigame-icon">🎰</div>
-                        <h4>スロットマシン</h4>
-                        <p>リールを回して大勝利を狙おう！</p>
-                        <div class="minigame-cost">コスト: 10ポイント</div>
-                        <div class="minigame-stats" id="slotStats">
-                            <div>総勝利: 0</div>
-                            <div>ジャックポット: 0</div>
-                            <div>総消費: 0</div>
-                        </div>
-                    </div>
-                    
-                    <div class="minigame-card" onclick="MinigameSystem.startGame('lottery')">
-                        <div class="minigame-icon">🎫</div>
-                        <h4>宝くじ</h4>
-                        <p>ラッキーナンバーを当てて大金を狙おう！</p>
-                        <div class="minigame-cost">コスト: 5ポイント</div>
-                        <div class="minigame-stats" id="lotteryStats">
-                            <div>総勝利: 0</div>
-                            <div>最大勝利: 0</div>
-                            <div>総消費: 0</div>
-                        </div>
-                    </div>
-                    
-                    <div class="minigame-card" onclick="MinigameSystem.startGame('quiz')">
-                        <div class="minigame-icon">🧠</div>
-                        <h4>クイズ</h4>
-                        <p>ゲームに関する問題に答えてポイントを獲得！</p>
-                        <div class="minigame-cost">コスト: 無料</div>
-                        <div class="minigame-stats" id="quizStats">
-                            <div>正解率: 0%</div>
-                            <div>最高連続: 0</div>
-                            <div>総問題: 0</div>
-                        </div>
-                    </div>
-                    
-                    <div class="minigame-card" onclick="MinigameSystem.startGame('puzzle')">
-                        <div class="minigame-icon">🧩</div>
-                        <h4>スライドパズル</h4>
-                        <p>数字を正しい順序に並べて完成させよう！</p>
-                        <div class="minigame-cost">コスト: 15ポイント</div>
-                        <div class="minigame-stats" id="puzzleStats">
-                            <div>完成数: 0</div>
-                            <div>最短時間: なし</div>
-                            <div>総消費: 0</div>
-                        </div>
-                    </div>
-                </div>
-                    </div>
-    </div>
 
-        <!-- ストーリーモードパネル -->
-        <div class="story-panel" id="storyPanel">
-            <div class="story-header">
-                <h3>🌍 ストーリーモード</h3>
-                <button class="close-btn" id="closeStoryBtn">×</button>
-            </div>
-            <div class="story-content">
-                <div class="story-tabs">
-                    <button class="story-tab active" data-tab="world">🌍 ワールド</button>
-                    <button class="story-tab" data-tab="quest">📋 クエスト</button>
-                    <button class="story-tab" data-tab="character">🐱 キャラクター</button>
-                    <button class="story-tab" data-tab="resources">📦 リソース</button>
-                </div>
-                
-                <!-- ワールドタブ -->
-                <div class="story-tab-content active" id="worldTab">
-                    <div class="world-section">
-                        <h4>🌍 ワールドマップ</h4>
-                        <div class="world-map" id="worldMap">
-                            <!-- ワールドはJavaScriptで動的に追加 -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- クエストタブ -->
-                <div class="story-tab-content" id="questTab">
-                    <div class="quest-section">
-                        <h4>📋 クエスト</h4>
-                        <div class="quest-list" id="questList">
-                            <!-- クエストはJavaScriptで動的に追加 -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- キャラクタータブ -->
-                <div class="story-tab-content" id="characterTab">
-                    <div class="character-section">
-                        <h4>🐱 キャラクター進化</h4>
-                        <div class="character-status" id="characterStatus">
-                            <!-- キャラクター情報はJavaScriptで動的に追加 -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- リソースタブ -->
-                <div class="story-tab-content" id="resourcesTab">
-                    <div class="resources-section">
-                        <div class="resources-display" id="resourcesDisplay">
-                            <!-- リソースはJavaScriptで動的に追加 -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
     <div id="notification" class="notification" role="alert" aria-live="polite"></div>
     

@@ -17,6 +17,12 @@ let gameState = {
     playerExpRequired: 100,
     prestige: 0,
     prestigeBonus: 1,
+    // ペット進化システム
+    petLevel: 1,
+    petExp: 0,
+    petExpRequired: 100,
+    petStage: 'kitten', // kitten, cat, magical_cat, cosmic_cat, legendary_cat
+    petEvolutionPoints: 0,
     // 一日一回ボーナス
     dailyRewardClaimed: false,
     lastDailyReward: 0,
@@ -120,6 +126,59 @@ const upgradeCosts = {
     criticalClick: (level) => Math.floor(150 * Math.pow(1.25, level)) // 成長率を緩和
 };
 
+// ペット進化システム定義
+const petEvolutions = {
+    kitten: {
+        name: '子猫',
+        description: '可愛い子猫です。これから大きく成長します！',
+        pointsBonus: 1.0,
+        expBonus: 1.0,
+        nextStage: 'cat',
+        requiredLevel: 5,
+        emoji: '🐱'
+    },
+    cat: {
+        name: '大人の猫',
+        description: '立派に成長した猫です。賢くなってより効率的にポイントを稼げます。',
+        pointsBonus: 1.2,
+        expBonus: 1.1,
+        nextStage: 'magical_cat',
+        requiredLevel: 15,
+        emoji: '😸'
+    },
+    magical_cat: {
+        name: '魔法猫',
+        description: '魔法の力を得た神秘的な猫です。クリティカル率がアップ！',
+        pointsBonus: 1.5,
+        expBonus: 1.3,
+        criticalBonus: 0.1,
+        nextStage: 'cosmic_cat',
+        requiredLevel: 30,
+        emoji: '🌟😸'
+    },
+    cosmic_cat: {
+        name: '宇宙猫',
+        description: '宇宙の力を操る猫です。自動クリッカーの効率が大幅アップ！',
+        pointsBonus: 2.0,
+        expBonus: 1.5,
+        autoClickerBonus: 1.5,
+        nextStage: 'legendary_cat',
+        requiredLevel: 50,
+        emoji: '🚀😸'
+    },
+    legendary_cat: {
+        name: '伝説の猫',
+        description: '伝説となった究極の猫です。すべての能力が最大級！',
+        pointsBonus: 3.0,
+        expBonus: 2.0,
+        criticalBonus: 0.2,
+        autoClickerBonus: 2.0,
+        nextStage: null,
+        requiredLevel: 100,
+        emoji: '👑😸'
+    }
+};
+
 // 実績定義（拡張版）
 const achievements = [
     { id: 'first_click', name: '初回クリック', description: '初めてクリックしました', requirement: 1, type: 'clicks', reward: 5 },
@@ -152,7 +211,18 @@ const achievements = [
     { id: 'daily_month', name: '毎日の習慣', description: '30日連続でデイリーボーナスを受け取りました', requirement: 30, type: 'daily', reward: 10000 },
     
     // プレステージ関連実績
-    { id: 'first_prestige', name: '転生の始まり', description: '初回転生を達成しました', requirement: 1, type: 'prestige', reward: 5000 }
+    { id: 'first_prestige', name: '転生の始まり', description: '初回転生を達成しました', requirement: 1, type: 'prestige', reward: 5000 },
+    
+    // ペット進化関連実績
+    { id: 'first_evolution', name: '成長の第一歩', description: '初めてペットが進化しました', requirement: 1, type: 'pet_evolution', reward: 500 },
+    { id: 'magical_pet', name: '魔法の友達', description: 'ペットが魔法猫に進化しました', requirement: 'magical_cat', type: 'pet_stage', reward: 2000 },
+    { id: 'cosmic_pet', name: '宇宙の相棒', description: 'ペットが宇宙猫に進化しました', requirement: 'cosmic_cat', type: 'pet_stage', reward: 5000 },
+    { id: 'legendary_pet', name: '伝説のパートナー', description: 'ペットが伝説の猫に進化しました', requirement: 'legendary_cat', type: 'pet_stage', reward: 10000 },
+    
+    // ゲーマー向け実績（アフィリエイト誘導）
+    { id: 'gaming_enthusiast', name: 'ゲーミング愛好家', description: '10,000クリック達成！真のゲーマーですね', requirement: 10000, type: 'clicks', reward: 1000, showAffiliate: true },
+    { id: 'serious_gamer', name: '本格ゲーマー', description: '50,000ポイント達成！プロゲーマー級の腕前', requirement: 50000, type: 'points', reward: 2000, showAffiliate: true },
+    { id: 'gaming_master', name: 'ゲーミングマスター', description: 'レベル20達成！最高峰のゲーマーです', requirement: 20, type: 'level', reward: 3000, showAffiliate: true }
 ];
 
 // DOM要素
@@ -222,6 +292,105 @@ const mockSocialData = {
         { id: 'friend_3', name: 'フレンド3', status: 'online', lastActive: Date.now() - 60000 }
     ]
 };
+
+// ペット進化システム関数
+function gainPetExp(amount) {
+    if (!amount || amount <= 0) return;
+    
+    gameState.petExp += amount;
+    
+    // レベルアップチェック
+    while (gameState.petExp >= gameState.petExpRequired) {
+        gameState.petExp -= gameState.petExpRequired;
+        gameState.petLevel++;
+        gameState.petExpRequired = Math.floor(100 * Math.pow(1.3, gameState.petLevel - 1));
+        
+        // 進化チェック
+        checkPetEvolution();
+        
+        // 通知
+        showNotification(`🐱 ペットがレベル${gameState.petLevel}になりました！`);
+    }
+}
+
+function checkPetEvolution() {
+    const currentEvolution = petEvolutions[gameState.petStage];
+    if (currentEvolution && currentEvolution.nextStage && gameState.petLevel >= currentEvolution.requiredLevel) {
+        evolvePet(currentEvolution.nextStage);
+    }
+}
+
+function evolvePet(newStage) {
+    const oldStage = gameState.petStage;
+    const newEvolution = petEvolutions[newStage];
+    
+    if (!newEvolution) return;
+    
+    gameState.petStage = newStage;
+    gameState.petEvolutionPoints++;
+    
+    // 進化実績をチェック
+    unlockAchievement('first_evolution');
+    
+    // 特定の進化段階の実績をチェック
+    const stageAchievements = {
+        'magical_cat': 'magical_pet',
+        'cosmic_cat': 'cosmic_pet',
+        'legendary_cat': 'legendary_pet'
+    };
+    
+    if (stageAchievements[newStage]) {
+        unlockAchievement(stageAchievements[newStage]);
+    }
+    
+    // 進化エフェクトと通知
+    showEvolutionEffect(oldStage, newStage);
+    showNotification(`🌟 ペットが${newEvolution.name}に進化しました！${newEvolution.emoji}`);
+    
+    // キャラクター表示を更新
+    updateCharacterDisplay();
+}
+
+function showEvolutionEffect(oldStage, newStage) {
+    const character = document.getElementById('mainCharacter');
+    if (!character) return;
+    
+    // 進化エフェクトのアニメーション
+    character.classList.add('evolution-effect');
+    
+    setTimeout(() => {
+        character.classList.remove('evolution-effect');
+    }, 3000);
+}
+
+function updateCharacterDisplay() {
+    const currentEvolution = petEvolutions[gameState.petStage];
+    if (!currentEvolution) return;
+    
+    // キャラクターのタイトルを更新
+    const header = document.querySelector('.game-header h1');
+    if (header) {
+        header.textContent = `${currentEvolution.emoji} 無限クリッカー 2024 - ${currentEvolution.name}`;
+    }
+}
+
+function getPetBonus(type) {
+    const currentEvolution = petEvolutions[gameState.petStage];
+    if (!currentEvolution) return 1;
+    
+    switch (type) {
+        case 'points':
+            return currentEvolution.pointsBonus || 1;
+        case 'exp':
+            return currentEvolution.expBonus || 1;
+        case 'critical':
+            return currentEvolution.criticalBonus || 0;
+        case 'autoClicker':
+            return currentEvolution.autoClickerBonus || 1;
+        default:
+            return 1;
+    }
+}
 
 // アップグレードコスト計算関数
 function calculateUpgradeCost(level, baseCost) {
@@ -1188,13 +1357,19 @@ function handleClick() {
     
     let pointsGained = safeClickMultiplier * safeComboMultiplier * safePrestigeBonus;
     
+    // ペットボーナスを適用
+    const petPointsBonus = getPetBonus('points');
+    pointsGained *= petPointsBonus;
+    
     // ワールドボーナスを適用
     if (gameState.worldBonus && gameState.worldBonus.clickMultiplier) {
         pointsGained *= gameState.worldBonus.clickMultiplier;
     }
     
-    // クリティカルヒットの判定
-    if (Math.random() < gameState.criticalClickChance) {
+    // クリティカルヒットの判定（ペットボーナス適用）
+    const petCriticalBonus = getPetBonus('critical');
+    const totalCriticalChance = gameState.criticalClickChance + petCriticalBonus;
+    if (Math.random() < totalCriticalChance) {
         pointsGained *= 3;
         showNotification('💥 クリティカルヒット！3倍のポイント！');
         
@@ -1221,6 +1396,10 @@ function handleClick() {
     
     // 経験値を加算
     addPlayerExp(Math.floor(pointsGained / 10));
+    
+    // ペット経験値を加算（ペットのボーナス適用）
+    const petExpGained = Math.floor(pointsGained / 20) * getPetBonus('exp');
+    gainPetExp(petExpGained);
     
     // 実績チェック
     checkAchievements();
@@ -1523,6 +1702,13 @@ function unlockAchievement(achievementId) {
                 showEnhancedNotification(`🏆 実績解除: ${achievement.name}`, 'achievement');
             }
             
+            // ゲーマー向け実績の場合、アフィリエイト商品を表示
+            if (achievement.showAffiliate && typeof RakutenAffiliate !== 'undefined') {
+                setTimeout(() => {
+                    RakutenAffiliate.showGamerRecommendation(achievement.name);
+                }, 2000); // 実績通知の後に表示
+            }
+            
             // 強化されたレベルアップエフェクト
             if (typeof VisualEnhancementSystem !== 'undefined') {
                 VisualEnhancementSystem.createLevelUpEffect();
@@ -1634,6 +1820,47 @@ function updatePlayerUI() {
         prestigeBtn.disabled = safeTotalPoints < 100000;
         const remainingPoints = 100000 - safeTotalPoints;
         prestigeBtn.textContent = safeTotalPoints >= 100000 ? '転生する' : `転生まで${remainingPoints.toLocaleString()}ポイント`;
+    }
+}
+
+function updatePetUI() {
+    // ペット要素の取得
+    const petEmojiElement = document.getElementById('petEmoji');
+    const petNameElement = document.getElementById('petName');
+    const petLevelElement = document.getElementById('petLevel');
+    const petExpFillElement = document.getElementById('petExpFill');
+    const petExpTextElement = document.getElementById('petExpText');
+    const petDescriptionElement = document.getElementById('petDescription');
+    
+    // 数値の安全性チェック
+    const safePetLevel = isNaN(gameState.petLevel) ? 1 : gameState.petLevel;
+    const safePetExp = isNaN(gameState.petExp) ? 0 : gameState.petExp;
+    const safePetExpRequired = isNaN(gameState.petExpRequired) ? 100 : gameState.petExpRequired;
+    const currentEvolution = petEvolutions[gameState.petStage] || petEvolutions.kitten;
+    
+    // ペット情報の更新
+    if (petEmojiElement) petEmojiElement.textContent = currentEvolution.emoji;
+    if (petNameElement) petNameElement.textContent = currentEvolution.name;
+    if (petLevelElement) petLevelElement.textContent = safePetLevel;
+    if (petDescriptionElement) petDescriptionElement.textContent = currentEvolution.description;
+    
+    // 経験値バーの更新
+    if (petExpFillElement) {
+        const expPercent = safePetExpRequired > 0 ? (safePetExp / safePetExpRequired) * 100 : 0;
+        petExpFillElement.style.width = `${Math.max(0, Math.min(100, expPercent))}%`;
+    }
+    if (petExpTextElement) {
+        petExpTextElement.textContent = `${safePetExp} / ${safePetExpRequired} EXP`;
+    }
+    
+    // 進化可能かチェック
+    if (currentEvolution.nextStage && safePetLevel >= currentEvolution.requiredLevel) {
+        const nextEvolution = petEvolutions[currentEvolution.nextStage];
+        if (nextEvolution && petDescriptionElement) {
+            petDescriptionElement.textContent = `進化準備完了！次は${nextEvolution.name}になります！`;
+            petDescriptionElement.style.borderLeftColor = '#ffd700';
+            petDescriptionElement.style.background = 'rgba(255, 215, 0, 0.1)';
+        }
     }
 }
 
@@ -1765,6 +1992,13 @@ function validateGameState() {
     if (isNaN(gameState.maxClickCombo) || gameState.maxClickCombo < 0) gameState.maxClickCombo = 0;
     if (isNaN(gameState.dailyRewardStreak) || gameState.dailyRewardStreak < 0) gameState.dailyRewardStreak = 0;
     
+    // ペット進化システムの検証
+    if (isNaN(gameState.petLevel) || gameState.petLevel < 1) gameState.petLevel = 1;
+    if (isNaN(gameState.petExp) || gameState.petExp < 0) gameState.petExp = 0;
+    if (isNaN(gameState.petExpRequired) || gameState.petExpRequired < 1) gameState.petExpRequired = 100;
+    if (isNaN(gameState.petEvolutionPoints) || gameState.petEvolutionPoints < 0) gameState.petEvolutionPoints = 0;
+    if (!gameState.petStage || typeof gameState.petStage !== 'string') gameState.petStage = 'kitten';
+    
     // レベル関連値の整合性チェック
     if (gameState.autoClickerLevel < 0) gameState.autoClickerLevel = 0;
     if (gameState.clickMultiplierLevel < 1) gameState.clickMultiplierLevel = 1;
@@ -1787,6 +2021,9 @@ function updateAllUI() {
     
     // プレイヤーUI更新
     updatePlayerUI();
+    
+    // ペットUI更新
+    updatePetUI();
     
     // デイリー報酬UI更新
     updateDailyRewardUI();
@@ -1884,6 +2121,12 @@ function checkAchievements() {
                 case 'prestige':
                     shouldUnlock = gameState.prestige >= achievement.requirement;
                     break;
+                case 'pet_evolution':
+                    shouldUnlock = gameState.petEvolutionPoints >= achievement.requirement;
+                    break;
+                case 'pet_stage':
+                    shouldUnlock = gameState.petStage === achievement.requirement;
+                    break;
                 case 'upgrades':
                     const totalUpgrades = gameState.autoClickerLevel + gameState.clickMultiplierLevel + 
                                         gameState.autoClickerSpeedLevel + gameState.criticalClickLevel;
@@ -1937,6 +2180,22 @@ function loadGame() {
             }
             if (typeof loadedState.clickEffect === 'undefined') {
                 loadedState.clickEffect = 'default';
+            }
+            // ペット進化システムの初期化
+            if (typeof loadedState.petLevel === 'undefined') {
+                loadedState.petLevel = 1;
+            }
+            if (typeof loadedState.petExp === 'undefined') {
+                loadedState.petExp = 0;
+            }
+            if (typeof loadedState.petExpRequired === 'undefined') {
+                loadedState.petExpRequired = 100;
+            }
+            if (typeof loadedState.petStage === 'undefined') {
+                loadedState.petStage = 'kitten';
+            }
+            if (typeof loadedState.petEvolutionPoints === 'undefined') {
+                loadedState.petEvolutionPoints = 0;
             }
             
             // 新しい属性の初期化
@@ -2340,6 +2599,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 楽天アフィリエイトシステムの初期化
     if (typeof RakutenAffiliate !== 'undefined') {
         RakutenAffiliate.init();
+        RakutenAffiliate.startAggressivePromotions(); // 収益最適化モード
     }
 
     // ミニゲームシステムの初期化
@@ -3115,6 +3375,41 @@ const RakutenAffiliate = {
     // 商品通知を表示
     showProductNotification: function(product) {
         showNotification(`🛒 ${product.name}がおすすめ！¥${product.price.toLocaleString()}`);
+    },
+    
+    // ゲーマー向け推薦機能
+    showGamerRecommendation: function(achievementName) {
+        const gamerProducts = RakutenProducts.filter(p => p.category === 'gaming' || p.category === 'furniture');
+        if (gamerProducts.length > 0) {
+            const randomProduct = gamerProducts[Math.floor(Math.random() * gamerProducts.length)];
+            
+            showEnhancedNotification(
+                `🎮 ${achievementName}おめでとう！真のゲーマーには${randomProduct.name}がおすすめです！限定価格¥${randomProduct.price.toLocaleString()}`, 
+                'reward'
+            );
+            
+            // 2秒後にサイドバーを自動表示
+            setTimeout(() => {
+                this.toggleSidebar();
+            }, 3000);
+        }
+    },
+    
+    // より頻繁なポップアップ（収益最適化）
+    startAggressivePromotions: function() {
+        // 5分ごとにポップアップ表示（50%の確率）
+        setInterval(() => {
+            if (Math.random() < 0.5 && !this.isSidebarOpen) {
+                this.showPopup();
+            }
+        }, 300000); // 5分
+        
+        // ゲーム進行に応じた推薦頻度を上げる
+        setInterval(() => {
+            if (gameState.totalPoints > 1000 && Math.random() < 0.3) {
+                this.showContextualProducts();
+            }
+        }, 120000); // 2分
     }
 };
 
