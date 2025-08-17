@@ -1544,7 +1544,7 @@ function buyAutoClicker() {
         if (CharacterManager && typeof CharacterManager.changeExpression === 'function') {
             CharacterManager.changeExpression('excited');
         }
-        updateDisplay();
+        updateAllUI();
         checkAchievements();
     } else {
         showNotification('❌ ポイントが足りません!', 'error');
@@ -1564,7 +1564,7 @@ function buyClickMultiplier() {
         if (CharacterManager && typeof CharacterManager.changeExpression === 'function') {
             CharacterManager.changeExpression('cool');
         }
-        updateDisplay();
+        updateAllUI();
         checkAchievements();
     } else {
         showNotification('❌ ポイントが足りません!', 'error');
@@ -1583,7 +1583,7 @@ function buyAutoClickerSpeed() {
         if (CharacterManager && typeof CharacterManager.changeExpression === 'function') {
             CharacterManager.changeExpression('excited');
         }
-        updateDisplay();
+        updateAllUI();
         checkAchievements();
     } else {
         showNotification('❌ ポイントが足りません!', 'error');
@@ -1603,7 +1603,7 @@ function buyCriticalClick() {
         if (CharacterManager && typeof CharacterManager.changeExpression === 'function') {
             CharacterManager.changeExpression('surprised');
         }
-        updateDisplay();
+        updateAllUI();
         checkAchievements();
     } else {
         showNotification('❌ ポイントが足りません!', 'error');
@@ -1613,28 +1613,17 @@ function buyCriticalClick() {
     }
 }
 
-// 表示更新
+// 表示更新（基本統計のみ）
 function updateDisplay() {
-    // ポイント表示
+    // 基本統計の更新
     if (pointsElement) pointsElement.textContent = formatNumber(gameState.points);
-    if (pointsPerSecondElement) pointsPerSecondElement.textContent = formatNumber(gameState.autoClickerLevel * gameState.autoClickerSpeedLevel);
+    if (pointsPerSecondElement) {
+        const basePointsPerSecond = gameState.autoClickerLevel * gameState.autoClickerSpeedLevel;
+        const petAutoClickerBonus = getPetBonus('autoClicker');
+        const totalPointsPerSecond = basePointsPerSecond * petAutoClickerBonus;
+        pointsPerSecondElement.textContent = formatNumber(totalPointsPerSecond);
+    }
     if (clickMultiplierElement) clickMultiplierElement.textContent = gameState.clickMultiplier;
-    
-    // アップグレード情報更新
-    if (autoClickerLevelElement) autoClickerLevelElement.textContent = gameState.autoClickerLevel;
-    if (autoClickerCostElement) autoClickerCostElement.textContent = formatNumber(calculateUpgradeCost(gameState.autoClickerLevel, 10));
-    
-    if (clickMultiplierLevelElement) clickMultiplierLevelElement.textContent = gameState.clickMultiplierLevel;
-    if (clickMultiplierCostElement) clickMultiplierCostElement.textContent = formatNumber(calculateUpgradeCost(gameState.clickMultiplierLevel, 50));
-    
-    if (autoClickerSpeedLevelElement) autoClickerSpeedLevelElement.textContent = gameState.autoClickerSpeedLevel;
-    if (autoClickerSpeedCostElement) autoClickerSpeedCostElement.textContent = formatNumber(calculateUpgradeCost(gameState.autoClickerSpeedLevel, 100));
-    
-    if (criticalClickLevelElement) criticalClickLevelElement.textContent = gameState.criticalClickLevel;
-    if (criticalClickCostElement) criticalClickCostElement.textContent = formatNumber(calculateUpgradeCost(gameState.criticalClickLevel, 200));
-    
-    // ボタンの有効/無効状態更新
-    updateUpgradeButtons();
 }
 
 // アップグレードボタンの状態更新
@@ -1930,7 +1919,7 @@ function performPrestige() {
         gameState.prestige++;
         gameState.prestigeBonus += 0.1; // 10%ボーナス
         
-        // ゲーム状態をリセット（プレステージ関連以外）
+        // ゲーム状態をリセット（プレステージ関連とペット関連以外）
         const prestigeData = {
             prestige: gameState.prestige,
             prestigeBonus: gameState.prestigeBonus,
@@ -1938,7 +1927,13 @@ function performPrestige() {
             playerName: gameState.playerName,
             dailyRewardStreak: gameState.dailyRewardStreak,
             lastDailyReward: gameState.lastDailyReward,
-            maxClickCombo: gameState.maxClickCombo
+            maxClickCombo: gameState.maxClickCombo,
+            // ペット進化データも保持
+            petLevel: gameState.petLevel,
+            petExp: gameState.petExp,
+            petExpRequired: gameState.petExpRequired,
+            petStage: gameState.petStage,
+            petEvolutionPoints: gameState.petEvolutionPoints
         };
         
         // 初期状態に戻す
@@ -2016,7 +2011,12 @@ function validateGameState() {
 function updateAllUI() {
     // 基本統計の更新
     if (pointsElement) pointsElement.textContent = formatNumber(gameState.points);
-    if (pointsPerSecondElement) pointsPerSecondElement.textContent = formatNumber(calculatePointsPerSecond());
+    if (pointsPerSecondElement) {
+        const basePointsPerSecond = gameState.autoClickerLevel * gameState.autoClickerSpeedLevel;
+        const petAutoClickerBonus = getPetBonus('autoClicker');
+        const totalPointsPerSecond = basePointsPerSecond * petAutoClickerBonus;
+        pointsPerSecondElement.textContent = formatNumber(totalPointsPerSecond);
+    }
     if (clickMultiplierElement) clickMultiplierElement.textContent = gameState.clickMultiplier;
     
     // プレイヤーUI更新
@@ -2487,8 +2487,12 @@ function resetGame() {
 
 // ゲームループ
 function gameLoop() {
-    // 自動クリッカーの処理
-    const autoClickerPoints = gameState.autoClickerLevel * gameState.autoClickerSpeedLevel;
+
+    
+    // 自動クリッカーの処理（ペットボーナス適用）
+    const baseAutoClickerPoints = gameState.autoClickerLevel * gameState.autoClickerSpeedLevel;
+    const petAutoClickerBonus = getPetBonus('autoClicker');
+    const autoClickerPoints = baseAutoClickerPoints * petAutoClickerBonus;
     gameState.points += autoClickerPoints;
     gameState.totalPoints += autoClickerPoints;
     
@@ -2510,9 +2514,8 @@ function gameLoop() {
         StoryModeSystem.checkQuests();
     }
     
-    // 表示を更新
+    // 表示を更新（基本統計のみ）
     updateDisplay();
-    updateUpgradeButtons();
 }
 
 // ページ読み込み時に初期化
@@ -2614,7 +2617,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ゲームループ開始
     setInterval(gameLoop, 1000);
-    updateDisplay();
     renderAchievements();
 });
 

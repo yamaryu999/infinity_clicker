@@ -6611,8 +6611,6 @@ body::before {
         transform: scale(1.05);
     }
 }
-    padding: 0 10px;
-}
 
 .exp-bar {
     position: relative;
