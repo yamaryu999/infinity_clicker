@@ -3,151 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="2024年最新の無限クリッカーゲーム！スマホでも快適にプレイできるモダンなUIと中毒性のあるゲームプレイ。">
-    <meta name="keywords" content="クリッカー, 放置ゲーム, 無限クリッカー, idle game, clicker game, 2024, モダンUI, スマホ対応">
-    <meta name="author" content="Infinite Clicker Game 2024">
-    <meta name="theme-color" content="#ff006e">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="無限クリッカー">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta property="og:title" content="🚀 無限クリッカー 2024 - スマホ対応Idle Clicker Game">
-    <meta property="og:description" content="2024年最新の無限クリッカーゲーム！スマホでも快適にプレイできるモダンなUI。">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://yamaryu999.github.io/infinity_clicker/">
-    <meta property="og:image" content="https://yamaryu999.github.io/infinity_clicker/og-image.png">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="🚀 無限クリッカー 2024">
-    <meta name="twitter:description" content="2024年最新の無限クリッカーゲーム！スマホ対応。">
-    <title>🚀 無限クリッカー 2024 - スマホ対応Idle Clicker Game</title>
+    <meta name="description" content="シンプルでスタイリッシュなクリッカーゲーム">
+    <meta name="keywords" content="クリッカー, 放置ゲーム, シンプルゲーム">
+    <meta name="author" content="Stylish Clicker Game">
+    <meta name="theme-color" content="#6366f1">
+    <title>✨ スタイリッシュクリッカー</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
-    <link rel="manifest" href="data:application/manifest+json,{&quot;name&quot;:&quot;無限クリッカー 2024&quot;,&quot;short_name&quot;:&quot;無限クリッカー&quot;,&quot;theme_color&quot;:&quot;#ff006e&quot;,&quot;background_color&quot;:&quot;#667eea&quot;,&quot;display&quot;:&quot;standalone&quot;}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>">
 </head>
 <body>
-    <!-- 動的背景エフェクト -->
-    <div class="dynamic-background"></div>
-    
-    <!-- パーティクルシステム -->
-    <div class="particle-system" id="particleSystem"></div>
+    <!-- 背景エフェクト -->
+    <div class="background-effects">
+        <div class="floating-shapes"></div>
+        <div class="gradient-overlay"></div>
+    </div>
     
     <div class="game-container">
+        <!-- ヘッダー -->
         <header class="game-header">
-            <div class="header-top">
-                <h1>🚀 無限クリッカー 2024</h1>
-                <div class="header-actions">
-                    <button class="menu-btn" id="menuBtn" aria-label="メニュー">
-                        <span class="menu-icon">☰</span>
-                    </button>
+            <h1 class="game-title">✨ スタイリッシュクリッカー</h1>
+            <div class="stats-container">
+                <div class="stat-card">
+                    <span class="stat-label">ポイント</span>
+                    <span id="points" class="stat-value">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">/秒</span>
+                    <span id="pointsPerSecond" class="stat-value">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">倍率</span>
+                    <span id="clickMultiplier" class="stat-value">1</span>
                 </div>
             </div>
-            
-            <div class="stats-bar">
-                <div class="stats">
-                    <div class="stat-item">
-                        <span class="stat-label">ポイント</span>
-                        <span id="points" class="stat-value">0</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">ポイント/秒</span>
-                        <span id="pointsPerSecond" class="stat-value">0</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">クリック倍率</span>
-                        <span id="clickMultiplier" class="stat-value">1</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">レベル</span>
-                        <span id="playerLevel" class="stat-value">1</span>
-                    </div>
-                </div>
-                
-                <!-- プレイヤー経験値バー -->
-                <div class="exp-bar-container">
-                    <div class="exp-bar">
-                        <div class="exp-fill" id="expFill"></div>
-                        <span class="exp-text" id="expText">0 / 100 EXP</span>
-                    </div>
-                </div>
-                
-                <!-- ペット情報セクション -->
-                <div class="pet-info-container">
-                    <div class="pet-status">
-                        <div class="pet-basic-info">
-                            <span class="pet-emoji" id="petEmoji">🐱</span>
-                            <div class="pet-details">
-                                <span class="pet-name" id="petName">子猫</span>
-                                <span class="pet-level">Lv.<span id="petLevel">1</span></span>
-                            </div>
-                        </div>
-                        <div class="pet-exp-bar">
-                            <div class="pet-exp-fill" id="petExpFill"></div>
-                            <span class="pet-exp-text" id="petExpText">0 / 100 EXP</span>
-                        </div>
-                    </div>
-                    <div class="pet-description" id="petDescription">可愛い子猫です。これから大きく成長します！</div>
-                </div>
-                
-                <!-- クイックアクセスボタン -->
-                <div class="quick-access-buttons">
-                    <button class="daily-reward-btn" onclick="claimDailyReward()" title="毎日ボーナス" id="dailyRewardBtn">
-                        <span class="daily-icon">🎁</span>
-                        <span class="daily-text">デイリー</span>
-                        <span class="daily-badge" id="dailyBadge">!</span>
-                    </button>
-                    <button class="rakuten-quick-btn primary" onclick="toggleRakutenSidebar()" title="ゲーマー限定セール">
-                        <span class="rakuten-icon">🔥</span>
-                        <span class="rakuten-text">ゲーマー限定セール</span>
-                        <span class="rakuten-badge hot">UP TO 30%OFF</span>
-                    </button>
-                    <button class="social-quick-btn" onclick="openSocialPanel()" title="ランキング">
-                        <span class="social-icon">🏆</span>
-                        <span class="social-text">ランキング</span>
-                    </button>
-                </div>
-            </div>
-            
-            <!-- ナビゲーションメニュー -->
-            <nav class="nav-menu" id="navMenu">
-                                <div class="nav-section">
-                    <h3>🎮 ゲーム機能</h3>
-                    <div class="nav-buttons">
-                                                <button class="nav-btn" onclick="toggleRakutenSidebar()">
-                            <span class="nav-icon">🛒</span>
-                            <span class="nav-text">限定セール商品</span>
-                            <span class="nav-badge">HOT</span>
-                        </button>
-                    </div>
-                </div>
-                
+        </header>
 
-                
-                <div class="nav-section">
-                    <h3>📤 シェア</h3>
-                    <div class="nav-buttons">
-                        <button class="nav-btn" onclick="shareToX()">
-                            <span class="nav-icon">𝕏</span>
-                            <span class="nav-text">Xでシェア</span>
-                        </button>
-                        <button class="nav-btn" onclick="shareToLine()">
-                            <span class="nav-icon">💬</span>
-                            <span class="nav-text">LINEでシェア</span>
-                        </button>
-                        <button class="nav-btn" onclick="copyShareLink()">
-                            <span class="nav-icon">📋</span>
-                            <span class="nav-text">リンクをコピー</span>
-                        </button>
+        <!-- メインゲームエリア -->
+        <main class="game-main">
+            <!-- クリックエリア -->
+            <div class="click-area">
+                <div class="click-button-container">
+                    <button id="clickButton" class="click-button" aria-label="クリックしてポイントを獲得">
+                        <div class="button-glow"></div>
+                        <span class="click-text">クリック</span>
+                    </button>
+                </div>
+                <div id="clickEffect" class="click-effect"></div>
+            </div>
+
+            <!-- アップグレードセクション -->
+            <div class="upgrades-section">
+                <h2 class="section-title">アップグレード</h2>
+                <div class="upgrades-grid">
+                    <div class="upgrade-card" id="autoClickerUpgrade">
+                        <div class="upgrade-header">
+                            <span class="upgrade-icon">🤖</span>
+                            <h3>自動クリッカー</h3>
+                        </div>
+                        <div class="upgrade-stats">
+                            <span>レベル: <span id="autoClickerLevel">0</span></span>
+                            <span>コスト: <span id="autoClickerCost">10</span></span>
+                        </div>
+                        <button class="upgrade-btn" onclick="buyAutoClicker()">購入</button>
+                    </div>
+
+                    <div class="upgrade-card" id="clickMultiplierUpgrade">
+                        <div class="upgrade-header">
+                            <span class="upgrade-icon">⚡</span>
+                            <h3>クリック倍率</h3>
+                        </div>
+                        <div class="upgrade-stats">
+                            <span>レベル: <span id="clickMultiplierLevel">1</span></span>
+                            <span>コスト: <span id="clickMultiplierCost">50</span></span>
+                        </div>
+                        <button class="upgrade-btn" onclick="buyClickMultiplier()">購入</button>
+                    </div>
+
+                    <div class="upgrade-card" id="autoClickerSpeedUpgrade">
+                        <div class="upgrade-header">
+                            <span class="upgrade-icon">🚀</span>
+                            <h3>自動速度</h3>
+                        </div>
+                        <div class="upgrade-stats">
+                            <span>レベル: <span id="autoClickerSpeedLevel">1</span></span>
+                            <span>コスト: <span id="autoClickerSpeedCost">100</span></span>
+                        </div>
+                        <button class="upgrade-btn" onclick="buyAutoClickerSpeed()">購入</button>
+                    </div>
+
+                    <div class="upgrade-card" id="criticalClickUpgrade">
+                        <div class="upgrade-header">
+                            <span class="upgrade-icon">💥</span>
+                            <h3>クリティカル</h3>
+                        </div>
+                        <div class="upgrade-stats">
+                            <span>確率: <span id="criticalClickLevel">0</span>%</span>
+                            <span>コスト: <span id="criticalClickCost">200</span></span>
+                        </div>
+                        <button class="upgrade-btn" onclick="buyCriticalClick()">購入</button>
                     </div>
                 </div>
-                
+            </div>
+        </main>
+
+        <!-- フッター -->
+        <footer class="game-footer">
+            <div class="footer-content">
+                <button class="menu-btn" id="menuBtn" aria-label="メニュー">
+                    <span class="menu-icon">☰</span>
+                </button>
+                <div class="footer-info">
+                    <span class="version">v1.0.0</span>
+                </div>
+            </div>
+        </footer>
+
+        <!-- ナビゲーションメニュー -->
+        <nav class="nav-menu" id="navMenu">
+            <div class="nav-header">
+                <h3>メニュー</h3>
+                <button class="close-menu" id="closeMenuBtn">×</button>
+            </div>
+            <div class="nav-content">
                 <div class="nav-section">
-                    <h3>💾 データ管理</h3>
+                    <h4>ゲーム</h4>
                     <div class="nav-buttons">
                         <button class="nav-btn" onclick="saveGame()">
                             <span class="nav-icon">💾</span>
                             <span class="nav-text">セーブ</span>
+                        </button>
+                        <button class="nav-btn" onclick="loadGame()">
+                            <span class="nav-icon">📂</span>
+                            <span class="nav-text">ロード</span>
                         </button>
                         <button class="nav-btn danger" onclick="resetGame()">
                             <span class="nav-icon">🔄</span>
@@ -156,277 +144,25 @@
                     </div>
                 </div>
                 
-                <div class="nav-footer">
-                    <div class="version">v2.4.0 - ミニゲームシステム追加</div>
-                </div>
-            </nav>
-        </header>
-
-        <main class="game-main">
-            <!-- 楽天アフィリエイトサイドバー -->
-            <div class="rakuten-sidebar" id="rakutenSidebar">
-                <div class="rakuten-header">
-                    <h4>🛒 おすすめ商品</h4>
-                    <button class="close-rakuten" onclick="toggleRakutenSidebar()">×</button>
-                </div>
-                <div class="rakuten-content" id="rakutenContent">
-                    <!-- 楽天商品はJavaScriptで動的に追加 -->
-                </div>
-            </div>
-            
-            <div class="click-area">
-                <div class="character-container">
-                    <div class="character" id="mainCharacter">
-                        <!-- オリジナル猫キャラクター -->
-                        <svg class="cat-character" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                            <!-- 猫の体 -->
-                            <ellipse class="cat-body" cx="100" cy="120" rx="45" ry="35" fill="#FFB6C1" stroke="#FF69B4" stroke-width="2"/>
-                            
-                            <!-- 猫の頭 -->
-                            <circle class="cat-head" cx="100" cy="80" r="35" fill="#FFB6C1" stroke="#FF69B4" stroke-width="2"/>
-                            
-                            <!-- 猫の耳 -->
-                            <path class="cat-ear left-ear" d="M75 55 L85 75 L95 65 Z" fill="#FFB6C1" stroke="#FF69B4" stroke-width="2"/>
-                            <path class="cat-ear right-ear" d="M105 65 L115 75 L125 55 Z" fill="#FFB6C1" stroke="#FF69B4" stroke-width="2"/>
-                            
-                            <!-- 耳の内側 -->
-                            <path class="ear-inside left-ear-inside" d="M78 58 L85 70 L92 68 Z" fill="#FFC0CB"/>
-                            <path class="ear-inside right-ear-inside" d="M108 68 L115 70 L122 58 Z" fill="#FFC0CB"/>
-                            
-                            <!-- 猫の目 -->
-                            <ellipse class="cat-eye left-eye" cx="90" cy="75" rx="6" ry="8" fill="#87CEEB" stroke="#4169E1" stroke-width="1"/>
-                            <ellipse class="cat-eye right-eye" cx="110" cy="75" rx="6" ry="8" fill="#87CEEB" stroke="#4169E1" stroke-width="1"/>
-                            
-                            <!-- 目のハイライト -->
-                            <circle class="eye-highlight left-highlight" cx="88" cy="72" r="2" fill="white"/>
-                            <circle class="eye-highlight right-highlight" cx="108" cy="72" r="2" fill="white"/>
-                            
-                            <!-- 猫の鼻 -->
-                            <ellipse class="cat-nose" cx="100" cy="85" rx="2" ry="1" fill="#FF69B4"/>
-                            
-                            <!-- 猫の口 -->
-                            <path class="cat-mouth" d="M100 85 Q95 90 100 95 Q105 90 100 85" fill="none" stroke="#FF69B4" stroke-width="1.5"/>
-                            
-                            <!-- 猫の頬 -->
-                            <circle class="cat-cheek left-cheek" cx="85" cy="90" r="8" fill="#FFB6C1" opacity="0.6"/>
-                            <circle class="cat-cheek right-cheek" cx="115" cy="90" r="8" fill="#FFB6C1" opacity="0.6"/>
-                            
-                            <!-- 猫の尻尾 -->
-                            <path class="cat-tail" d="M145 120 Q160 110 165 125 Q170 140 155 130" fill="#FFB6C1" stroke="#FF69B4" stroke-width="2"/>
-                            
-                            <!-- 猫の足 -->
-                            <ellipse class="cat-paw front-left" cx="85" cy="150" rx="8" ry="5" fill="#FFB6C1" stroke="#FF69B4" stroke-width="1"/>
-                            <ellipse class="cat-paw front-right" cx="115" cy="150" rx="8" ry="5" fill="#FFB6C1" stroke="#FF69B4" stroke-width="1"/>
-                            <ellipse class="cat-paw back-left" cx="75" cy="145" rx="6" ry="4" fill="#FFB6C1" stroke="#FF69B4" stroke-width="1"/>
-                            <ellipse class="cat-paw back-right" cx="125" cy="145" rx="6" ry="4" fill="#FFB6C1" stroke="#FF69B4" stroke-width="1"/>
-                            
-                            <!-- 猫の模様 -->
-                            <ellipse class="cat-pattern" cx="100" cy="100" rx="15" ry="8" fill="#FFC0CB" opacity="0.3"/>
-                            
-                            <!-- キラキラエフェクト -->
-                            <g class="sparkles">
-                                <circle class="sparkle sparkle-1" cx="70" cy="60" r="2" fill="#FFD700" opacity="0"/>
-                                <circle class="sparkle sparkle-2" cx="130" cy="70" r="2" fill="#FFD700" opacity="0"/>
-                                <circle class="sparkle sparkle-3" cx="80" cy="100" r="2" fill="#FFD700" opacity="0"/>
-                            </g>
-                        </svg>
-                        
-                        <div class="character-particles"></div>
-                        <div class="character-shadow"></div>
-                    </div>
-                    
-                    <div class="floating-characters">
-                        <div class="floating-char" data-char="🦋">🦋</div>
-                        <div class="floating-char" data-char="🐝">🐝</div>
-                        <div class="floating-char" data-char="🦜">🦜</div>
-                        <div class="floating-char" data-char="🐿️">🐿️</div>
-                        <div class="floating-char" data-char="🦊">🦊</div>
-                        <div class="floating-char" data-char="🐰">🐰</div>
-                        <div class="floating-char" data-char="🦝">🦝</div>
-                        <div class="floating-char" data-char="🦘">🦘</div>
-                    </div>
-                    
-                    <div class="environment-effects">
-                        <div class="grass grass-1">🌱</div>
-                        <div class="grass grass-2">🌿</div>
-                        <div class="grass grass-3">🍃</div>
-                        <div class="cloud cloud-1">☁️</div>
-                        <div class="cloud cloud-2">☁️</div>
-                        <div class="flowers">
-                            <span class="flower flower-1">🌸</span>
-                            <span class="flower flower-2">🌺</span>
-                            <span class="flower flower-3">🌼</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <button id="clickButton" class="click-button" aria-label="クリックしてポイントを獲得" data-touch-action="manipulation">
-                    <span class="click-text">クリック!</span>
-                    <div class="click-particles"></div>
-                </button>
-                
-                <!-- おすすめ商品バナー -->
-                <div class="rakuten-banner" id="rakutenBanner">
-                    <div class="banner-content">
-                        <div class="banner-text">
-                            <span class="banner-icon">🔥</span>
-                            <span class="banner-title">限定セール中！</span>
-                            <span class="banner-subtitle">ゲーミング商品がお得</span>
-                        </div>
-                        <button class="banner-btn" onclick="toggleRakutenSidebar()">
-                            チェックする
+                <div class="nav-section">
+                    <h4>シェア</h4>
+                    <div class="nav-buttons">
+                        <button class="nav-btn" onclick="shareToX()">
+                            <span class="nav-icon">𝕏</span>
+                            <span class="nav-text">Xでシェア</span>
+                        </button>
+                        <button class="nav-btn" onclick="copyShareLink()">
+                            <span class="nav-icon">📋</span>
+                            <span class="nav-text">リンクをコピー</span>
                         </button>
                     </div>
-                    <button class="banner-close" onclick="closeRakutenBanner()">×</button>
-                </div>
-                <div id="clickEffect" class="click-effect"></div>
-            </div>
-
-            <div class="upgrades-section">
-                <h2>🛠️ アップグレード</h2>
-                <div class="upgrades-grid">
-                    <div class="upgrade-card" id="autoClickerUpgrade">
-                        <div class="upgrade-icon">🤖</div>
-                        <h3>🤖 自動クリッカー</h3>
-                        <p>自動的にポイントを生成します。放置でもポイントが増え続けます！2024年最新の自動化技術を採用。</p>
-                        <div class="upgrade-info">
-                            <span>現在: <span id="autoClickerLevel">0</span></span>
-                            <span>コスト: <span id="autoClickerCost">10</span></span>
-                        </div>
-                        <button class="upgrade-btn" onclick="buyAutoClicker()" aria-label="自動クリッカーを購入" data-touch-action="manipulation">購入</button>
-                    </div>
-
-                    <div class="upgrade-card" id="clickMultiplierUpgrade">
-                        <div class="upgrade-icon">⚡</div>
-                        <h3>⚡ クリック倍率</h3>
-                        <p>クリックごとのポイントを増加させます。効率的にポイントを稼げます！モダンな倍率システム。</p>
-                        <div class="upgrade-info">
-                            <span>現在: <span id="clickMultiplierLevel">1</span>x</span>
-                            <span>コスト: <span id="clickMultiplierCost">50</span></span>
-                        </div>
-                        <button class="upgrade-btn" onclick="buyClickMultiplier()" aria-label="クリック倍率をアップグレード" data-touch-action="manipulation">購入</button>
-                    </div>
-
-                    <div class="upgrade-card" id="autoClickerSpeedUpgrade">
-                        <div class="upgrade-icon">🚀</div>
-                        <h3>🚀 自動クリッカー速度</h3>
-                        <p>自動クリッカーの速度を上げます。より速くポイントが増加します！2024年最新の高速化技術。</p>
-                        <div class="upgrade-info">
-                            <span>現在: <span id="autoClickerSpeedLevel">1</span>x</span>
-                            <span>コスト: <span id="autoClickerSpeedCost">100</span></span>
-                        </div>
-                        <button class="upgrade-btn" onclick="buyAutoClickerSpeed()" aria-label="自動クリッカー速度をアップグレード" data-touch-action="manipulation">購入</button>
-                    </div>
-
-                    <div class="upgrade-card" id="criticalClickUpgrade">
-                        <div class="upgrade-icon">💥</div>
-                        <h3>💥 クリティカルクリック</h3>
-                        <p>クリティカルヒットの確率を上げます。ラッキーでポイントが3倍に！モダンな確率システム。</p>
-                        <div class="upgrade-info">
-                            <span>現在: <span id="criticalClickLevel">0</span>%</span>
-                            <span>コスト: <span id="criticalClickCost">200</span></span>
-                        </div>
-                        <button class="upgrade-btn" onclick="buyCriticalClick()" aria-label="クリティカルクリックをアップグレード" data-touch-action="manipulation">購入</button>
-                    </div>
-
-                    <div class="upgrade-card prestige-card" id="prestigeUpgrade">
-                        <div class="upgrade-icon">⭐</div>
-                        <h3>⭐ プレステージ（転生）</h3>
-                        <p>すべてをリセットして永続ボーナスを獲得！より強くなって新たな冒険を始めましょう。</p>
-                        <div class="upgrade-info">
-                            <span>現在: <span id="prestigeLevel">0</span>回転生</span>
-                            <span>ボーナス: <span id="prestigeBonus">0</span>%</span>
-                        </div>
-                        <button class="upgrade-btn prestige-btn" onclick="performPrestige()" aria-label="プレステージを実行" data-touch-action="manipulation" id="prestigeBtn" disabled>転生する</button>
-                    </div>
                 </div>
             </div>
-
-            <div class="achievements-section">
-                <h2>🏆 実績</h2>
-                <div id="achievements" class="achievements-grid">
-                    <!-- 実績はJavaScriptで動的に追加 -->
-                </div>
-            </div>
-        </main>
-
-        <footer class="game-footer">
-            <div class="footer-content">
-                <div class="footer-info">
-                    <span class="game-status">🎮 ゲーム進行中</span>
-                    <span class="auto-save">💾 自動保存有効</span>
-                </div>
-            </div>
-        </footer>
-
-
-
-        <!-- ソーシャルパネル -->
-        <div class="social-panel" id="socialPanel">
-            <div class="social-header">
-                <h3>👥 ソーシャル機能</h3>
-                <button class="close-btn" id="closeSocialBtn">×</button>
-            </div>
-            <div class="social-content">
-                <div class="social-tabs">
-                    <button class="social-tab active" data-tab="ranking">🏆 ランキング</button>
-                    <button class="social-tab" data-tab="share">📤 シェア</button>
-                </div>
-                
-                <!-- ランキングタブ -->
-                <div class="social-tab-content active" id="rankingTab">
-                    <div class="ranking-section">
-                        <h4>🏆 グローバルランキング</h4>
-                        <div class="ranking-filters">
-                            <button class="ranking-filter active" data-type="total">総ポイント</button>
-                            <button class="ranking-filter" data-type="level">レベル</button>
-                            <button class="ranking-filter" data-type="prestige">転生回数</button>
-                        </div>
-                        <div class="ranking-list" id="globalRanking">
-                            <!-- ランキングはJavaScriptで動的に追加 -->
-                        </div>
-                        <div class="my-rank">
-                            <span>あなたの順位: <span id="myRank">-</span></span>
-                            <span>あなたのスコア: <span id="myScore">0</span></span>
-                            <button class="challenge-btn" onclick="sendChallenge()">上位プレイヤーに挑戦</button>
-                        </div>
-                    </div>
-                </div>
-
-
-
-                <!-- シェアタブ -->
-                <div class="social-tab-content" id="shareTab">
-                    <div class="share-section">
-                        <h4>📤 スコアをシェア</h4>
-                        <div class="share-stats">
-                            <div class="share-stat">
-                                <span>総ポイント: <span id="sharePoints">0</span></span>
-                            </div>
-                            <div class="share-stat">
-                                <span>総クリック数: <span id="shareClicks">0</span></span>
-                            </div>
-                            <div class="share-stat">
-                                <span>獲得実績: <span id="shareAchievements">0</span>個</span>
-                            </div>
-                        </div>
-                        <div class="share-buttons">
-                            <button onclick="shareToX()" class="share-btn x">𝕏 X</button>
-                            <button onclick="shareToLine()" class="share-btn line">💬 LINE</button>
-                            <button onclick="copyShareLink()" class="share-btn copy">📋 コピー</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        </nav>
     </div>
 
-
-
+    <!-- 通知 -->
     <div id="notification" class="notification" role="alert" aria-live="polite"></div>
-    
-    <!-- 強化された通知システム -->
-    <div class="notification-container" id="notificationContainer"></div>
     
     <!-- フローティング数値エフェクト -->
     <div class="floating-numbers" id="floatingNumbers"></div>
