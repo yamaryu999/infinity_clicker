@@ -35,36 +35,108 @@
     
     <div class="game-container">
         <header class="game-header">
-            <h1>🚀 無限クリッカー 2024</h1>
-            <div class="stats">
-                <div class="stat-item">
-                    <span class="stat-label">ポイント</span>
-                    <span id="points" class="stat-value">0</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">ポイント/秒</span>
-                    <span id="pointsPerSecond" class="stat-value">0</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">クリック倍率</span>
-                    <span id="clickMultiplier" class="stat-value">1</span>
+            <div class="header-top">
+                <h1>🚀 無限クリッカー 2024</h1>
+                <div class="header-actions">
+                    <button class="menu-btn" id="menuBtn" aria-label="メニュー">
+                        <span class="menu-icon">☰</span>
+                    </button>
                 </div>
             </div>
-            <!-- クイックシェアボタン -->
-            <div class="quick-share">
-                <button onclick="shareToX()" class="quick-share-btn x" title="Xでシェア">
-                    <span class="quick-share-icon">𝕏</span>
-                </button>
-                <button onclick="shareToLine()" class="quick-share-btn line" title="LINEでシェア">
-                    <span class="quick-share-icon">💬</span>
-                </button>
-                <button onclick="shareToInstagram()" class="quick-share-btn instagram" title="Instagramでシェア">
-                    <span class="quick-share-icon">📷</span>
-                </button>
-                <button onclick="copyShareLink()" class="quick-share-btn copy" title="リンクをコピー">
-                    <span class="quick-share-icon">📋</span>
-                </button>
+            
+            <div class="stats-bar">
+                <div class="stats">
+                    <div class="stat-item">
+                        <span class="stat-label">ポイント</span>
+                        <span id="points" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">ポイント/秒</span>
+                        <span id="pointsPerSecond" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">クリック倍率</span>
+                        <span id="clickMultiplier" class="stat-value">1</span>
+                    </div>
+                </div>
+                
+                <!-- クイックアクセスボタン -->
+                <div class="quick-access-buttons">
+                    <button class="social-quick-btn" onclick="openSocialPanel()" title="ソーシャル機能">
+                        <span class="social-icon">👥</span>
+                        <span class="social-text">ソーシャル</span>
+                    </button>
+                    <button class="rakuten-quick-btn" onclick="toggleRakutenSidebar()" title="おすすめ商品">
+                        <span class="rakuten-icon">🔥</span>
+                        <span class="rakuten-text">限定セール</span>
+                        <span class="rakuten-badge">NEW</span>
+                    </button>
+                </div>
             </div>
+            
+            <!-- ナビゲーションメニュー -->
+            <nav class="nav-menu" id="navMenu">
+                <div class="nav-section">
+                    <h3>🎮 ゲーム機能</h3>
+                    <div class="nav-buttons">
+                        <button class="nav-btn" onclick="MinigameSystem.openMinigamePanel()">
+                            <span class="nav-icon">🎮</span>
+                            <span class="nav-text">ミニゲーム</span>
+                        </button>
+
+                        <button class="nav-btn" onclick="toggleRakutenSidebar()">
+                            <span class="nav-icon">🛒</span>
+                            <span class="nav-text">おすすめ商品</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="nav-section">
+                    <h3>🎨 カスタマイズ</h3>
+                    <div class="nav-buttons">
+                        <button class="nav-btn" onclick="openDecorationPanel()">
+                            <span class="nav-icon">🎨</span>
+                            <span class="nav-text">装飾</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="nav-section">
+                    <h3>📤 シェア</h3>
+                    <div class="nav-buttons">
+                        <button class="nav-btn" onclick="shareToX()">
+                            <span class="nav-icon">𝕏</span>
+                            <span class="nav-text">Xでシェア</span>
+                        </button>
+                        <button class="nav-btn" onclick="shareToLine()">
+                            <span class="nav-icon">💬</span>
+                            <span class="nav-text">LINEでシェア</span>
+                        </button>
+                        <button class="nav-btn" onclick="copyShareLink()">
+                            <span class="nav-icon">📋</span>
+                            <span class="nav-text">リンクをコピー</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="nav-section">
+                    <h3>💾 データ管理</h3>
+                    <div class="nav-buttons">
+                        <button class="nav-btn" onclick="saveGame()">
+                            <span class="nav-icon">💾</span>
+                            <span class="nav-text">セーブ</span>
+                        </button>
+                        <button class="nav-btn danger" onclick="resetGame()">
+                            <span class="nav-icon">🔄</span>
+                            <span class="nav-text">リセット</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="nav-footer">
+                    <div class="version">v2.4.0 - ミニゲームシステム追加</div>
+                </div>
+            </nav>
         </header>
 
         <main class="game-main">
@@ -169,6 +241,21 @@
                     <span class="click-text">クリック!</span>
                     <div class="click-particles"></div>
                 </button>
+                
+                <!-- おすすめ商品バナー -->
+                <div class="rakuten-banner" id="rakutenBanner">
+                    <div class="banner-content">
+                        <div class="banner-text">
+                            <span class="banner-icon">🔥</span>
+                            <span class="banner-title">限定セール中！</span>
+                            <span class="banner-subtitle">ゲーミング商品がお得</span>
+                        </div>
+                        <button class="banner-btn" onclick="toggleRakutenSidebar()">
+                            チェックする
+                        </button>
+                    </div>
+                    <button class="banner-close" onclick="closeRakutenBanner()">×</button>
+                </div>
                 <div id="clickEffect" class="click-effect"></div>
             </div>
 
@@ -230,12 +317,12 @@
         </main>
 
         <footer class="game-footer">
-            <button id="saveBtn" class="save-btn" onclick="saveGame()" aria-label="ゲームを保存" data-touch-action="manipulation">💾 セーブ</button>
-            <button id="resetBtn" class="reset-btn" onclick="resetGame()" aria-label="ゲームをリセット" data-touch-action="manipulation">🔄 リセット</button>
-            <button id="socialBtn" class="social-btn" onclick="openSocialPanel()" aria-label="ソーシャル機能" data-touch-action="manipulation">👥 ソーシャル</button>
-            <button id="minigameBtn" class="minigame-btn" onclick="MinigameSystem.openMinigamePanel()" aria-label="ミニゲーム" data-touch-action="manipulation">🎮 ミニゲーム</button>
-            <button id="rakutenBtn" class="rakuten-btn" onclick="toggleRakutenSidebar()" aria-label="楽天商品" data-touch-action="manipulation">🔥 限定セール中！</button>
-            <div class="version">v2.4.0 - ミニゲームシステム追加</div>
+            <div class="footer-content">
+                <div class="footer-info">
+                    <span class="game-status">🎮 ゲーム進行中</span>
+                    <span class="auto-save">💾 自動保存有効</span>
+                </div>
+            </div>
         </footer>
 
         <!-- 装飾システム -->
@@ -294,7 +381,7 @@
         </div>
 
         <!-- 装飾ボタン -->
-        <button class="decoration-btn" id="decorationBtn" aria-label="装飾を変更">
+        <button class="decoration-btn" id="decorationBtn" aria-label="装飾を変更" onclick="openDecorationPanel()">
             <span class="decoration-btn-icon">🎨</span>
         </button>
 

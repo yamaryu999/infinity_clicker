@@ -1040,6 +1040,35 @@ function setupEventListeners() {
             }
         });
     }
+    
+    // ナビゲーションメニュー
+    setupNavigationMenu();
+}
+
+// ナビゲーションメニューの設定
+function setupNavigationMenu() {
+    const menuBtn = document.getElementById('menuBtn');
+    const navMenu = document.getElementById('navMenu');
+    
+    if (menuBtn && navMenu) {
+        menuBtn.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+        });
+        
+        // メニュー外クリックで閉じる
+        document.addEventListener('click', (e) => {
+            if (!navMenu.contains(e.target) && !menuBtn.contains(e.target)) {
+                navMenu.classList.remove('active');
+            }
+        });
+        
+        // ESCキーでメニューを閉じる
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                navMenu.classList.remove('active');
+            }
+        });
+    }
 }
 
 // クリック処理を更新
@@ -1655,6 +1684,11 @@ document.addEventListener('DOMContentLoaded', function() {
             CharacterManager.playSpecialAnimation(randomAnimation);
         }
     }, 12000);
+    
+    // 定期的におすすめ商品バナーを表示
+    setInterval(() => {
+        showRakutenBanner();
+    }, 30000); // 30秒ごと
     
     // 定期的にキラキラエフェクト
     setInterval(() => {
@@ -2459,6 +2493,47 @@ const RakutenAffiliate = {
 window.toggleRakutenSidebar = function() {
     RakutenAffiliate.toggleSidebar();
 };
+
+// 装飾パネルを開く
+window.openDecorationPanel = function() {
+    const decorationPanel = document.getElementById('decorationPanel');
+    if (decorationPanel) {
+        decorationPanel.classList.add('show');
+        // ナビゲーションメニューを閉じる
+        const navMenu = document.getElementById('navMenu');
+        if (navMenu) {
+            navMenu.classList.remove('active');
+        }
+    }
+};
+
+// おすすめ商品バナーを閉じる
+window.closeRakutenBanner = function() {
+    const banner = document.getElementById('rakutenBanner');
+    if (banner) {
+        banner.style.animation = 'slideOutRight 0.5s ease-out forwards';
+        setTimeout(() => {
+            banner.style.display = 'none';
+        }, 500);
+    }
+};
+
+// おすすめ商品バナーの表示制御
+function showRakutenBanner() {
+    const banner = document.getElementById('rakutenBanner');
+    if (banner) {
+        // 既に表示されている場合は何もしない
+        if (banner.style.display !== 'none') {
+            return;
+        }
+        
+        // ランダムなタイミングでバナーを表示（30%の確率）
+        if (Math.random() < 0.3) {
+            banner.style.display = 'block';
+            banner.style.animation = 'slideInRight 0.5s ease-out';
+        }
+    }
+}
 
 // ===== ミニゲームシステム =====
 

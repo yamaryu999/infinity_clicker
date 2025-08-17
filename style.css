@@ -102,7 +102,7 @@ body::before {
     backdrop-filter: blur(30px);
     border: 1px solid var(--glass-border);
     border-radius: var(--radius-lg);
-    padding: 12px;
+    padding: 0;
     margin-bottom: 8px;
     box-shadow: var(--shadow-medium);
     position: relative;
@@ -126,11 +126,17 @@ body::before {
     100% { left: 100%; }
 }
 
-.game-header h1 {
-    text-align: center;
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.header-top h1 {
     font-size: clamp(1.2rem, 4vw, 1.8rem);
     font-weight: 900;
-    margin-bottom: 8px;
     background: linear-gradient(45deg, #ff006e, #8338ec, #3a86ff, #06ffa5, #ffbe0b);
     background-size: 400% 400%;
     -webkit-background-clip: text;
@@ -139,6 +145,240 @@ body::before {
     animation: modernGradient 4s ease-in-out infinite;
     text-shadow: 0 0 40px rgba(255, 0, 110, 0.3);
     letter-spacing: -0.02em;
+    margin: 0;
+}
+
+.header-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.menu-btn {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    padding: 10px;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.menu-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.05);
+}
+
+.menu-icon {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.stats-bar {
+    padding: 15px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.quick-access-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.social-quick-btn {
+    background: var(--accent-gradient);
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 10px 15px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    box-shadow: var(--shadow-soft);
+}
+
+.social-quick-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-medium);
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.social-icon {
+    font-size: 1.2rem;
+}
+
+.social-text {
+    font-weight: 600;
+}
+
+.rakuten-quick-btn {
+    background: linear-gradient(135deg, #e60012 0%, #ff1a1a 100%);
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 10px 15px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    box-shadow: var(--shadow-soft);
+    position: relative;
+    animation: pulse 2s infinite;
+}
+
+.rakuten-quick-btn:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: var(--shadow-medium);
+    background: linear-gradient(135deg, #ff1a1a 0%, #e60012 100%);
+}
+
+.rakuten-icon {
+    font-size: 1.2rem;
+}
+
+.rakuten-text {
+    font-weight: 600;
+}
+
+.rakuten-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #FFD700;
+    color: #000;
+    font-size: 0.6rem;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 10px;
+    animation: bounce 1s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(230, 0, 18, 0.7);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 10px rgba(230, 0, 18, 0);
+    }
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-5px);
+    }
+    60% {
+        transform: translateY(-3px);
+    }
+}
+
+/* ナビゲーションメニュー */
+.nav-menu {
+    position: fixed;
+    top: 0;
+    right: -400px;
+    width: 400px;
+    height: 100vh;
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border-left: 1px solid var(--glass-border);
+    z-index: 2000;
+    transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+    box-shadow: var(--shadow-heavy);
+    padding: 20px;
+}
+
+.nav-menu.active {
+    right: 0;
+}
+
+.nav-section {
+    margin-bottom: 30px;
+}
+
+.nav-section h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.nav-buttons {
+    display: grid;
+    gap: 10px;
+}
+
+.nav-btn {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    padding: 15px;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-align: left;
+    font-size: 1rem;
+}
+
+.nav-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(5px);
+    border-color: rgba(255, 0, 110, 0.3);
+}
+
+.nav-btn.danger {
+    border-color: rgba(244, 67, 54, 0.3);
+}
+
+.nav-btn.danger:hover {
+    background: rgba(244, 67, 54, 0.1);
+    border-color: rgba(244, 67, 54, 0.5);
+}
+
+.nav-icon {
+    font-size: 1.5rem;
+    width: 30px;
+    text-align: center;
+}
+
+.nav-text {
+    font-weight: 500;
+}
+
+.nav-footer {
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid var(--glass-border);
+    text-align: center;
+}
+
+.nav-footer .version {
+    font-size: 0.9rem;
+    color: var(--text-muted);
 }
 
 @keyframes modernGradient {
@@ -237,6 +477,119 @@ body::before {
     overflow: hidden;
     padding: 12px;
     flex-shrink: 0;
+}
+
+/* おすすめ商品バナー */
+.rakuten-banner {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #e60012 0%, #ff1a1a 100%);
+    border-radius: var(--radius-lg);
+    padding: 15px;
+    color: white;
+    box-shadow: var(--shadow-heavy);
+    z-index: 100;
+    max-width: 300px;
+    animation: slideInRight 0.5s ease-out;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.banner-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.banner-text {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.banner-icon {
+    font-size: 1.5rem;
+    animation: flame 1s infinite;
+}
+
+.banner-title {
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.banner-subtitle {
+    font-size: 0.8rem;
+    opacity: 0.9;
+}
+
+.banner-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: var(--radius-md);
+    padding: 8px 15px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 600;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+.banner-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
+}
+
+.banner-close {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    transition: all 0.3s;
+}
+
+.banner-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+@keyframes flame {
+    0%, 100% {
+        transform: scale(1) rotate(0deg);
+    }
+    25% {
+        transform: scale(1.1) rotate(-5deg);
+    }
+    75% {
+        transform: scale(1.1) rotate(5deg);
+    }
 }
 
 .click-area::before {
@@ -597,9 +950,6 @@ body::before {
 
 /* モダンなフッター */
 .game-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     margin-top: 8px;
     padding: 12px;
     background: var(--glass-bg);
@@ -607,9 +957,26 @@ body::before {
     border: 1px solid var(--glass-border);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-medium);
-    flex-wrap: wrap;
-    gap: 8px;
     flex-shrink: 0;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.footer-info {
+    display: flex;
+    gap: 20px;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.game-status, .auto-save {
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
 .save-btn, .reset-btn {
@@ -5536,6 +5903,80 @@ body::before {
     
     .minigame-container .minigame-header h3 {
         font-size: 1.5rem;
+    }
+    
+    /* ナビゲーションメニューのレスポンシブ対応 */
+    .nav-menu {
+        width: 100%;
+        right: -100%;
+    }
+    
+    .header-top {
+        padding: 10px 15px;
+    }
+    
+    .header-top h1 {
+        font-size: 1.4rem;
+    }
+    
+    .menu-btn {
+        padding: 8px;
+    }
+    
+    .menu-icon {
+        font-size: 1rem;
+    }
+    
+    .stats-bar {
+        padding: 10px 15px;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .social-quick-btn {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+    }
+    
+    .social-icon {
+        font-size: 1rem;
+    }
+    
+    .rakuten-quick-btn {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+    }
+    
+    .rakuten-icon {
+        font-size: 1rem;
+    }
+    
+    .rakuten-banner {
+        max-width: 250px;
+        padding: 10px;
+    }
+    
+    .banner-content {
+        gap: 10px;
+    }
+    
+    .banner-title {
+        font-size: 0.9rem;
+    }
+    
+    .banner-subtitle {
+        font-size: 0.7rem;
+    }
+    
+    .banner-btn {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
+    
+    .footer-info {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
     }
 }
 
